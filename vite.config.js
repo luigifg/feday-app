@@ -5,8 +5,8 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   server: {
     proxy: {
-      "/me": "http://localhost:3309", // URL do backend
-      "/userGroup": "http://localhost:3309", // URL do backend
+      "/me": "https://fbf6-2804-d55-830c-1400-fdd5-7855-f91b-9b0a.ngrok-free.app ", // URL do backend
+      "/userGroup": "https://fbf6-2804-d55-830c-1400-fdd5-7855-f91b-9b0a.ngrok-free.app ", // URL do backend
     },
   },
   plugins: [react()],
