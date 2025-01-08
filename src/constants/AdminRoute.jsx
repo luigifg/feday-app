@@ -32,6 +32,11 @@ const AdminRoute = ({ element }) => {
     checkAdminStatus();
   }, []);
 
+  if (isAdmin === null) {
+    console.log("Verificando permissões...");
+    return <div>Verificando permissões...</div>;
+  }
+
   console.log("Renderizando elemento admin");
   // Se o usuário não for admin, redireciona para a página principal
   return isAdmin ? element : <Navigate to="/" />;

@@ -15,8 +15,11 @@ const AppRoutes = () => {
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/signin" element={<SignIn />} />
-        <Route path="/events" element={<PrivateRoute element={<Events />} />} />
-        <Route path="/admin" element={<AdminRoute element={<Admin />} />} />
+        <Route
+          path="/events"
+          element={<PrivateRoute element={<Events />} />}
+        />
+       <Route path="/admin" element={<AdminRoute element={<Admin />} />} />
       </Routes>
     </BrowserRouter>
   );
