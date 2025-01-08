@@ -32,7 +32,7 @@ const LoginForm = () => {
         setMessage("Login realizado com sucesso!");
 
         // Obtém o usuário logado após o sucesso
-        const rawUser = await axios.get("/me");  // Endpoint para pegar dados do usuário
+        const rawUser = await axios.get("/me", { withCredentials: true }) ;  // Endpoint para pegar dados do usuário
         console.log("Dados do usuário:", rawUser.data);
 
         // Após o login bem-sucedido e obtenção dos dados do usuário, redireciona para /events
