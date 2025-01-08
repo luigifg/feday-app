@@ -26,7 +26,7 @@ import sliders04 from "./sliders-04.svg";
 import loading from "./loading.png";
 import bg from "./bg.jpg";
 import ramos from "../assets/ramos.png";
-
+import fe2025 from "./hero/fe2025.svg";
 import curve from "./hero/curve.png";
 import future from "./hero/future.jpg";
 import fbg from "./bg.jpg";
@@ -161,4 +161,5 @@ export {
   instagram,
   telegram,
   twitter,
+  fe2025
 };

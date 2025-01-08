@@ -1,4 +1,5 @@
 import { future, curve, heroBackground } from "../assets";
+import fe2025 from "../assets/hero/fe2025.svg";
 import Button from "./Button";
 import Section from "./Section";
 import { BackgroundCircles, BottomLine, Gradient } from "./design/Hero";

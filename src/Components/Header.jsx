@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { disablePageScroll, enablePageScroll } from "scroll-lock";
-import fe from "../assets/fe.png";
+import fe from "../assets/logos/feLogo.svg";
 import { navigation } from "../constants";
 import Button from "./Button";
 import MenuSvg from "../assets/svg/MenuSvg";
@@ -36,7 +36,7 @@ const Header = () => {
     >
       <div className="flex items-center px-5 lg:px-7.5 xl:px-10 max-lg:py-4">
         <a className="block w-[12rem] xl:mr-8" href="/">
-          <img src={fe} width={190} height={40} alt="FutureDay" />
+          <img src={fe} width={140} height={40} alt="FutureDay" />
         </a>
 
         <nav
