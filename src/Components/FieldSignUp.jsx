@@ -1,6 +1,6 @@
 import React from "react";
 
-const inputField = ({ placeholder, type, name, value, onChange, fullWidth = true }) => {
+const FieldSignUp = ({ placeholder, type, name, value, onChange, fullWidth = true }) => {
   return (
     <input
       className={`${
@@ -15,4 +15,4 @@ const inputField = ({ placeholder, type, name, value, onChange, fullWidth = true
   );
 };
 
-export default inputField;
+export default FieldSignUp;
