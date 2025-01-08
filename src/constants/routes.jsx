@@ -10,7 +10,7 @@ import AdminRoute from "../constants/AdminRoute";
 
 const AppRoutes = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
@@ -23,9 +23,7 @@ const AppRoutes = () => {
           path="/admin"
           element={
             <PrivateRoute
-              element={
-                <AdminRoute element={<Admin />} />
-              }
+              element={<AdminRoute element={<Admin />} />}
             />
           }
         />

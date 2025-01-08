@@ -1,9 +1,17 @@
 {
-  "redirects": [
+  "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/index.html",
-      "permanent": false
+      "destination": "/index.html"
+    }
+  ],
+  "builds": [
+    {
+      "src": "src/main.jsx",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
     }
   ]
 }
