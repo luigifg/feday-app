@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import api from "../Axios"; // Importe a instância do Axios configurada
 import { future, fbg } from "../assets";
-import InputField from "../components/InputField";
+import inputField from "../Components/inputField.jsx";
 import { useNavigate } from "react-router-dom";
 
 const RegistrationForm = () => {
@@ -123,14 +123,14 @@ const RegistrationForm = () => {
           <form className="w-full flex-1 mt-8" onSubmit={handleSubmit}>
             <div className="mx-auto max-w-xs flex flex-col gap-4">
               <div className="flex gap-4">
-                <InputField
+                <inputField
                   placeholder="Digite seu nome"
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                 />
-                <InputField
+                <inputField
                   placeholder="Digite seu telefone"
                   type="tel"
                   name="phone"
@@ -138,7 +138,7 @@ const RegistrationForm = () => {
                   onChange={handleChange}
                 />
               </div>
-              <InputField
+              <inputField
                 placeholder="Digite seu email"
                 type="email"
                 name="email"
@@ -146,14 +146,14 @@ const RegistrationForm = () => {
                 onChange={handleChange}
               />
               <div className="flex gap-4">
-                <InputField
+                <inputField
                   placeholder="Digite sua empresa"
                   type="text"
                   name="company"
                   value={formData.company}
                   onChange={handleChange}
                 />
-                <InputField
+                <inputField
                   placeholder="Digite seu cargo"
                   type="text"
                   name="position"
@@ -162,14 +162,14 @@ const RegistrationForm = () => {
                 />
               </div>
               <div className="flex gap-4">
-                <InputField
+                <inputField
                   placeholder="Senha"
                   type="password"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
                 />
-                <InputField
+                <inputField
                   placeholder="Confirme sua senha"
                   type="password"
                   name="confirmPassword"

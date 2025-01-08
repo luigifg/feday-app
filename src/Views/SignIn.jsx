@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../Axios";
 import { future, fbg } from "../assets";
-import InputField from "../components/InputField";
+import inputField from "../Components/inputField";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -83,7 +83,7 @@ const LoginForm = () => {
           <div className="w-full flex-1 mt-8">
             <div className="mx-auto max-w-xs flex flex-col gap-4">
               {/* Campo de Email */}
-              <InputField
+              <inputField
                 placeholder="Digite seu email"
                 type="email"
                 name="email"
@@ -93,7 +93,7 @@ const LoginForm = () => {
 
               {/* Campo de Senha */}
               <div className="flex gap-4">
-                <InputField
+                <inputField
                   placeholder="Senha"
                   type="password"
                   name="password"
