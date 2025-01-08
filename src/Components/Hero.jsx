@@ -1,5 +1,6 @@
 import { future, curve, heroBackground } from "../assets";
-import fe2025 from "../assets/hero/fe2025.svg";
+import bg1 from "../assets/logos/bg1.svg";
+import bg2 from "../assets/logos/bg2.svg";
 import Button from "./Button";
 import Section from "./Section";
 import { BackgroundCircles, BottomLine, Gradient } from "./design/Hero";
@@ -13,12 +14,34 @@ const Hero = () => {
 
   return (
     <Section
-      className="pt-[12rem] -mt-[5.25rem]"
+      className="pt-[12rem] -mt-[5.25rem] relative"
       crosses
       crossesOffset="lg:translate-y-[5.25rem]"
       customPaddings
       id="hero"
     >
+      {/* First section background */}
+      <div 
+        className="absolute inset-0 z-0 h-[50%]"
+        style={{
+          backgroundImage: `url(${bg1})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      />
+      
+      {/* Second section background */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 z-0 h-[50%]"
+        style={{
+          backgroundImage: `url(${bg2})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      />
+      
       <div className="container relative" ref={parallaxRef}>
         <div className="relative z-1 max-w-[62rem] mx-auto text-center mb-[3.875rem] md:mb-20 lg:mb-[6.25rem]">
           <h1 className="h1 mb-6">
@@ -39,7 +62,7 @@ const Hero = () => {
             palestras, horários e inovações do mundo eletrônico que o Future Day
             2025 tem para apresentar
           </p>
-          <Button className= " mt-5"href="/events">Ver Eventos</Button>
+          <Button className="mt-5" href="/events">Ver Eventos</Button>
         </div>
 
         <div className="relative max-w-[23rem] mx-auto md:max-w-3xl">
@@ -69,19 +92,10 @@ const Hero = () => {
             </div>
             <Gradient />
           </div>
-          {/* <div className="absolute -top-[54%] left-1/2 w-[234%] -translate-x-1/2 md:-top-[46%] md:w-[138%] lg:-top-[104%]">
-            <img
-              src={heroBackground}
-              className="w-full"
-              width={1440}
-              height={1800}
-              alt="hero"
-            />
-          </div> */}
-          <BackgroundCircles />
+
         </div>
 
-        <Section className="mt-2 " id="parceiros" showVerticalLines={false}>
+        <Section className="mt-2" id="parceiros" showVerticalLines={false}>
           <CompanyLogos className="hidden relative z-10 mt-20 lg:block" />
         </Section>
       </div>
