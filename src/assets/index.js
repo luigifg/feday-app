@@ -12,7 +12,7 @@ import yourlogo from "./yourlogo.svg";
 import onlogo from "./onlogo.png";
 import nxplogo from "./nxplogo.jpg";
 import micrologo from "./micrologo.jpg";
-import infineonlogo from "./infineonlogo.svg";
+import infineonlogo from "./Infineonlogo.svg";
 import stLogo from "./st-logo.svg";
 import homeSmile from "./home-smile.svg";
 import file02 from "./file-02.svg";
