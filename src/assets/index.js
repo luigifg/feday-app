@@ -1,6 +1,6 @@
 import brainwave from "./brainwave.svg";
 import check from "./check.svg";
-import wvulkan from "./wvulkan.png";
+import wvulkan from "./Wvulkan.png";
 import brainwaveSymbol from "./brainwave-symbol.svg";
 import brainwaveWhiteSymbol from "./brainwave-symbol-white.svg";
 import play from "./play.svg";
