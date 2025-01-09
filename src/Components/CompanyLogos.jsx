@@ -47,7 +47,7 @@ const CompanyLogos = ({ className }) => {
 
   return (
     <div className={className}>
-      <h4 className="tagline mb-6 text-center text-n-8">
+      <h4 className="tagline mb-15 text-center text-n-8">
         Nossos Parceiros de confiança
       </h4>
       <div

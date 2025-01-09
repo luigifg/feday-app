@@ -1,6 +1,7 @@
 import { future, curve, heroBackground } from "../assets";
 import bg1 from "../assets/logos/bg1.svg";
 import bg2 from "../assets/logos/bg2.svg";
+import fe2025 from "../assets/logos/fedayDate.svg";
 import Button from "./Button";
 import Section from "./Section";
 import { BackgroundCircles, BottomLine, Gradient } from "./design/Hero";
@@ -14,37 +15,46 @@ const Hero = () => {
 
   return (
     <Section
-      className="pt-[12rem] -mt-[5.25rem] relative"
+      className="pt-[5rem] lg:pt-[2rem] -mt-[5.25rem] relative"
       crosses
       crossesOffset="lg:translate-y-[5.25rem]"
       customPaddings
       id="hero"
     >
       {/* First section background */}
-      <div 
+      <div
         className="absolute inset-0 z-0 h-[50%]"
         style={{
           backgroundImage: `url(${bg1})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       />
-      
+
       {/* Second section background */}
-      <div 
+      <div
         className="absolute bottom-0 left-0 right-0 z-0 h-[50%]"
         style={{
           backgroundImage: `url(${bg2})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       />
-      
+
       <div className="container relative" ref={parallaxRef}>
-        <div className="relative z-1 max-w-[62rem] mx-auto text-center mb-[3.875rem] md:mb-20 lg:mb-[6.25rem]">
-          <h1 className="h1 mb-6">
+        <div className="relative z-1 max-w-[62rem] mx-auto text-center mb-[3.875rem] md:mb-20 lg:mb-[4.25rem]">
+          {/* Added Logo Container */}
+          <div className="flex justify-center  px-4">
+            <img
+              src={fe2025}
+              alt="Future Event Logo"
+              className="w-[350px] sm:w-[250px] md:w-[450px] lg:w-[650px] h-auto object-contain"
+            />
+          </div>
+          
+          <h1 className="h1 mb-4">
             Bem-vindo ao evento {` `}
             <span className="inline-block relative mb-10">
               Future Day 2025{" "}
@@ -62,44 +72,16 @@ const Hero = () => {
             palestras, horários e inovações do mundo eletrônico que o Future Day
             2025 tem para apresentar
           </p>
-          <Button className="mt-5" href="/events">Ver Eventos</Button>
+          <Button className="mt-5" href="/events">
+            Ver Eventos
+          </Button>
         </div>
-
-        <div className="relative max-w-[23rem] mx-auto md:max-w-3xl">
-          <div className="relative z-1 p-0.5 rounded-2xl bg-conic-gradient">
-            <div className="relative bg-n-8 rounded-[1rem]">
-              <div className="h-[1.4rem] bg-n-14 rounded-t-[0.9rem]" />
-
-              <div className="aspect-[33/17] rounded-b-[0.9rem] overflow-hidden md:aspect-[688/225] lg:aspect-[1024/350]">
-                <img
-                  src={future}
-                  className="w-full scale-[1.7] translate-y-[20%] md:scale-[1] md:-translate-y-[10%] lg:-translate-y-[2%]"
-                  width={1024}
-                  height={490}
-                  alt="AI"
-                />
-
-                <ScrollParallax isAbsolutelyPositioned>
-                  <ul className="hidden absolute -left-[5.5rem] bottom-[7.5rem] px-1 py-1 bg-n-9/40 backdrop-blur border border-n-1/10 rounded-2xl xl:flex">
-                    {heroIcons.map((icon, index) => (
-                      <li className="p-5" key={index}>
-                        <img src={icon} width={24} height={25} alt={icon} />
-                      </li>
-                    ))}
-                  </ul>
-                </ScrollParallax>
-              </div>
-            </div>
-            <Gradient />
-          </div>
-
-        </div>
-
-        <Section className="mt-2" id="parceiros" showVerticalLines={false}>
-          <CompanyLogos className="hidden relative z-10 mt-20 lg:block" />
-        </Section>
       </div>
-      <BottomLine />
+      <div className="relative max-w-[23rem] mx-auto md:max-w-5xl">
+        <div className="mb-15" id="parceiros" showVerticalLines={false}>
+          <CompanyLogos className="hidden relative z-10 mt-20 lg:block" />
+        </div>
+      </div>
     </Section>
   );
 };
