@@ -24,7 +24,12 @@ const EventosList = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get("/me", { withCredentials: true });
+        const response = await axios.get("https://feday-api.onrender.com/me", {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
         if (response.status === 200) {
           setUserData(response.data);
           setIsAuthenticated(true);

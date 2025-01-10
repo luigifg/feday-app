@@ -17,7 +17,7 @@ const AdminRoute = ({ element }) => {
           }
         });
         
-        console.log("Resposta do servidor admin:", response);
+        console.log("Resposta do servidor admin:", response.data);
 
         if (response.status === 200) {
           const isAdminUser = response.data.idGroup === 2;

@@ -12,7 +12,7 @@ const PrivateRoute = ({ element }) => {
 
       try {
         const response = await axios.get("/me", { withCredentials: true });
-        console.log("Resposta do servidor:", response);
+        console.log("Resposta do servidor:", response.data);
 
         if (response.status === 200) {
           console.log("Usuário autenticado!");

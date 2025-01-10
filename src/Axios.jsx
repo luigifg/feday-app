@@ -10,3 +10,13 @@ const api = axios.create({
 });
 
 export default api;
+
+// import axios from 'axios';
+
+// // Configurando a instância do Axios dinamicamente
+// const api = axios.create({
+//   baseURL: import.meta.env.VITE_API_BASE_URL, // Usa a URL definida no .env
+//   withCredentials: true,  // Permite o envio de cookies
+// });
+
+// export default api;
