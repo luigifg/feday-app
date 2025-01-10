@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import api from "../Axios"; // Importe a instância do Axios configurada
+import api from "../Axios";
 import { future, fbg } from "../assets";
-import  FieldSignUp  from "../Components/FieldSignUp";
+import FieldSignUp from "../Components/FieldSignUp";
 import { useNavigate } from "react-router-dom";
 
 const RegistrationForm = () => {
-  // Estados para armazenar os dados do formulário
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -16,22 +15,37 @@ const RegistrationForm = () => {
     confirmPassword: "",
   });
 
-  const [errorMessage, setErrorMessage] = useState(""); // Para exibir mensagens de erro
-  const [successMessage, setSuccessMessage] = useState(""); // Para exibir mensagens de sucesso
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  
+  const navigate = useNavigate();
 
-  const navigate = useNavigate(); // Hook para redirecionar o usuário
+  const passwordRequirements = [
+    { test: (p) => p.length >= 8, text: "8+ caracteres" },
+    { test: (p) => /\d/.test(p), text: "1 número" },
+    { test: (p) => /[A-Z]/.test(p), text: "1 maiúscula" },
+    { test: (p) => /[a-z]/.test(p), text: "1 minúscula" },
+    { test: (p) => /[!@#$%^&*]/.test(p), text: "1 caractere especial" }
+  ];
 
-  // Função para lidar com mudanças nos campos
+  const validatePassword = (password) => {
+    return passwordRequirements.every(req => req.test(password));
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Função para enviar os dados do formulário
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Verificar se as senhas coincidem
+    if (!validatePassword(formData.password)) {
+      setErrorMessage("A senha deve conter pelo menos 8 caracteres, incluindo números, letras maiúsculas e minúsculas e caracteres especiais.");
+      return;
+    }
+
     if (formData.password !== formData.confirmPassword) {
       setErrorMessage("As senhas não coincidem!");
       return;
@@ -39,26 +53,18 @@ const RegistrationForm = () => {
 
     try {
       const response = await api.post("/user", formData);
-      console.log("Cadastro realizado com sucesso:", response.data);
-
-      // Após o cadastro, fazer o login automaticamente
       const loginResponse = await api.post("/login", {
         email: formData.email,
         password: formData.password,
       });
       
       if (loginResponse.status === 200) {
-        // Armazenar o token em um cookie (dependendo da configuração da API, você pode já ter o cookie configurado pelo backend)
-        const rawUser = await api.get("/me"); // Endpoint para pegar dados do usuário
-        console.log("Dados do usuário:", rawUser.data);
-
-        // Redirecionar para a página de eventos
+        const rawUser = await api.get("/me");
         navigate("/events");
       } else {
         setErrorMessage("Erro ao fazer login após cadastro. Tente novamente.");
       }
 
-      // Exemplo: limpar o formulário após o envio bem-sucedido
       setFormData({
         name: "",
         phone: "",
@@ -69,21 +75,17 @@ const RegistrationForm = () => {
         confirmPassword: "",
       });
 
-      setSuccessMessage("Cadastro realizado com sucesso!"); // Mensagem de sucesso
-      setErrorMessage(""); // Limpar mensagens de erro, se houver
+      setSuccessMessage("Cadastro realizado com sucesso!");
+      setErrorMessage("");
     } catch (error) {
-      console.error(
-        "Erro ao enviar os dados:",
-        error.response?.data || error.message
-      );
-      setErrorMessage("Erro ao criar sua conta. Tente novamente."); // Mensagem de erro
-      setSuccessMessage(""); // Limpar a mensagem de sucesso, se houver
+      setErrorMessage(error.response?.data?.errors?.[0] || "Erro ao criar sua conta. Tente novamente.");
+      setSuccessMessage("");
     }
   };
 
   return (
     <div
-      className="h-[100vh] flex items-center justify-center px-5 lg:px-0"
+      className="min-h-screen flex items-center justify-center px-5 lg:px-0"
       style={{
         backgroundImage: `url(${fbg})`,
         backgroundSize: "cover",
@@ -110,14 +112,11 @@ const RegistrationForm = () => {
             </p>
           </div>
 
-          {/* Mensagens de erro ou sucesso */}
           {errorMessage && (
-            <div className="text-red-500 text-center mb-4">{errorMessage}</div>
+            <div className="text-red-500 text-center mb-4 text-sm">{errorMessage}</div>
           )}
           {successMessage && (
-            <div className="text-green-500 text-center mb-4">
-              {successMessage}
-            </div>
+            <div className="text-green-500 text-center mb-4 text-sm">{successMessage}</div>
           )}
 
           <form className="w-full flex-1 mt-8" onSubmit={handleSubmit}>
@@ -161,21 +160,47 @@ const RegistrationForm = () => {
                   onChange={handleChange}
                 />
               </div>
-              <div className="flex gap-4">
-                <FieldSignUp
-                  placeholder="Senha"
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-                <FieldSignUp
-                  placeholder="Confirme sua senha"
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                />
+              <div className="space-y-2">
+                <div className="flex gap-4">
+                  <div className="flex-1">
+                    <FieldSignUp
+                      placeholder="Senha"
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      onFocus={() => setIsPasswordFocused(true)}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <FieldSignUp
+                      placeholder="Confirme sua senha"
+                      type="password"
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+                {/* Requisitos da senha em uma linha única */}
+                <div className="flex flex-wrap gap-2 items-center justify-center bg-gray-50 p-2 rounded-md">
+                  {passwordRequirements.map((req, index) => (
+                    <div
+                      key={index}
+                      className={`flex items-center text-xs ${
+                        formData.password && req.test(formData.password)
+                          ? "text-green-600"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      <span className="mr-1">
+                        {formData.password && req.test(formData.password) ? "✓" : "○"}
+                      </span>
+                      {req.text}
+                      {index < passwordRequirements.length - 1 && <span className="ml-2">•</span>}
+                    </div>
+                  ))}
+                </div>
               </div>
               <button
                 type="submit"
