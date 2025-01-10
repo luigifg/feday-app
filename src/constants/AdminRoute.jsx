@@ -11,7 +11,7 @@ const AdminRoute = ({ element }) => {
 
       try {
         // Use a instância customizada do axios
-        const response = await api.get("/me");
+        const response = await axios.get("/me");
         console.log("Resposta do servidor admin:", response);
 
         if (response.status === 200) {
