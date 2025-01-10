@@ -10,8 +10,13 @@ const AdminRoute = ({ element }) => {
       console.log("Verificando permissões de administrador...");
 
       try {
-        // Use a instância customizada do axios
-        const response = await axios.get("/me");
+        const response = await axios.get("https://feday-api.onrender.com/me", {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        
         console.log("Resposta do servidor admin:", response);
 
         if (response.status === 200) {
@@ -35,8 +40,6 @@ const AdminRoute = ({ element }) => {
     return <div>Verificando permissões...</div>;
   }
 
-  console.log("Renderizando elemento admin");
-  // Se o usuário não for admin, redireciona para a página principal
   return isAdmin ? element : <Navigate to="/" />;
 };
 
