@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/((?!api/).*)",
-      "destination": "/index.html"
+      "source": "/api/(.*)",
+      "destination": "https://feday-api.onrender.com/api/$1"
     }
   ]
 }
