@@ -11,7 +11,12 @@ const PrivateRoute = ({ element }) => {
       console.log("Verificando autenticação...");
 
       try {
-        const response = await axios.get("/me", { withCredentials: true });
+        const response = await axios.get("https://feday-api.onrender.com/me", {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
         console.log("Resposta do servidor:", response.data);
 
         if (response.status === 200) {
