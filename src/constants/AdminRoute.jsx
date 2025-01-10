@@ -10,17 +10,15 @@ const AdminRoute = ({ element }) => {
       console.log("Verificando permissões de administrador...");
 
       try {
-        const response = await axios.get("/me", { withCredentials: true });
-        console.log("Resposta do servidor:", response);
+        // Use a instância customizada do axios
+        const response = await api.get("/me");
+        console.log("Resposta do servidor admin:", response);
 
         if (response.status === 200) {
-          // Verifica se o usuário tem id_group 2 (administrador)
           const isAdminUser = response.data.idGroup === 2;
-
           console.log("Usuário é admin?", isAdminUser);
           setIsAdmin(isAdminUser);
         } else {
-          console.log("Status não 200, sem permissão de administrador");
           setIsAdmin(false);
         }
       } catch (error) {

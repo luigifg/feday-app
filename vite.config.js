@@ -5,9 +5,13 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   server: {
     proxy: {
-      "/me": "https://feday-api.onrender.com", // URL do backend
-      "/userGroup": "https://feday-api.onrender.com", // URL do backend
-    },
+      "/me": {
+        target: "https://feday-api.onrender.com",
+        changeOrigin: true,
+        secure: false,
+        withCredentials: true
+      }
+    }
   },
   plugins: [react()],
   optimizeDeps: {
