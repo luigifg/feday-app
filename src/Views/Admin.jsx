@@ -98,7 +98,7 @@ const AdminList = () => {
                 },
               });
 
-              const userData = {
+              const userDataQr = {
                 id: qrData.id,
                 name: userResponse.data.name || qrData.name
               };
@@ -114,7 +114,7 @@ const AdminList = () => {
               
               if (checkExistingResponse.data.exists) {
                 // Se já existe no banco, apenas atualiza o usuário e mostra mensagem de sucesso
-                setScannedUser(userData);
+                setScannedUser(userDataQr);
                 setSuccessMessage("Check-in realizado com sucesso!");
                 setLastScannedQR(`${qrData.id}-${selectedEvent}-${selectedHour}`);
                 return;
@@ -133,7 +133,7 @@ const AdminList = () => {
               });
 
               if (response.status === 200) {
-                setScannedUser(userData);
+                setScannedUser(userDataQr);
                 setSuccessMessage("Check-in realizado com sucesso!");
                 setLastScannedQR(`${qrData.id}-${selectedEvent}-${selectedHour}`);
               }
