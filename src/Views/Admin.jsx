@@ -128,7 +128,7 @@ const AdminList = () => {
                 adminId: userData.id,
               };
 
-              const response = await axios.post("/checkIn", checkInData, {
+              const response = await api.post("/checkIn", checkInData, {
                 withCredentials: true,
               });
 
