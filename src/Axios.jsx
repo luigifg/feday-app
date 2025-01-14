@@ -1,11 +1,10 @@
 import axios from 'axios';
 
-// Configurando a instância do Axios diretamente com o URL
 const api = axios.create({
-  baseURL: 'https://api.futuredaybrasil.com.br', // Defina diretamente o baseURL
-  withCredentials: true,  // Permite o envio de cookies
+  baseURL: 'https://api.futuredaybrasil.com.br',
+  withCredentials: true,
   headers: {
-    'ngrok-skip-browser-warning': 'true',  // Cabeçalho para ignorar o aviso do Ngrok (se necessário)
+    'Content-Type': 'application/json',
   }
 });
 

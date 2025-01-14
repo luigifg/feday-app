@@ -16,7 +16,7 @@ const HeaderEvents = ({ navigation = [], logoHref = "/" }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const rawUser = await axios.get("https://api.futuredaybrasil.com.br/me", {
+        const userResponse = await axios.get("https://feday-api.onrender.com/me", {
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json',

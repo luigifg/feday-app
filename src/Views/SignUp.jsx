@@ -61,9 +61,6 @@ const RegistrationForm = () => {
       if (loginResponse.status === 200) {
         const rawUser = await axios.get("https://api.futuredaybrasil.com.br/me", {
           withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json',
-          }
         });
         navigate("/events");
       } else {
