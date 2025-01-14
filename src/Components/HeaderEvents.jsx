@@ -16,12 +16,7 @@ const HeaderEvents = ({ navigation = [], logoHref = "/" }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userResponse = await axios.get("https://feday-api.onrender.com/me", {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
+        const userResponse = await axios.get("/me", { withCredentials: true });
         if (userResponse.status === 200 && userResponse.data?.id) {
           setUserId(userResponse.data.id);
           setIsAdmin(userResponse.data.idGroup === 2);
