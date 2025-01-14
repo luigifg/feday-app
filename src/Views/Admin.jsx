@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import { Check } from "lucide-react";
 import { navigationAdmin } from "../constants/index";
-import axios from "../Axios";
+import api from "../Axios";
 import HeaderEvents from "../Components/HeaderEvents";
 import Section from "../Components/Section";
 import Footer from "../Components/Footer";
@@ -54,7 +54,7 @@ const AdminList = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get("/me", { withCredentials: true });
+        const response = await api.get("/me", { withCredentials: true });
         if (response.status === 200) {
           setUserData(response.data);
           setIsAuthenticated(true);
@@ -92,7 +92,7 @@ const AdminList = () => {
 
             try {
               // Buscar informações do usuário
-              const userResponse = await axios.get(`/user`, {
+              const userResponse = await api.get(`/user`, {
                 params: {
                   userName: qrData.name,
                 },
@@ -104,7 +104,7 @@ const AdminList = () => {
               };
 
               // Verificar se já existe check-in
-              const checkExistingResponse = await axios.get("/checkIn", { 
+              const checkExistingResponse = await api.get("/checkIn", { 
                 params: {
                   user_id: qrData.id,
                   event_id: selectedEvent,

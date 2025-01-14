@@ -4,7 +4,7 @@ import QRCode from "react-qr-code";
 import EventItem from "../Components/Schedule/EventItems";
 import HeaderEvents from "../Components/HeaderEvents";
 import { horariosEvento, events } from "../data/EventsData";
-import axios from "../Axios";
+import api from "../Axios";
 import { navigationEvents } from "../constants/index";
 import "../index.css";
 import Section from "../Components/Section";
@@ -24,12 +24,7 @@ const EventosList = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get("https://api.futuredaybrasil.com.br/me", {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
+        const response = await api.get("/me");
         if (response.status === 200) {
           setUserData(response.data);
           setIsAuthenticated(true);
@@ -50,7 +45,7 @@ const EventosList = () => {
     const fetchUserEvents = async () => {
       if (userData?.id) {
         try {
-          const participationsResponse = await axios.get(`/participation`, {
+          const participationsResponse = await api.get(`/participation`, {
             params: {
               userId: userData.id,
             },
@@ -132,7 +127,7 @@ const EventosList = () => {
       // Handle deletions
       for (const dbId of pendingDeletions) {
         try {
-          await axios.delete(`/participation/${dbId}`);
+          await api.delete(`/participation/${dbId}`);
         } catch (deleteError) {
           console.error("Erro ao deletar item:", dbId, deleteError);
           throw deleteError;
@@ -152,12 +147,12 @@ const EventosList = () => {
             room: stagedEvent.room,
           };
 
-          await axios.post("/participation", participationData);
+          await api.post("/participation", participationData);
         }
       }
 
       // Refresh the events list
-      const participationsResponse = await axios.get(`/participation`);
+      const participationsResponse = await api.get(`/participation`);
       const currentEvents = {};
       participationsResponse.data.data.forEach((participation) => {
         const eventDetails = events.find((e) => e.id === participation.eventId);

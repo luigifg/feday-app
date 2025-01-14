@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "../Axios";
+import api from "../Axios";
 import { future, fbg } from "../assets";
 import FieldSignUp from "../Components/FieldSignUp";
 
@@ -25,7 +25,7 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("/login", { email, password });
+      const response = await api.post("/login", { email, password });
       console.log("Login response:", response); // Verificando a resposta
 
       if (response.status === 200) {
