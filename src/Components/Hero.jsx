@@ -7,15 +7,34 @@ import Section from "./Section";
 import { BackgroundCircles, BottomLine, Gradient } from "./design/Hero";
 import { heroIcons } from "../constants";
 import { ScrollParallax } from "react-just-parallax";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import CompanyLogos from "./CompanyLogos";
 
 const Hero = () => {
   const parallaxRef = useRef(null);
+  const [isImagesLoaded, setIsImagesLoaded] = useState(false);
+
+  useEffect(() => {
+    const preloadImages = async () => {
+      const images = [bg1, bg2, fe2025];
+      await Promise.all(
+        images.map((src) => {
+          return new Promise((resolve) => {
+            const img = new Image();
+            img.src = src;
+            img.onload = resolve;
+          });
+        })
+      );
+      setIsImagesLoaded(true);
+    };
+
+    preloadImages();
+  }, []);
 
   return (
     <Section
-      className="pt-[5rem] lg:pt-[2rem] -mt-[5.25rem] relative"
+      className="pt-[5rem] lg:pt-[2rem] -mt-[5.25rem] relative min-h-[100svh]"
       crosses
       crossesOffset="lg:translate-y-[5.25rem]"
       customPaddings
@@ -23,34 +42,40 @@ const Hero = () => {
     >
       {/* First section background */}
       <div
-        className="absolute inset-0 z-0 h-[50%]"
+        className="absolute inset-0 z-0  h-[50%] transform-gpu will-change-transform"
         style={{
           backgroundImage: `url(${bg1})`,
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: "bottom",
           backgroundRepeat: "no-repeat",
+          opacity: isImagesLoaded ? 1 : 0,
+          transition: 'opacity 0.3s ease-in',
         }}
       />
 
       {/* Second section background */}
       <div
-        className="absolute bottom-0 left-0 right-0 z-0 h-[50%]"
+        className="absolute bottom-0 left-0 right-0 z-0 h-[50%] transform-gpu will-change-transform"
         style={{
           backgroundImage: `url(${bg2})`,
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: "top",
           backgroundRepeat: "no-repeat",
+          opacity: isImagesLoaded ? 1 : 0,
+          transition: 'opacity 0.3s ease-in',
         }}
       />
 
       <div className="container relative" ref={parallaxRef}>
         <div className="relative z-1 max-w-[62rem] mx-auto text-center mb-[3.875rem] md:mb-20 lg:mb-[4.25rem]">
-          {/* Added Logo Container */}
-          <div className="flex justify-center  px-4">
+          {/* Logo Container */}
+          <div className="flex justify-center px-4 transform-gpu">
             <img
               src={fe2025}
               alt="Future Event Logo"
-              className="w-[350px] sm:w-[250px] md:w-[450px] lg:w-[650px] h-auto object-contain"
+              className="w-[280px] sm:w-[250px] md:w-[450px] lg:w-[650px] h-auto object-contain"
+              loading="eager"
+              style={{ opacity: isImagesLoaded ? 1 : 0, transition: 'opacity 0.3s ease-in' }}
             />
           </div>
           
@@ -64,6 +89,7 @@ const Hero = () => {
                 width={624}
                 height={28}
                 alt="Curve"
+                loading="eager"
               />
             </span>
           </h1>
