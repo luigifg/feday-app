@@ -108,7 +108,7 @@ export const navigationEvents = [
   {
     id: "3",
     title: "Admin",
-    url: "admin",
+    url: "./admin",
   },
 ];
 

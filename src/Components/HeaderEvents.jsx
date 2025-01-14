@@ -16,7 +16,10 @@ const HeaderEvents = ({ navigation = [], logoHref = "/" }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userResponse = await axios.get("/me", { withCredentials: true });
+        const userResponse = await axios.get("/me");
+        console.log("Resposta API:", userResponse.data);
+        console.log("ID Group:", userResponse.data?.idGroup);
+        console.log("Is Admin?", userResponse.data?.idGroup === 2);
         if (userResponse.status === 200 && userResponse.data?.id) {
           setUserId(userResponse.data.id);
           setIsAdmin(userResponse.data.idGroup === 2);
