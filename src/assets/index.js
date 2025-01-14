@@ -83,7 +83,43 @@ import instagram from "./socials/instagram.svg";
 import telegram from "./socials/telegram.svg";
 import twitter from "./socials/twitter.svg";
 
+import adamtech from "./manufactures/adamtech.png";
+import allrep from "./manufactures/allrep.png";
+import artimar from "./manufactures/artimar.png";
+import ciontek from "./manufactures/ciontek.png";
+import cvilux from "./manufactures/cvilux.jpg";
+import epson from "./manufactures/epson.png";
+import flexxon from "./manufactures/flexxon.png";
+import lumileds from "./manufactures/lumileds.svg";
+import mcc from "./manufactures/mcc.png";
+import murata from "./manufactures/murata.png";
+import onsemi from "./manufactures/onsemi.png";
+import recom from "./manufactures/recom.svg";
+import smc from "./manufactures/smc.png";
+import ublox from "./manufactures/ublox.png";
+import vermont from "./manufactures/vermont.png";
+import viking from "./manufactures/viking.jpg";
+import yageo from "./manufactures/yageo.png";
+
+
 export {
+  adamtech,
+  allrep,
+  artimar,
+  ciontek,
+  cvilux,
+  epson,
+  flexxon,
+  lumileds,
+  mcc,
+  murata,
+  onsemi,
+  recom,
+  smc,
+  ublox,
+  vermont,
+  viking,
+  yageo,
   brainwave,
   ramos,
   check,
