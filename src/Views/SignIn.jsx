@@ -32,12 +32,7 @@ const LoginForm = () => {
         setMessage("Login realizado com sucesso!");
 
         // Obtém o usuário logado após o sucesso
-        const rawUser = await axios.get("https://api.futuredaybrasil.com.br/me", {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
+        const rawUser = await api.get("/me");
         console.log("Dados do usuário:", rawUser.data);
 
         // Após o login bem-sucedido e obtenção dos dados do usuário, redireciona para /events
