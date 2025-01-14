@@ -40,17 +40,49 @@ const RegistrationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Validação dos campos obrigatórios
+    if (!formData.name.trim()) {
+      setErrorMessage("O campo Nome é obrigatório");
+      return;
+    }
+  
+    if (!formData.email.trim()) {
+      setErrorMessage("O campo Email é obrigatório");
+      return;
+    }
+  
+    if (!formData.password) {
+      setErrorMessage("O campo Senha é obrigatório");
+      return;
+    }
+  
+    if (!formData.confirmPassword) {
+      setErrorMessage("É necessário confirmar a senha");
+      return;
+    }
+  
+    // Validação do formato do email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setErrorMessage("Por favor, insira um email válido");
+      return;
+    }
+  
+    // Validação da senha
     if (!validatePassword(formData.password)) {
-      setErrorMessage("A senha deve conter pelo menos 8 caracteres, incluindo números, letras maiúsculas e minúsculas e caracteres especiais.");
+      setErrorMessage(
+        "Sua senha deve conter: 8+ caracteres, 1 número, 1 letra maiúscula, 1 letra minúscula e 1 caractere especial"
+      );
       return;
     }
-
+  
+    // Validação da confirmação de senha
     if (formData.password !== formData.confirmPassword) {
-      setErrorMessage("As senhas não coincidem!");
+      setErrorMessage("As senhas não correspondem. Por favor, verifique e tente novamente");
       return;
     }
-
+  
     try {
       const response = await api.post("/user", formData);
       const loginResponse = await api.post("/login", {
@@ -60,25 +92,35 @@ const RegistrationForm = () => {
       
       if (loginResponse.status === 200) {
         const rawUser = await api.get("/me");
-        navigate("/events");
+        
+        // Limpa o formulário após sucesso
+        setFormData({
+          name: "",
+          phone: "",
+          email: "",
+          company: "",
+          position: "",
+          password: "",
+          confirmPassword: "",
+        });
+  
+        setSuccessMessage("Cadastro realizado com sucesso!");
+        setErrorMessage("");
+        
+        // Redireciona após um breve delay para mostrar a mensagem de sucesso
+        setTimeout(() => {
+          navigate("/events");
+        }, 1500);
       } else {
         setErrorMessage("Erro ao fazer login após cadastro. Tente novamente.");
       }
-
-      setFormData({
-        name: "",
-        phone: "",
-        email: "",
-        company: "",
-        position: "",
-        password: "",
-        confirmPassword: "",
-      });
-
-      setSuccessMessage("Cadastro realizado com sucesso!");
-      setErrorMessage("");
     } catch (error) {
-      setErrorMessage(error.response?.data?.errors?.[0] || "Erro ao criar sua conta. Tente novamente.");
+      const errorMsg = error.response?.data?.errors?.[0];
+      if (errorMsg?.includes("email")) {
+        setErrorMessage("Este email já está cadastrado. Tente fazer login ou use outro email.");
+      } else {
+        setErrorMessage(errorMsg || "Erro ao criar sua conta. Tente novamente.");
+      }
       setSuccessMessage("");
     }
   };
