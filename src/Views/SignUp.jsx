@@ -59,7 +59,12 @@ const RegistrationForm = () => {
       });
       
       if (loginResponse.status === 200) {
-        const rawUser = await api.get("/me");
+        const rawUser = await axios.get("https://api.futuredaybrasil.com.br/me", {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
         navigate("/events");
       } else {
         setErrorMessage("Erro ao fazer login após cadastro. Tente novamente.");

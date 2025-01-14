@@ -10,7 +10,12 @@ const AdminRoute = ({ element }) => {
       console.log("Verificando permissões de administrador...");
 
       try {
-        const response = await axios.get("/me", { withCredentials: true });
+        const response = await axios.get("https://api.futuredaybrasil.com.br/me", {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
         console.log("Resposta do servidor:", response);
 
         if (response.status === 200) {

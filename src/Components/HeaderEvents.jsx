@@ -16,7 +16,12 @@ const HeaderEvents = ({ navigation = [], logoHref = "/" }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userResponse = await axios.get("/me", { withCredentials: true });
+        const rawUser = await axios.get("https://api.futuredaybrasil.com.br/me", {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
         if (userResponse.status === 200 && userResponse.data?.id) {
           setUserId(userResponse.data.id);
           setIsAdmin(userResponse.data.idGroup === 2);
