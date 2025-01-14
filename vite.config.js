@@ -5,8 +5,8 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   server: {
     proxy: {
-      "/me": "http://localhost:3310", // URL do backend
-      "/userGroup": "http://localhost:3310", // URL do backend
+      "/me": "https://api.futuredaybrasil.com.br", // URL do backend
+      "/userGroup": "https://api.futuredaybrasil.com.br", // URL do backend
     },
   },
   build: {
