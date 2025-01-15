@@ -116,10 +116,10 @@ export default function EventLocation() {
                 </div>
                 <div>
                   <Button
-                    className="w-full md:w-auto text-sm md:text-base gap-2"
+                    className="flex flex-row w-full md:w-auto text-sm md:text-base gap-2"
                     onClick={handleOpenGoogleMaps}
                   >
-                    Ver no Google Maps
+                    Ver no Google Maps 
                     <ExternalLink className="w-3 md:w-4 h-3 md:h-4" />
                   </Button>
                 </div>

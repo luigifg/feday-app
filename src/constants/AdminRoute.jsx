@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import api from "axios";
+import api from "../Axios";
 
 const AdminRoute = ({ element }) => {
   const [isAdmin, setIsAdmin] = useState(null);

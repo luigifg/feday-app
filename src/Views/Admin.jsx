@@ -54,7 +54,7 @@ const AdminList = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await api.get("/me", { withCredentials: true });
+        const response = await api.get("/me");
         if (response.status === 200) {
           setUserData(response.data);
           setIsAuthenticated(true);

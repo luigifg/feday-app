@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { disablePageScroll, enablePageScroll } from "scroll-lock";
 import { useState, useEffect } from "react";
-import api from "axios";
+import api from "../Axios";
 import fe from "../assets/logos/feLogo.svg";
 import Button from "./Button";
 import MenuSvg from "../assets/svg/MenuSvg";
@@ -19,6 +19,7 @@ const HeaderEvents = ({ navigation = [], logoHref = "/" }) => {
         const userResponse = await api.get("/me");
         if (userResponse.status === 200 && userResponse.data?.id) {
           setUserId(userResponse.data.id);
+          console.log('userresponde', userResponse.data)
           setIsAdmin(userResponse.data.idGroup === 2);
         }
       } catch (error) {
