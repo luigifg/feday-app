@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import Section from "./Section";
 import bg3 from "../assets/logos/bg3.svg";
 
@@ -10,6 +10,8 @@ const Previous = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const minSwipeDistance = 50;
 
@@ -67,29 +69,50 @@ const Previous = () => {
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
 
-    if (isLeftSwipe && !isNextDisabled) {
-      nextSlide();
-    } else if (isRightSwipe && !isPrevDisabled) {
-      prevSlide();
+    if (showModal) {
+      if (isLeftSwipe) {
+        nextModalImage();
+      } else if (isRightSwipe) {
+        prevModalImage();
+      }
+    } else {
+      if (isLeftSwipe && !isNextDisabled) {
+        nextSlide();
+      } else if (isRightSwipe && !isPrevDisabled) {
+        prevSlide();
+      }
     }
   };
 
   const nextSlide = () => {
     const maxIndex = Math.max(0, images.length - imagesPerView);
-    setCurrentIndex((prevIndex) =>
-      Math.min(prevIndex + imagesPerView, maxIndex)
-    );
+    setCurrentIndex((prevIndex) => Math.min(prevIndex + imagesPerView, maxIndex));
   };
 
   const prevSlide = () => {
     setCurrentIndex((prevIndex) => Math.max(0, prevIndex - imagesPerView));
   };
 
-  const currentImages = images.slice(
-    currentIndex,
-    currentIndex + imagesPerView
-  );
+  const nextModalImage = () => {
+    setSelectedImageIndex((prev) => (prev + 1) % images.length);
+  };
 
+  const prevModalImage = () => {
+    setSelectedImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const openModal = (index) => {
+    setSelectedImageIndex(currentIndex + index);
+    setShowModal(true);
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    document.body.style.overflow = 'unset';
+  };
+
+  const currentImages = images.slice(currentIndex, currentIndex + imagesPerView);
   const displayImages = [...currentImages];
   while (displayImages.length < imagesPerView) {
     displayImages.push(null);
@@ -102,144 +125,199 @@ const Previous = () => {
   const currentPage = Math.floor(currentIndex / imagesPerView);
 
   return (
-    <div className="relative">
-      <div
-        className="absolute inset-0 w-full h-full"
-        style={{
-          backgroundImage: `url(${bg3})`,
-          backgroundSize: "145% 120%",
-          backgroundPosition: "top center",
-          backgroundRepeat: "no-repeat",
-        }}
-      />
+    <>
+      <div className="relative">
+        <div
+          className="absolute inset-0 w-full h-full"
+          style={{
+            backgroundImage: `url(${bg3})`,
+            backgroundSize: "145% 120%",
+            backgroundPosition: "top center",
+            backgroundRepeat: "no-repeat",
+          }}
+        />
 
-      <Section
-        crosses
-        crossesOffset="lg:translate-y-[5.25rem]"
-        customPaddings
-        className="pt-16 sm:pt-20 lg:pt-[10rem] -mt-[5.25rem] pb-8 sm:pb-12 lg:pb-[5rem] relative"
-        id="2024"
-      >
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className="relative z-1 max-w-[62rem] mx-auto text-center mb-8 sm:mb-12 lg:mb-[3.875rem]">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
-              Veja o Sucesso {` `}
-              <span className="inline-block relative">Do Evento Passado </span>
-            </h2>
-            <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto  text-n-8 leading-relaxed">
-              Nosso último evento foi um grande sucesso e se consolidou como um
-              importante espaço de troca de informações e conexões. Realizado no
-              mesmo local que receberá a próxima edição, reunimos os principais
-              fabricantes do setor, apresentando lançamentos, tendências de
-              mercado e palestras enriquecedoras que fortaleceram o conhecimento
-              de todos os participantes.
-            </p>
-            <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto mt-10 text-n-8 leading-relaxed">
-              Confira abaixo os destaques e as fotos que marcaram o evento
-            </p>
-          </div>
-
-          <div className="relative w-full max-w-7xl mx-auto">
-            {images.length > 0 ? (
-              <div className="flex items-center justify-center w-full space-x-2 sm:space-x-4 px-4 sm:px-6 lg:px-10">
-                {!isMobile && (
-                  <button
-                    onClick={prevSlide}
-                    disabled={isPrevDisabled}
-                    className={`flex-shrink-0 bg-white p-1.5 sm:p-2 rounded-full shadow-md transition-opacity duration-300 
-                    ${
-                      isPrevDisabled
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:scale-105"
-                    }`}
-                    aria-label="Previous slide"
-                  >
-                    <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1">
-                      <div className="bg-white rounded-full p-1">
-                        <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-gray-600" />
-                      </div>
-                    </div>
-                  </button>
-                )}
-
-                <div
-                  className="flex-grow flex justify-center space-x-3 sm:space-x-4 lg:space-x-6 w-full"
-                  onTouchStart={onTouchStart}
-                  onTouchMove={onTouchMove}
-                  onTouchEnd={onTouchEnd}
-                >
-                  {displayImages.map((src, index) => (
-                    <div key={index} className="flex-1 max-w-xs">
-                      <div className="p-1 sm:p-1.5 bg-gradient-to-r from-green-300 to-green-500 rounded-xl shadow-lg">
-                        <div className="bg-white rounded-lg overflow-hidden h-full">
-                          {src ? (
-                            <img
-                              src={src}
-                              alt={`Event highlight ${
-                                currentIndex + index + 1
-                              }`}
-                              className="w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[430px] object-cover transition-transform duration-300 hover:scale-105"
-                            />
-                          ) : (
-                            <div className="w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[430px] bg-gray-200" />
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {!isMobile && (
-                  <button
-                    onClick={nextSlide}
-                    disabled={isNextDisabled}
-                    className={`flex-shrink-0 bg-white p-1.5 sm:p-2 rounded-full shadow-md transition-opacity duration-300 
-                    ${
-                      isNextDisabled
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:scale-105"
-                    }`}
-                    aria-label="Next slide"
-                  >
-                    <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1">
-                      <div className="bg-white rounded-full p-1">
-                        <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-gray-600" />
-                      </div>
-                    </div>
-                  </button>
-                )}
-              </div>
-            ) : (
-              <div className="text-center text-gray-500">
-                Carregando imagens...
-              </div>
-            )}
-
-            {/* Navigation Indicators - Ajustados para tablet */}
-            <div className="flex justify-center mt-6 sm:mt-8 space-x-1.5 sm:space-x-2">
-              {Array.from({ length: totalPages }).map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentIndex(index * imagesPerView)}
-                  className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-colors duration-300 ${
-                    currentPage === index
-                      ? "bg-green-500"
-                      : "bg-gray-300 hover:bg-green-300"
-                  }`}
-                />
-              ))}
+        <Section
+          crosses
+          crossesOffset="lg:translate-y-[5.25rem]"
+          customPaddings
+          className="pt-16 sm:pt-20 lg:pt-[10rem] -mt-[5.25rem] pb-8 sm:pb-12 lg:pb-[5rem] relative"
+          id="2024"
+        >
+          <div className="container mx-auto px-4 sm:px-6 relative z-10">
+            <div className="relative z-1 max-w-[62rem] mx-auto text-center mb-8 sm:mb-12 lg:mb-[3.875rem]">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
+                Veja o Sucesso {` `}
+                <span className="inline-block relative">Do Evento Passado </span>
+              </h2>
+              <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto text-n-8 leading-relaxed">
+                Nosso último evento foi um grande sucesso e se consolidou como um
+                importante espaço de troca de informações e conexões. Realizado no
+                mesmo local que receberá a próxima edição, reunimos os principais
+                fabricantes do setor, apresentando lançamentos, tendências de
+                mercado e palestras enriquecedoras que fortaleceram o conhecimento
+                de todos os participantes.
+              </p>
+              <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto mt-10 text-n-8 leading-relaxed">
+                Confira abaixo os destaques e as fotos que marcaram o evento
+              </p>
             </div>
 
-            {/* Mobile Swipe Indicator */}
-            {isMobile && (
-              <div className="text-center mt-4 text-sm text-gray-500">
-                ← Deslize para navegar →
+            <div className="relative w-full max-w-7xl mx-auto">
+              {images.length > 0 ? (
+                <div className="flex items-center justify-center w-full space-x-2 sm:space-x-4 px-4 sm:px-6 lg:px-10">
+                  {!isMobile && (
+                    <button
+                      onClick={prevSlide}
+                      disabled={isPrevDisabled}
+                      className={`flex-shrink-0 bg-white p-1.5 sm:p-2 rounded-full shadow-md transition-opacity duration-300 
+                      ${
+                        isPrevDisabled
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:scale-105"
+                      }`}
+                      aria-label="Previous slide"
+                    >
+                      <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1">
+                        <div className="bg-white rounded-full p-1">
+                          <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-gray-600" />
+                        </div>
+                      </div>
+                    </button>
+                  )}
+
+                  <div
+                    className="flex-grow flex justify-center space-x-3 sm:space-x-4 lg:space-x-6 w-full"
+                    onTouchStart={onTouchStart}
+                    onTouchMove={onTouchMove}
+                    onTouchEnd={onTouchEnd}
+                  >
+                    {displayImages.map((src, index) => (
+                      <div key={index} className="flex-1 max-w-xs">
+                        <div className="p-1 sm:p-1.5 bg-gradient-to-r from-green-300 to-green-500 rounded-xl shadow-lg">
+                          <div className="bg-white rounded-lg overflow-hidden h-full">
+                            {src ? (
+                              <img
+                                src={src}
+                                alt={`Event highlight ${currentIndex + index + 1}`}
+                                className="w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[430px] object-cover transition-transform duration-300 hover:scale-105 cursor-pointer"
+                                onClick={() => openModal(index)}
+                              />
+                            ) : (
+                              <div className="w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[430px] bg-gray-200" />
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {!isMobile && (
+                    <button
+                      onClick={nextSlide}
+                      disabled={isNextDisabled}
+                      className={`flex-shrink-0 bg-white p-1.5 sm:p-2 rounded-full shadow-md transition-opacity duration-300 
+                      ${
+                        isNextDisabled
+                          ? "opacity-50 cursor-not-allowed"
+                          : "hover:scale-105"
+                      }`}
+                      aria-label="Next slide"
+                    >
+                      <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1">
+                        <div className="bg-white rounded-full p-1">
+                          <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-gray-600" />
+                        </div>
+                      </div>
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center text-gray-500">
+                  Carregando imagens...
+                </div>
+              )}
+
+              <div className="flex justify-center mt-6 sm:mt-8 space-x-1.5 sm:space-x-2">
+                {Array.from({ length: totalPages }).map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentIndex(index * imagesPerView)}
+                    className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-colors duration-300 ${
+                      currentPage === index
+                        ? "bg-green-500"
+                        : "bg-gray-300 hover:bg-green-300"
+                    }`}
+                  />
+                ))}
               </div>
-            )}
+
+              {isMobile && (
+                <div className="text-center mt-4 text-sm text-gray-500">
+                  ← Deslize para navegar →
+                </div>
+              )}
+            </div>
+          </div>
+        </Section>
+      </div>
+
+      {/* Image Modal */}
+      {showModal && (
+        <div 
+          className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center"
+          onClick={closeModal}
+        >
+          <div 
+            className="relative w-full h-full flex items-center justify-center"
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+          >
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 text-white hover:text-gray-300 z-50"
+              aria-label="Close modal"
+            >
+              <X className="w-8 h-8" />
+            </button>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                prevModalImage();
+              }}
+              className="absolute left-4 text-white hover:text-gray-300 z-50"
+              aria-label="Previous image"
+            >
+              <ChevronLeft className="w-8 h-8" />
+            </button>
+
+            <img
+              src={images[selectedImageIndex]}
+              alt={`Event highlight ${selectedImageIndex + 1}`}
+              className="max-h-[90vh] max-w-[90vw] object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                nextModalImage();
+              }}
+              className="absolute right-4 text-white hover:text-gray-300 z-50"
+              aria-label="Next image"
+            >
+              <ChevronRight className="w-8 h-8" />
+            </button>
+
+            <div className="absolute bottom-4 left-0 right-0 text-center text-white text-sm">
+              {selectedImageIndex + 1} / {images.length}
+            </div>
           </div>
         </div>
-      </Section>
-    </div>
+      )}
+    </>
   );
 };
 

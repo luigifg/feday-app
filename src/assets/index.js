@@ -4,6 +4,7 @@ import wvulkan from "./Wvulkan.png";
 import brainwaveSymbol from "./brainwave-symbol.svg";
 import brainwaveWhiteSymbol from "./brainwave-symbol-white.svg";
 import play from "./play.svg";
+import felogo from "./future_logo.png"
 import gradient from "./gradient.png";
 import grid from "./grid.png";
 import check2 from "./check-02.svg";
@@ -79,7 +80,7 @@ import sParana from "./benefits/sala-parana.png";
 import sTangua from "./benefits/sala-tangua.png";
 import discordBlack from "./socials/discord.svg";
 import facebook from "./socials/facebook.svg";
-import instagram from "./socials/instagram.svg";
+import linkedin from "./socials/linkedin.svg";
 import telegram from "./socials/telegram.svg";
 import twitter from "./socials/twitter.svg";
 
@@ -173,6 +174,7 @@ export {
   coins,
   done,
   hero,
+  felogo,
   roadmap1,
   roadmap2,
   roadmap3,
@@ -194,7 +196,7 @@ export {
   benefitIcon4,
   discordBlack,
   facebook,
-  instagram,
+  linkedin,
   telegram,
   twitter,
   fe2025
