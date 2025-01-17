@@ -197,18 +197,19 @@ const EventosList = () => {
     return <div>Carregando...</div>;
   }
   // Função para criar o formato vCard
-  const generateVCardData = (user) => {
-    const vCard = [
-      "BEGIN:VCARD",
-      "VERSION:3.0",
-      `FN:${user.name}`,
-      `EMAIL:${user.email}`,
-      `TEL:${user.phone || ""}`,
-      `ORG:${user.company || ""}`,
-      "END:VCARD",
-    ].join("\n");
-
-    return vCard;
+    const generateVCardData = (user) => {
+      const vCard = [
+        "BEGIN:VCARD",
+        "VERSION:3.0",
+        `N:;${user.name};;;`,  // Formato correto: Sobrenome;Nome;MiddleName;Prefixo;Sufixo
+        `FN:${user.name}`,    // Nome completo formatado
+        `TEL;TYPE=CELL:${user.phone || ""}`,
+        `EMAIL;TYPE=INTERNET:${user.email}`,
+        `ORG:${user.company || ""}`,
+        "END:VCARD"
+      ].join("\n");
+    
+      return vCard;
   };
 
   return (
@@ -216,53 +217,53 @@ const EventosList = () => {
       <HeaderEvents navigation={navigationEvents} />
 
       <Section
-      showVerticalLines={false}
-      className="px-[4rem] md:px-[8rem] pt-[3rem] bg-gradient-to-r from-green-400 to-blue-500"
-      customPaddings
-      id="qrcode"
-    >
-      {/* Gradient Wrapper */}
-      <div className="flex py-8 flex-col md:flex-row items-center justify-between">
-        {/* Welcome Message */}
-        <div className="text-white mb-6 md:mb-0">
-          <h1 className="text-3xl font-bold mb-2">
-            Bem-vindo, {userData?.name || "Participante"}!
-          </h1>
-          <p className="text-lg opacity-90">
-            Prepare-se para o Future Day. Explore a programação e escolha seus
-            eventos.
-          </p>
-          <p className="text-lg opacity-90 mt-10 underline">
-          Ao lado você encontra o seu QRcode para trocar conexões na feira e
-          fazer seu check-in nas salas
-          </p>
-        </div>
+        showVerticalLines={false}
+        className="px-[4rem] md:px-[8rem] pt-[3rem] bg-gradient-to-r from-green-400 to-blue-500"
+        customPaddings
+        id="qrcode"
+      >
+        {/* Gradient Wrapper */}
+        <div className="flex py-8 flex-col md:flex-row items-center justify-between">
+          {/* Welcome Message */}
+          <div className="text-white mb-6 md:mb-0">
+            <h1 className="text-3xl font-bold mb-2">
+              Bem-vindo, {userData?.name || "Participante"}!
+            </h1>
+            <p className="text-lg opacity-90">
+              Prepare-se para o Future Day. Explore a programação e escolha seus
+              eventos.
+            </p>
+            <p className="text-lg opacity-90 mt-10 underline">
+              Ao lado você encontra o seu QRcode para trocar conexões na feira e
+              fazer seu check-in nas salas
+            </p>
+          </div>
 
-        {/* User QR Code and Details */}
-        <div className="bg-white rounded-xl shadow-lg p-6 text-center">
-          {userData && (
-            <>
-              <QRCode
-                value={generateVCardData({
-                  name: userData.name,
-                  email: userData.email,
-                  phone: userData.phone,
-                  company: userData.company,
-                })}
-                size={200}
-                level={"H"}
-                className="mx-auto mb-4"
-              />
-              <div className="mt-4">
-                <h2 className="text-xl font-semibold">{userData.name}</h2>
-                <p className="text-gray-600">{userData.position}</p>
-                <p className="text-gray-600">{userData.company}</p>
-              </div>
-            </>
-          )}
+          {/* User QR Code and Details */}
+          <div className="bg-white rounded-xl shadow-lg p-6 text-center">
+            {userData && (
+              <>
+                <QRCode
+                  value={generateVCardData({
+                    name: userData.name,
+                    email: userData.email,
+                    phone: userData.phone,
+                    company: userData.company,
+                  })}
+                  size={200}
+                  level={"H"}
+                  className="mx-auto mb-4"
+                />
+                <div className="mt-4">
+                  <h2 className="text-xl font-semibold">{userData.name}</h2>
+                  <p className="text-gray-600">{userData.position}</p>
+                  <p className="text-gray-600">{userData.company}</p>
+                </div>
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    </Section>
+      </Section>
 
       <Section
         className="px-[1rem] md:px-[8rem] pt-[3rem] pb-[4rem]"

@@ -33,8 +33,8 @@ export default {
         }
       },
       fontSize: {
-        xxs: "0.7rem",
-        xxxs: "0.5rem",
+        xxs: "0.65rem",
+        xxxs: "0.55rem",
       },
       boxShadow: {
         custom: "0px 15px 40px rgba(0, 0, 0, 0.4)", // Sombra personalizada
