@@ -233,7 +233,8 @@ const EventosList = () => {
             eventos.
           </p>
           <p className="text-lg opacity-90 mt-10 underline">
-            Escaneie o QR code ao lado para adicionar este contato aos seus contatos
+          Ao lado você encontra o seu QRcode para trocar conexões na feira e
+          fazer seu check-in nas salas
           </p>
         </div>
 
