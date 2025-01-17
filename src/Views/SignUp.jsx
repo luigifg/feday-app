@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import api from "../Axios";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { future, fbg } from "../assets";
 import FieldSignUp from "../Components/FieldSignUp";
 import { useNavigate } from "react-router-dom";
@@ -15,10 +16,12 @@ const RegistrationForm = () => {
     confirmPassword: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
-  
+
   const navigate = useNavigate();
 
   const passwordRequirements = [
@@ -26,11 +29,11 @@ const RegistrationForm = () => {
     { test: (p) => /\d/.test(p), text: "1 número" },
     { test: (p) => /[A-Z]/.test(p), text: "1 maiúscula" },
     { test: (p) => /[a-z]/.test(p), text: "1 minúscula" },
-    { test: (p) => /[!@#$%^&*]/.test(p), text: "1 caractere especial" }
+    { test: (p) => /[!@#$%^&*]/.test(p), text: "1 caractere especial" },
   ];
 
   const validatePassword = (password) => {
-    return passwordRequirements.every(req => req.test(password));
+    return passwordRequirements.every((req) => req.test(password));
   };
 
   const handleChange = (e) => {
@@ -42,7 +45,9 @@ const RegistrationForm = () => {
     e.preventDefault();
 
     if (!validatePassword(formData.password)) {
-      setErrorMessage("A senha deve conter pelo menos 8 caracteres, incluindo números, letras maiúsculas e minúsculas e caracteres especiais.");
+      setErrorMessage(
+        "A senha deve conter pelo menos 8 caracteres, incluindo números, letras maiúsculas e minúsculas e caracteres especiais."
+      );
       return;
     }
 
@@ -57,7 +62,7 @@ const RegistrationForm = () => {
         email: formData.email,
         password: formData.password,
       });
-      
+
       if (loginResponse.status === 200) {
         const rawUser = await api.get("/me");
         navigate("/events");
@@ -78,7 +83,10 @@ const RegistrationForm = () => {
       setSuccessMessage("Cadastro realizado com sucesso!");
       setErrorMessage("");
     } catch (error) {
-      setErrorMessage(error.response?.data?.errors?.[0] || "Erro ao criar sua conta. Tente novamente.");
+      setErrorMessage(
+        error.response?.data?.errors?.[0] ||
+          "Erro ao criar sua conta. Tente novamente."
+      );
       setSuccessMessage("");
     }
   };
@@ -92,8 +100,16 @@ const RegistrationForm = () => {
         backgroundPosition: "center",
       }}
     >
-      <div className="shadow-custom 2xl:max-w-screen-xl lg:max-w-screen-lg max-h-[97vh] bg-white rounded-3xl flex flex-1 mx-auto">
-        <div className="hidden md:flex flex-1 items-center justify-center">
+      <div className="relative shadow-custom 2xl:max-w-screen-xl lg:max-w-screen-lg max-h-[97vh] bg-white rounded-3xl flex flex-1 mx-auto">
+        <a
+          href="/"
+          className="absolute left-6 md:left-8 p-2 hover:bg-gray-100 rounded-full transition-colors flex items-center gap-2 text-n-14"
+          style={{ top: "1rem" }}
+        >
+          <ArrowLeft className="w-6 h-6" />
+          <span className="hidden md:inline text-base font-medium">Voltar</span>
+        </a>
+        <div className="flex-1 text-center hidden md:flex justify-center items-center">
           <div
             className="w-[80%] max-w-md aspect-[4/3] bg-center bg-no-repeat rounded-lg border-4"
             style={{
@@ -113,10 +129,14 @@ const RegistrationForm = () => {
           </div>
 
           {errorMessage && (
-            <div className="text-red-500 text-center mb-4 text-sm">{errorMessage}</div>
+            <div className="text-red-500 text-center mb-4 text-sm">
+              {errorMessage}
+            </div>
           )}
           {successMessage && (
-            <div className="text-green-500 text-center mb-4 text-sm">{successMessage}</div>
+            <div className="text-green-500 text-center mb-4 text-sm">
+              {successMessage}
+            </div>
           )}
 
           <form className="w-full flex-1 mt-8" onSubmit={handleSubmit}>
@@ -162,24 +182,48 @@ const RegistrationForm = () => {
               </div>
               <div className="space-y-4">
                 <div className="flex gap-4">
-                  <div className="flex-1">
+                  <div className="flex-1 relative">
                     <FieldSignUp
                       placeholder="Senha"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
                       onFocus={() => setIsPasswordFocused(true)}
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 relative">
                     <FieldSignUp
-                      placeholder="Confirme sua senha"
-                      type="password"
+                      placeholder="Confirme a senha"
+                      type={showConfirmPassword ? "text" : "password"}
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleChange}
                     />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
                   </div>
                 </div>
                 {/* Requisitos da senha em uma linha única */}
@@ -194,10 +238,14 @@ const RegistrationForm = () => {
                       }`}
                     >
                       <span className="mr-1">
-                        {formData.password && req.test(formData.password) ? "✓" : "○"}
+                        {formData.password && req.test(formData.password)
+                          ? "✓"
+                          : "○"}
                       </span>
                       {req.text}
-                      {index < passwordRequirements.length - 1 && <span className="ml-2">•</span>}
+                      {index < passwordRequirements.length - 1 && (
+                        <span className="ml-2">•</span>
+                      )}
                     </div>
                   ))}
                 </div>
