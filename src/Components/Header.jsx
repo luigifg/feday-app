@@ -12,6 +12,7 @@ const Header = () => {
   const pathname = useLocation();
   const [openNavigation, setOpenNavigation] = useState(false);
   const [user, setUser] = useState(null);
+  const [showAuthButtons, setShowAuthButtons] = useState(false); // Variável para controlar a exibição dos botões
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -46,18 +47,18 @@ const Header = () => {
   const handleLogout = async () => {
     try {
       // Remove cookies
-      document.cookie.split(";").forEach(cookie => {
+      document.cookie.split(";").forEach((cookie) => {
         document.cookie = cookie
           .replace(/^ +/, "")
           .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
       });
-      
+
       // Call logout endpoint if you have one
       await api.post("/logout");
-      
+
       // Reset user state
       setUser(null);
-      
+
       // Redirect to home page
       window.location.href = "/";
     } catch (error) {
@@ -147,13 +148,13 @@ const Header = () => {
               Sair
             </button>
           </div>
-        ) : (
-          // Botões de login/signup quando não logado (apenas desktop)
+        ) : // Placeholder para manter o alinhamento quando os botões estão ocultos
+        showAuthButtons ? (
           <>
             <a
               href="signup"
               className="button hidden mr-8 text-n-8/50
-                transition-colors hover:text-color-4 lg:block"
+          transition-colors hover:text-color-4 lg:block"
             >
               Novo Usuário
             </a>
@@ -162,6 +163,8 @@ const Header = () => {
               Entrar
             </Button>
           </>
+        ) : (
+          <div className="hidden lg:flex ml-auto w-[150px]" /> // Placeholder com largura fixa
         )}
 
         <Button

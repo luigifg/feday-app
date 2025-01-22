@@ -4,6 +4,7 @@ import Section from "./Section";
 import bg3 from "../assets/logos/bg3.svg";
 
 const Previous = () => {
+  const [activeYear, setActiveYear] = useState("2023");
   const [images, setImages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [imagesPerView, setImagesPerView] = useState(3);
@@ -13,6 +14,20 @@ const Previous = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
+  const eventContent = {
+    2023: {
+      title: "O Sucesso em Curitiba – Evento 2023",
+      description:
+        "O evento de 2023, realizado na vibrante cidade de Curitiba, marcou o retorno triunfal dos eventos de eletrônica no Brasil. Após o hiato causado pela pandemia global de COVID-19, o Future Day voltou estabelecendo um novo patamar para o setor. Recebemos os maiores fabricantes e profissionais renomados, que apresentaram ao público as mais recentes tendências, tecnologias inovadoras e lançamentos de destaque. Além disso, o evento promoveu muitos reencontros durante o Supplier Fair, um espaço dedicado ao networking entre nossos estimados clientes e os fabricantes. Curitiba foi o cenário perfeito para um encontro histórico que consolidou nosso compromisso com a excelência.",
+    },
+    2024: {
+      title: "Porto Alegre como Palco – Evento 2024",
+      description:
+        "É impossível falar do Future Day sem lembrar de Porto Alegre! A cidade, que já sediou várias edições do evento, superou todas as expectativas na edição de 2024. Nossos clientes da região tiveram acesso a lançamentos exclusivos, às últimas tendências de mercado e a uma programação enriquecedora, apresentada por um número ainda maior de fabricantes. A escolha de Porto Alegre proporcionou uma experiência única, com espaços modernos e uma atmosfera inspiradora, que impulsionaram a troca de ideias e a construção de conexões ainda mais fortes entre os participantes.",
+    },
+  };
+
+  // Rest of the state management and helper functions remain the same...
   const minSwipeDistance = 50;
 
   const updateImagesPerView = () => {
@@ -31,9 +46,16 @@ const Previous = () => {
 
   useEffect(() => {
     const importImages = async () => {
-      const imageModules = import.meta.glob("../assets/fe2024/*", {
-        eager: true,
-      });
+      let imageModules;
+      if (activeYear === "2024") {
+        imageModules = import.meta.glob("../assets/fe2024/*", {
+          eager: true,
+        });
+      } else {
+        imageModules = import.meta.glob("../assets/fe2023/*", {
+          eager: true,
+        });
+      }
       const importedImages = Object.values(imageModules).map(
         (module) => module.default
       );
@@ -41,6 +63,10 @@ const Previous = () => {
     };
 
     importImages();
+    setCurrentIndex(0);
+  }, [activeYear]);
+
+  useEffect(() => {
     updateImagesPerView();
     window.addEventListener("resize", updateImagesPerView);
 
@@ -49,10 +75,7 @@ const Previous = () => {
     };
   }, []);
 
-  useEffect(() => {
-    setCurrentIndex(0);
-  }, [imagesPerView]);
-
+  // Touch handlers and other functions remain the same...
   const onTouchStart = (e) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
@@ -86,7 +109,9 @@ const Previous = () => {
 
   const nextSlide = () => {
     const maxIndex = Math.max(0, images.length - imagesPerView);
-    setCurrentIndex((prevIndex) => Math.min(prevIndex + imagesPerView, maxIndex));
+    setCurrentIndex((prevIndex) =>
+      Math.min(prevIndex + imagesPerView, maxIndex)
+    );
   };
 
   const prevSlide = () => {
@@ -104,15 +129,18 @@ const Previous = () => {
   const openModal = (index) => {
     setSelectedImageIndex(currentIndex + index);
     setShowModal(true);
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = "hidden";
   };
 
   const closeModal = () => {
     setShowModal(false);
-    document.body.style.overflow = 'unset';
+    document.body.style.overflow = "unset";
   };
 
-  const currentImages = images.slice(currentIndex, currentIndex + imagesPerView);
+  const currentImages = images.slice(
+    currentIndex,
+    currentIndex + imagesPerView
+  );
   const displayImages = [...currentImages];
   while (displayImages.length < imagesPerView) {
     displayImages.push(null);
@@ -145,24 +173,43 @@ const Previous = () => {
           id="2024"
         >
           <div className="container mx-auto px-4 sm:px-6 relative z-10">
+            {/* Year Tabs */}
+
+            <div className="flex justify-center mb-12">
+              <div className="inline-flex bg-white rounded-lg p-1 mb-10 shadow-md">
+                {["2023", "2024"].map((year) => (
+                  <button
+                    key={year}
+                    onClick={() => setActiveYear(year)}
+                    className={`relative px-6 py-2 rounded-md text-sm font-medium transition-all duration-200
+                      ${
+                        activeYear === year
+                          ? "text-green-600"
+                          : "text-gray-500 hover:text-green-500"
+                      }`}
+                  >
+                    {year}
+                    {activeYear === year && (
+                      <div className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500 rounded-full" />
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="relative z-1 max-w-[62rem] mx-auto text-center mb-8 sm:mb-12 lg:mb-[3.875rem]">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
-                Veja o Sucesso {` `}
-                <span className="inline-block relative">Do Evento Passado </span>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 sm:mb-12">
+                {eventContent[activeYear].title}
               </h2>
               <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto text-n-8 leading-relaxed">
-                Nosso último evento foi um grande sucesso e se consolidou como um
-                importante espaço de troca de informações e conexões. Realizado no
-                mesmo local que receberá a próxima edição, reunimos os principais
-                fabricantes do setor, apresentando lançamentos, tendências de
-                mercado e palestras enriquecedoras que fortaleceram o conhecimento
-                de todos os participantes.
+                {eventContent[activeYear].description}
               </p>
-              <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto mt-10 text-n-8 leading-relaxed">
-                Confira abaixo os destaques e as fotos que marcaram o evento
+              <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto text-n-8 leading-relaxed mt-10">
+                {"Confira as fotos das edições anteriores: "}
               </p>
             </div>
 
+            {/* Rest of the component remains the same... */}
             <div className="relative w-full max-w-7xl mx-auto">
               {images.length > 0 ? (
                 <div className="flex items-center justify-center w-full space-x-2 sm:space-x-4 px-4 sm:px-6 lg:px-10">
@@ -199,7 +246,9 @@ const Previous = () => {
                             {src ? (
                               <img
                                 src={src}
-                                alt={`Event highlight ${currentIndex + index + 1}`}
+                                alt={`Event highlight ${
+                                  currentIndex + index + 1
+                                }`}
                                 className="w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[430px] object-cover transition-transform duration-300 hover:scale-105 cursor-pointer"
                                 onClick={() => openModal(index)}
                               />
@@ -264,11 +313,11 @@ const Previous = () => {
 
       {/* Image Modal */}
       {showModal && (
-        <div 
+        <div
           className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center"
           onClick={closeModal}
         >
-          <div 
+          <div
             className="relative w-full h-full flex items-center justify-center"
             onTouchStart={onTouchStart}
             onTouchMove={onTouchMove}

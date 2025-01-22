@@ -99,12 +99,12 @@ const Hero = () => {
             2025 tem para apresentar
           </p>
           <Button className="mt-5" href="/events">
-            Ver Eventos
+            Ver Eventos - EM BREVE
           </Button>
         </div>
       </div>
       <div className="relative max-w-[23rem] mx-auto md:max-w-5xl">
-        <div className="mb-15" id="parceiros" showVerticalLines={false}>
+        <div className="mb-15"  showVerticalLines={false}>
           <CompanyLogos className="hidden relative z-10 mt-20 lg:block" />
         </div>
       </div>

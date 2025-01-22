@@ -6,6 +6,32 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slide-reverse {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide {
+  animation: slide 30s linear infinite;
+}
+
+.animate-slide-reverse {
+  animation: slide-reverse 30s linear infinite;
+}
+
 :root {
   --font-sora: "Sora", sans-serif;
   --font-code: "Source Code Pro", monospace;

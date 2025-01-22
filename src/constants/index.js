@@ -42,9 +42,7 @@ import {
   infineonlogo,
   nxplogo,
   adamtech,
-  allrep,
   artimar,
-  ciontek,
   cvilux,
   epson,
   flexxon,
@@ -58,6 +56,8 @@ import {
   vermont,
   viking,
   yageo,
+  osram,
+  nic
 } from "../assets";
 
 export const navigation = [
@@ -68,7 +68,7 @@ export const navigation = [
   },
   {
     id: "1",
-    title: "2024",
+    title: "Edições Passadas",
     url: "#2024",
   },
   {
@@ -76,18 +76,18 @@ export const navigation = [
     title: "Local",
     url: "#local",
   },
-  {
-    id: "4",
-    title: "Novo Usuário",
-    url: "./signup",
-    onlyMobile: true,
-  },
-  {
-    id: "5",
-    title: "Entrar",
-    url: "./signin",
-    onlyMobile: true,
-  },
+  // {
+  //   id: "4",
+  //   title: "Novo Usuário",
+  //   url: "./signup",
+  //   onlyMobile: true,
+  // },
+  // {
+  //   id: "5",
+  //   title: "Entrar",
+  //   url: "./signin",
+  //   onlyMobile: true,
+  // },
 ];
 
 export const navigationEvents = [
@@ -132,25 +132,28 @@ export const heroIcons = [homeSmile, file02, searchMd, plusSquare];
 export const notificationImages = [notification4, notification3, notification2];
 
 export const companyLogos = [
-  adamtech,
-  allrep,
-  artimar,
-  ciontek,
-  cvilux,
-  epson,
-  flexxon,
-  lumileds,
-  stLogo,
+  { logo: adamtech, url: "https://www.adam-tech.com" },
+  { logo: artimar, url: "https://www.artimar.com.br" },
+  { logo: cvilux, url: "https://www.cvilux.com" },
+  { logo: epson, url: "https://www.epson.com" },
+  { logo: flexxon, url: "https://www.flexxon.com" },
+  { logo: lumileds, url: "https://www.lumileds.com" },
+  { logo: stLogo, url: "https://www.st.com" },
+  { logo: nic, url: "https://www.niccomp.com" },
+  { logo: mcc, url: "https://www.mccsemi.com/" },
 ];
-export const companyLogos2 = [mcc,
-  murata,
-  onsemi,
-  recom,
-  smc,
-  ublox,
-  vermont,
-  viking,
-  yageo,];
+export const companyLogos2 = [
+  { logo: murata, url: "https://www.murata.com" },
+  { logo: onsemi, url: "https://www.onsemi.com" },
+  { logo: recom, url: "https://www.recom-power.com" },
+  { logo: smc, url: "https://www.smcworld.com" },
+  { logo: ublox, url: "https://www.ublox.com" },
+  { logo: vermont, url: "https://www.vermont.com" },
+  { logo: viking, url: "https://www.viking.com" },
+  { logo: yageo, url: "https://www.yageo.com" },
+  { logo: osram, url: "https://ams-osram.com" },
+  
+];
 
 export const brainwaveServices = [
   "Photo generating",
