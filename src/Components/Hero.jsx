@@ -98,7 +98,8 @@ const Hero = () => {
             palestras, horários e inovações do mundo eletrônico que o Future Day
             2025 tem para apresentar
           </p>
-          <Button className="mt-5" href="/events">
+          {/* href="/events" */}
+          <Button className="mt-5" > 
             Ver Eventos - EM BREVE
           </Button>
         </div>

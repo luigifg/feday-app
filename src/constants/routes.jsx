@@ -1,8 +1,8 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "../App";
-import SignUp from "../Views/SignUp";
-import SignIn from "../Views/SignIn";
+// import SignUp from "../Views/SignUp";
+// import SignIn from "../Views/SignIn";
 import Events from "../Views/Events";
 import Admin from "../Views/Admin"; // Você precisará criar este componente
 import PrivateRoute from "../constants/PrivateRoute";
