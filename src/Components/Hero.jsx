@@ -4,9 +4,6 @@ import bg2 from "../assets/logos/bg2.svg";
 import fe2025 from "../assets/logos/fedayDate.svg";
 import Button from "./Button";
 import Section from "./Section";
-import { BackgroundCircles, BottomLine, Gradient } from "./design/Hero";
-import { heroIcons } from "../constants";
-import { ScrollParallax } from "react-just-parallax";
 import { useRef, useEffect, useState } from "react";
 import CompanyLogos from "./CompanyLogos";
 
@@ -49,7 +46,7 @@ const Hero = () => {
           backgroundPosition: "bottom",
           backgroundRepeat: "no-repeat",
           opacity: isImagesLoaded ? 1 : 0,
-          transition: 'opacity 0.3s ease-in',
+          transition: 'opacity 0.2s ease-in',
         }}
       />
 
@@ -62,7 +59,7 @@ const Hero = () => {
           backgroundPosition: "top",
           backgroundRepeat: "no-repeat",
           opacity: isImagesLoaded ? 1 : 0,
-          transition: 'opacity 0.3s ease-in',
+          transition: 'opacity 0.2s ease-in',
         }}
       />
 
@@ -75,7 +72,7 @@ const Hero = () => {
               alt="Future Event Logo"
               className="w-[280px] sm:w-[250px] md:w-[450px] lg:w-[650px] h-auto object-contain"
               loading="eager"
-              style={{ opacity: isImagesLoaded ? 1 : 0, transition: 'opacity 0.3s ease-in' }}
+              style={{ opacity: isImagesLoaded ? 1 : 0, transition: 'opacity 0.2s ease-in' }}
             />
           </div>
           

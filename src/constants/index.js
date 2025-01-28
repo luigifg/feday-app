@@ -12,6 +12,7 @@ import {
   discord,
   discordBlack,
   facebook,
+  instagram,
   file02,
   framer,
   homeSmile,
@@ -57,7 +58,7 @@ import {
   viking,
   yageo,
   osram,
-  nic
+  nic,
 } from "../assets";
 
 export const navigation = [
@@ -152,7 +153,6 @@ export const companyLogos2 = [
   { logo: viking, url: "https://www.viking.com" },
   { logo: yageo, url: "https://www.yageo.com" },
   { logo: osram, url: "https://ams-osram.com" },
-  
 ];
 
 export const brainwaveServices = [
@@ -366,7 +366,6 @@ export const benefits = [
 ];
 
 export const socials = [
-
   {
     id: "0",
     title: "Linkedin",
@@ -380,5 +379,17 @@ export const socials = [
     iconUrl: felogo,
     url: "https://www.futureelectronics.com/",
   },
+  {
+    id: "2",
+    title: "Instagram",
+    iconUrl: instagram,
+    url: "https://www.instagram.com/futureelectronics_",
+  },
 
+  {
+    id: "3",
+    title: "Facebook",
+    iconUrl: facebook,
+    url: "https://www.facebook.com/FutureElectronics/",
+  },
 ];

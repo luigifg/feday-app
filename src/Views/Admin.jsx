@@ -231,8 +231,8 @@ const AdminList = () => {
               Área do Administrador
             </h1>
             <p className="text-lg">
-              Se você está aqui, o estagiário definitivamente clicou em 'Permitir
-              Acesso' sem pensar duas vezes.
+              Se você está aqui, o estagiário clicou em 'Permitir
+              Acesso'.
             </p>
 
             <p className="text-lg mt-8 border-l-4 border-emerald-400 pl-4">

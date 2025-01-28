@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import Button from "./Button";
 import Section from "../Components/Section";
+import bg4 from "../assets/logos/bg4.svg";
 
 export default function EventLocation() {
   const [locationImages, setLocationImages] = useState([]);
@@ -69,6 +70,15 @@ export default function EventLocation() {
 
   return (
     <div className="relative">
+      <div
+        className="absolute inset-0 w-full h-full"
+        style={{
+          backgroundImage: `url(${bg4})`,
+          backgroundSize: "100% 125%",
+          backgroundPosition: "top center",
+          backgroundRepeat: "no-repeat",
+        }}
+      ></div>
       <Section
         crosses
         crossesOffset="lg:translate-y-[5.25rem]"

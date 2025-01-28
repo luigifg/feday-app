@@ -6,7 +6,7 @@ const CompanyLogos = () => {
     <section className="w-full py-10 overflow-hidden" id="parceiros">
       <div className="container">
         <h4 className="tagline mb-8 text-center text-n-8">
-          Nossos Parceiros de Confiança
+          Nossos Parceiros Confirmados
         </h4>
       </div>
 
