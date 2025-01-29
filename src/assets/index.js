@@ -102,10 +102,28 @@ import viking from "./manufactures/viking.jpg";
 import yageo from "./manufactures/yageo.png";
 import nic from "./manufactures/nic.svg";
 import osram from "./manufactures/osram.png";
+import aishi from "./manufactures/aishi.png";
+import hirose from "./manufactures/hirose.svg";
+import infineon from "./manufactures/infineon.png";
+import littelfuse from "./manufactures/littelfuse.png";
+import nxp from "./manufactures/nxp.png";
+import renesas from "./manufactures/renesas.jpg";
+import seed4b from "./manufactures/seed4b.png";
+import te from "./manufactures/te.png";
+import vishay from "./manufactures/vishay.svg";
+import wurth from "./manufactures/wurth.png";
+import atl from "./manufactures/atl.png";
+import bpm from "./manufactures/bpm.png";
+import vla from "./manufactures/vla.png";
+import allrep from "./manufactures/allrep.png";
 
 
 export {
   adamtech,
+  allrep,
+  vla,
+  bpm,
+  atl,
   artimar,
   cvilux,
   epson,
@@ -122,6 +140,16 @@ export {
   yageo,
   osram,
   nic,
+  aishi,
+  hirose,
+  infineon,
+  littelfuse,
+  nxp,
+  renesas,
+  seed4b,
+  te,
+  vishay,
+  wurth,
   brainwave,
   ramos,
   check,

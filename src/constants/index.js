@@ -59,6 +59,20 @@ import {
   yageo,
   osram,
   nic,
+  aishi,
+  hirose,
+  infineon,
+  littelfuse,
+  nxp,
+  renesas,
+  seed4b,
+  te,
+  vishay,
+  wurth,
+  atl,
+  bpm,
+  vla,
+  allrep,
 } from "../assets";
 
 export const navigation = [
@@ -142,7 +156,14 @@ export const companyLogos = [
   { logo: stLogo, url: "https://www.st.com" },
   { logo: nic, url: "https://www.niccomp.com" },
   { logo: mcc, url: "https://www.mccsemi.com/" },
+  { logo: aishi, url: "https://www.aishi.com" }, // Adicionado
+  { logo: hirose, url: "https://www.hirose.com" }, // Adicionado
+  { logo: infineon, url: "https://www.infineon.com" }, // Adicionado
+  { logo: littelfuse, url: "https://www.littelfuse.com" }, // Adicionado
+  { logo: atl, url: "http://atl-electronics.com" }, // Adicionado
+  { logo: bpm, url: "https://bpmrep.com.br" }, // Adicionado
 ];
+
 export const companyLogos2 = [
   { logo: murata, url: "https://www.murata.com" },
   { logo: onsemi, url: "https://www.onsemi.com" },
@@ -153,6 +174,14 @@ export const companyLogos2 = [
   { logo: viking, url: "https://www.viking.com" },
   { logo: yageo, url: "https://www.yageo.com" },
   { logo: osram, url: "https://ams-osram.com" },
+  { logo: nxp, url: "https://www.nxp.com" }, // Adicionado
+  { logo: renesas, url: "https://www.renesas.com" }, // Adicionado
+  { logo: seed4b, url: "https://www.seed4b.com" }, // Adicionado
+  { logo: te, url: "https://www.te.com" }, // Adicionado
+  { logo: vishay, url: "https://www.vishay.com" }, // Adicionado
+  { logo: wurth, url: "https://www.wurth.com.br" }, // Adicionado
+  { logo: vla, url: "https://www.linkedin.com/company/vla-solutions/?originalSubdomain=br" }, // Adicionado
+  { logo: allrep, url: "https://allrepbr.com.br/" }, // Adicionado
 ];
 
 export const brainwaveServices = [

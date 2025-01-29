@@ -83,7 +83,7 @@ export default function EventLocation() {
         crosses
         crossesOffset="lg:translate-y-[5.25rem]"
         customPaddings
-        className="pt-[10rem] pb-[5rem] md:pt-[10rem] px-4 md:px-[4rem] -mt-[5.25rem] relative"
+        className="pt-[8rem] pb-[5rem] md:pt-[10rem] px-4 md:px-[4rem] -mt-[5.25rem] relative"
         id="local"
       >
         <div className="relative">
@@ -110,7 +110,7 @@ export default function EventLocation() {
                     <p className="text-lg">
                       Av. Sete de Setembro, 4211
                       <br />
-                      Avenue - Curitiba, PR
+                       Curitiba, PR
                       <br />
                       CEP: 80250-205
                     </p>

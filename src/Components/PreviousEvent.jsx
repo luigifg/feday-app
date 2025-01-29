@@ -18,12 +18,12 @@ const Previous = () => {
     2023: {
       title: "O Sucesso em Curitiba – Evento 2023",
       description:
-        "O evento de 2023, realizado na vibrante cidade de Curitiba, marcou o retorno triunfal dos eventos de eletrônica no Brasil. Após o hiato causado pela pandemia global de COVID-19, o Future Day voltou estabelecendo um novo patamar para o setor. Recebemos os maiores fabricantes e profissionais renomados, que apresentaram ao público as mais recentes tendências, tecnologias inovadoras e lançamentos de destaque. Além disso, o evento promoveu muitos reencontros durante o Supplier Fair, um espaço dedicado ao networking entre nossos estimados clientes e os fabricantes. Curitiba foi o cenário perfeito para um encontro histórico que consolidou nosso compromisso com a excelência.",
+        "O evento de 2023, realizado em Curitiba, marcou o retorno dos eventos de eletrônica no Brasil após a pandemia. O Future Day estabeleceu um novo patamar para o setor, com grandes fabricantes e profissionais apresentando as últimas tendências e inovações. O Supplier Fair proporcionou importantes reencontros e networking entre clientes e fabricantes, tornando Curitiba o cenário perfeito para um evento histórico de excelência",
     },
     2024: {
       title: "Porto Alegre como Palco – Evento 2024",
       description:
-        "É impossível falar do Future Day sem lembrar de Porto Alegre! A cidade, que já sediou várias edições do evento, superou todas as expectativas na edição de 2024. Nossos clientes da região tiveram acesso a lançamentos exclusivos, às últimas tendências de mercado e a uma programação enriquecedora, apresentada por um número ainda maior de fabricantes. A escolha de Porto Alegre proporcionou uma experiência única, com espaços modernos e uma atmosfera inspiradora, que impulsionaram a troca de ideias e a construção de conexões ainda mais fortes entre os participantes.",
+        "Porto Alegre, que já sediou várias edições do Future Day, superou todas as expectativas na edição de 2024. Nossos clientes da região tiveram acesso a lançamentos exclusivos e às últimas tendências de mercado, com uma programação ainda mais enriquecedora e a participação de um número maior de fabricantes. A escolha da cidade ofereceu uma experiência única, com espaços modernos e uma atmosfera inspiradora, que impulsionaram a troca de ideias e fortaleceram as conexões entre os participantes.",
     },
   };
 
@@ -201,7 +201,7 @@ const Previous = () => {
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 sm:mb-12">
                 {eventContent[activeYear].title}
               </h2>
-              <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto text-n-8 leading-relaxed">
+              <p className="text-base sm:text-lg lg:text-xl max-w-4xl mx-auto text-n-8 leading-relaxed">
                 {eventContent[activeYear].description}
               </p>
               <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto text-n-8 leading-relaxed mt-10">

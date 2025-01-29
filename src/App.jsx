@@ -1,11 +1,12 @@
 import React from "react";
 import ButtonGradient from "./assets/svg/ButtonGradient";
-import Benefits from "./Components/Benefits";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Hero from "./Components/Hero";
 import Previous from "./Components/PreviousEvent";
 import Location from "./Components/EventLocation"
+
+
 
 
 const App = () => {
@@ -15,6 +16,7 @@ const App = () => {
       <Hero />
       <Previous />
       <Location />
+
       {/* <Benefits /> */}
       <ButtonGradient />
       <Footer />
