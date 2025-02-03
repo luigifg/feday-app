@@ -38,19 +38,19 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #f3f4f6;
   border-radius: 4px;
   margin: 6px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: #9ca3af;
   border-radius: 4px;
   transition: background 0.2s ease;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
+  background: #6b7280;
 }
 
 .custom-scrollbar::-webkit-scrollbar-button {

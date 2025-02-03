@@ -95,7 +95,7 @@ const SpeakerModal = ({
           </div>
 
           {/* Container com scroll para o conteúdo */}
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
             <p className="text-base text-gray-600">
               {slides[currentSlide].description}
             </p>
