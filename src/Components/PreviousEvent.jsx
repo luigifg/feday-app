@@ -167,7 +167,7 @@ const Previous = () => {
 
         <Section
           crosses
-          crossesOffset="lg:translate-y-[5.25rem]"
+          crossesOffset="lg:translate-y-[5.25rem] 2xl:translate-y-0"
           customPaddings
           className="pt-16 sm:pt-20 lg:pt-[10rem] -mt-[5.25rem] pb-8 sm:pb-12 lg:pb-[5rem] relative"
           id="2024"
