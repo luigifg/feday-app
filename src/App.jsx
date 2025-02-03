@@ -5,6 +5,7 @@ import Footer from "./Components/Footer";
 import Hero from "./Components/Hero";
 import Previous from "./Components/PreviousEvent";
 import Location from "./Components/EventLocation"
+import Banner from "./Components/Banner"
 
 
 
@@ -14,8 +15,10 @@ const App = () => {
     <div className="pt-[4.75rem] lg:pt-[5.25rem] overflow-hidden">
       <Header />
       <Hero />
+      <Banner />
       <Previous />
       <Location />
+
 
       {/* <Benefits /> */}
       <ButtonGradient />

@@ -147,41 +147,41 @@ export const heroIcons = [homeSmile, file02, searchMd, plusSquare];
 export const notificationImages = [notification4, notification3, notification2];
 
 export const companyLogos = [
-  { logo: adamtech, url: "https://www.adam-tech.com" },
-  { logo: artimar, url: "https://www.artimar.com.br" },
-  { logo: cvilux, url: "https://www.cvilux.com" },
-  { logo: epson, url: "https://www.epson.com" },
-  { logo: flexxon, url: "https://www.flexxon.com" },
-  { logo: lumileds, url: "https://www.lumileds.com" },
-  { logo: stLogo, url: "https://www.st.com" },
-  { logo: nic, url: "https://www.niccomp.com" },
-  { logo: mcc, url: "https://www.mccsemi.com/" },
-  { logo: aishi, url: "https://www.aishi.com" }, // Adicionado
-  { logo: hirose, url: "https://www.hirose.com" }, // Adicionado
-  { logo: infineon, url: "https://www.infineon.com" }, // Adicionado
-  { logo: littelfuse, url: "https://www.littelfuse.com" }, // Adicionado
-  { logo: atl, url: "http://atl-electronics.com" }, // Adicionado
-  { logo: bpm, url: "https://bpmrep.com.br" }, // Adicionado
+  { logo: adamtech, url: "https://www.adam-tech.com", title: "Adam Tech" },
+  { logo: artimar, url: "https://www.artimar.com.br", title: "Artimar" },
+  { logo: cvilux, url: "https://www.cvilux.com", title: "Cvilux" },
+  { logo: epson, url: "https://www.epson.com", title: "Epson" },
+  { logo: flexxon, url: "https://www.flexxon.com", title: "Flexxon" },
+  { logo: lumileds, url: "https://www.lumileds.com", title: "Lumileds" },
+  { logo: stLogo, url: "https://www.st.com", title: "STMicroelectronics" },
+  { logo: nic, url: "https://www.niccomp.com", title: "NIC Components" },
+  { logo: mcc, url: "https://www.mccsemi.com/", title: "MCC Semiconductor" },
+  { logo: aishi, url: "https://www.aishi.com", title: "Aishi" },
+  { logo: hirose, url: "https://www.hirose.com", title: "Hirose" },
+  { logo: infineon, url: "https://www.infineon.com", title: "Infineon" },
+  { logo: littelfuse, url: "https://www.littelfuse.com", title: "Littelfuse" },
+  { logo: atl, url: "http://atl-electronics.com", title: "ATL Electronics" },
+  { logo: bpm, url: "https://bpmrep.com.br", title: "BPM Rep" },
 ];
 
 export const companyLogos2 = [
-  { logo: murata, url: "https://www.murata.com" },
-  { logo: onsemi, url: "https://www.onsemi.com" },
-  { logo: recom, url: "https://www.recom-power.com" },
-  { logo: smc, url: "https://www.smcworld.com" },
-  { logo: ublox, url: "https://www.ublox.com" },
-  { logo: vermont, url: "https://www.vermont.com" },
-  { logo: viking, url: "https://www.viking.com" },
-  { logo: yageo, url: "https://www.yageo.com" },
-  { logo: osram, url: "https://ams-osram.com" },
-  { logo: nxp, url: "https://www.nxp.com" }, // Adicionado
-  { logo: renesas, url: "https://www.renesas.com" }, // Adicionado
-  { logo: seed4b, url: "https://www.seed4b.com" }, // Adicionado
-  { logo: te, url: "https://www.te.com" }, // Adicionado
-  { logo: vishay, url: "https://www.vishay.com" }, // Adicionado
-  { logo: wurth, url: "https://www.wurth.com.br" }, // Adicionado
-  { logo: vla, url: "https://www.linkedin.com/company/vla-solutions/?originalSubdomain=br" }, // Adicionado
-  { logo: allrep, url: "https://allrepbr.com.br/" }, // Adicionado
+  { logo: murata, url: "https://www.murata.com", title: "Murata" },
+  { logo: onsemi, url: "https://www.onsemi.com", title: "ON Semiconductor" },
+  { logo: recom, url: "https://www.recom-power.com", title: "RECOM Power" },
+  { logo: smc, url: "https://www.smcworld.com", title: "SMC" },
+  { logo: ublox, url: "https://www.ublox.com", title: "u-blox" },
+  { logo: vermont, url: "https://www.vermont.com", title: "Vermont" },
+  { logo: viking, url: "https://www.viking.com", title: "Viking" },
+  { logo: yageo, url: "https://www.yageo.com", title: "Yageo" },
+  { logo: osram, url: "https://ams-osram.com", title: "Osram" },
+  { logo: nxp, url: "https://www.nxp.com", title: "NXP Semiconductors" },
+  { logo: renesas, url: "https://www.renesas.com", title: "Renesas" },
+  { logo: seed4b, url: "https://www.seed4b.com", title: "Seed4B" },
+  { logo: te, url: "https://www.te.com", title: "TE Connectivity" },
+  { logo: vishay, url: "https://www.vishay.com", title: "Vishay" },
+  { logo: wurth, url: "https://www.wurth.com.br", title: "Würth" },
+  { logo: vla, url: "https://www.linkedin.com/company/vla-solutions/?originalSubdomain=br", title: "VLA Solutions" },
+  { logo: allrep, url: "https://allrepbr.com.br/", title: "AllRep" },
 ];
 
 export const brainwaveServices = [
