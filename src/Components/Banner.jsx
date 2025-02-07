@@ -193,7 +193,7 @@ const ImageSlider = () => {
                   );
                 })}
 
-                <div className="flex items-center gap-5 pt-2 pb-2 lg:pb-0 justify-center">
+                <div className="flex items-center gap-5 pt-2 pb-6 lg:pb-0 justify-center">
                   <button
                     onClick={prevSlide}
                     className="bg-white w-6 h-6 md:w-6 md:h-6 lg:w-8 lg:h-8 rounded-full shadow-md hover:bg-gray-50 transition-colors flex items-center justify-center cursor-pointer z-20"
@@ -201,7 +201,7 @@ const ImageSlider = () => {
                   >
                     <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1">
                       <div className="bg-white rounded-full p-1">
-                        <ChevronLeft className="w-4 h-4 md:w-4 md:h-4 lg:w-6 lg:h-6 text-gray-600" />
+                        <ChevronLeft className="w-6 h-6 text-gray-600" />
                       </div>
                     </div>
                   </button>
@@ -228,7 +228,7 @@ const ImageSlider = () => {
                   >
                     <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1">
                       <div className="bg-white rounded-full p-1">
-                        <ChevronRight className="w-4 h-4 md:w-4 md:h-4 lg:w-6 lg:h-6 text-gray-600" />
+                        <ChevronRight className="w-6 h-6 text-gray-600" />
                       </div>
                     </div>
                   </button>
