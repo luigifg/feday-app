@@ -9,6 +9,12 @@ import mituuti from "../assets/speakers/mituuti.png";
 import pompeu from "../assets/speakers/pompeu.png";
 import siegel from "../assets/speakers/siegel.png";
 import souza from "../assets/speakers/souza.png";
+import chemin from "../assets/speakers/chemin.png";
+import seiti from "../assets/speakers/seiti.png";
+import horacio from "../assets/speakers/horacio.png";
+import peterson from "../assets/speakers/peterson.png";
+import savastano from "../assets/speakers/savastano.png";
+import corradi from "../assets/speakers/corradi.png";
 
 export const speakers = [
  {
@@ -98,7 +104,56 @@ export const speakers = [
    description: "Minha família e eu moramos na região de Sacramento, Califórnia. Minha esposa Melinda é professora de pré-escola, e nossos dois filhos, Zach e Marlee, estão na faculdade. Também temos 2 cachorros (DJ e Maggie). Nossa família gosta de fazer aventuras off-road 4x4 e acampar em locais remotos. Trabalho na indústria eletrônica há mais de 30 anos. Tive algumas experiências na minha carreira, desde o início na Distribuição até trabalhar no espaço OEM. Atualmente, estou na u-blox há mais de 5 anos, desde a aquisição da Rigado.",
    image: siegel,
    linkedinUrl: "https://linkedin.com/in/paul-siegel-21434b6"
- }
+ },
+ {
+  id: 12,
+  name: "Rodrigo Chemin",
+  position: "Sales Leader South America",
+  description: "Gerente de Produto e Gerente de Contas de itens Automotivos voltados a Sistemistas e Chicoteiros, com 10 anos de experiencia no mercado. Atualmente Coordenador de Coordenador de Vendas América do Sul para o mercado de linha branca e Iluminação.",
+  image: chemin,
+  linkedinUrl: "https://www.linkedin.com/in/rodrigo-chemin/"
+},
+{
+  id: 13,
+  name: "Ricardo Seiti",
+  position: "Embedded Solution Engineer",
+  description: "Engenheiro Eletricista. Atua no mercado de eletrônica desde 2009 como engenheiro de aplicações da Atmel/Microchip. Atualmente especialista da Microchip em sistemas de comunicação sem fio e segurança.",
+  image: seiti,
+  linkedinUrl: "https://br.linkedin.com/in/ricardo-seiti-yoshizaki-959a403a"
+},
+{
+  id: 14,
+  name: "Horácio Garcia",
+  position: "Field Application Engineer - MCUs",
+  description: "Horacio Garcia é Field Application Engineer na NXP Semiconductors, especializado no desenvolvimento e suporte de MCUs para aplicações embarcadas. Doutor em Engenharia Elétrica e Controle Automático pelo CINVESTAV Guadalajara e pela Università degli Studi dell'Aquila, possui experiência em controle de sistemas multiagentes, sistemas embarcados e design de hardware e software. Já atuou em projetos de UAVs, sistemas inteligentes e controle distribuído. Com forte perfil técnico e acadêmico, combina pesquisa e inovação para resolver desafios em automação e sistemas embarcados.",
+  image: horacio,
+  linkedinUrl: "https://br.linkedin.com/in/horacio-de-jesus-garcia-vazquez"
+},
+{
+  id: 15,
+  name: "Peterson dos Santos",
+  position: "Gerente Regional de Negócios – América do Sul",
+  description: "Atuando na industria de semicondutores desde o ano 2000, Peterson Roberto dos Santos é formado como técnico eletricista na ETE Jorge Street, graduado em engenharia pela Escola de Engenharia Mauá como Engenheiro eletricista, concluindo em 2008 curso de MBA em Gestão de Inovação Tecnologica na Fundação IPT. Atualmente na posição de Gerente Regional de Negócios na NXP para o mercado Sul-americano.",
+  image: peterson,
+  linkedinUrl: "https://linkedin.com/in/peterson-roberto-dos-santos-3438a29"
+},
+{
+  id: 16,
+  name: "Fellipe Corradi",
+  position: "Gerente de Vendas",
+  description: "Gerente de Vendas da Cvilux no Brasil, responsável por estratégias comerciais e expansão de mercado no setor de conectores. Formado em Administração e experiência de 15 anos em Supply Chain.",
+  image: corradi,
+  linkedinUrl: "https://www.linkedin.com/in/fellipe-corradi-amaral-08569194"
+},
+{
+  id: 17,
+  name: "Dario Savastano",
+  position: "Business Development Manager",
+  description: "Engenheiro Eletronico, MBA, mais de 20 anos trabalhando na indústria PEMCO (Passive, Electromechanical and Connector)",
+  image: savastano,
+  linkedinUrl: "http://www.linkedin.com/in/dariosavastano"
+}
+
 ];
 
 export default speakers;

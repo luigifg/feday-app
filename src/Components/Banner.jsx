@@ -4,7 +4,7 @@ import Section from "../Components/Section";
 import SpeakerModal from "../Components/SpeakerModal";
 import { speakers } from "../Components/speakerData.jsx";
 
-const truncateText = (text, limit = 30) => {
+const truncateText = (text, limit = 10) => {
   const words = text.split(" ");
   if (words.length <= limit) return { truncatedText: text, isTruncated: false };
   return {
@@ -101,14 +101,12 @@ const ImageSlider = () => {
           onMouseLeave={handleMouseLeave}
         >
           <div className="grid grid-cols-1 lg:grid-cols-3 h-full">
-            <div className="relative lg:col-span-2 h-[230px] md:h-[400px] lg:h-[400px] 2xl:h-[600px]">
+            <div className="relative lg:col-span-2 h-[230px] md:h-[400px] lg:h-[450px] 2xl:h-[600px]">
               {slides.map((slide, index) => (
                 <div
                   key={slide.id}
                   className={`absolute top-0 left-0 w-full h-full transition-opacity duration-500 ${
-                    currentSlide === index
-                      ? "opacity-100"
-                      : "opacity-0 z-0"
+                    currentSlide === index ? "opacity-100" : "opacity-0 z-0"
                   }`}
                 >
                   <img
@@ -160,20 +158,25 @@ const ImageSlider = () => {
                       <div className="relative">
                         <p
                           className={`
-                            text-sm sm:text-sm md:text-base text-gray-600 mb-4
-                            ${
-                              screenSize !== "desktop" && isExpanded
-                                ? "line-clamp-none"
-                                : "line-clamp-3"
-                            }
-                          `}
+                          text-sm sm:text-sm md:text-base text-gray-600 mb-4
+                          ${
+                            screenSize !== "desktop" && isExpanded
+                              ? "line-clamp-none"
+                              : screenSize === "desktop" && window.innerWidth >= 1536 // 2xl breakpoint
+                              ? "line-clamp-none"
+                              : "line-clamp-3"
+                          }
+                        `}
                         >
                           {screenSize !== "desktop" && isExpanded
+                            ? slide.description
+                            : screenSize === "desktop" &&
+                              window.innerWidth >= 1536
                             ? slide.description
                             : truncatedText}
                         </p>
 
-                        {isTruncated && (
+                        {isTruncated && window.innerWidth < 1536 && (
                           <div className="flex justify-start mt-6 mb-6 xl:mt-4 xl:mb-4">
                             <button
                               onClick={() => toggleTextExpansion(slide.id)}
@@ -190,7 +193,7 @@ const ImageSlider = () => {
                   );
                 })}
 
-                <div className="flex items-center gap-5 justify-center">
+                <div className="flex items-center gap-5 pt-2 pb-2 lg:pb-0 justify-center">
                   <button
                     onClick={prevSlide}
                     className="bg-white w-6 h-6 md:w-6 md:h-6 lg:w-8 lg:h-8 rounded-full shadow-md hover:bg-gray-50 transition-colors flex items-center justify-center cursor-pointer z-20"
