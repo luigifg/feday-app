@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Linkedin, X } from "lucide-react";
 import Section from "../Components/Section";
-import SpeakerModal  from "../Components/SpeakerModal";
-import infineon from "../assets/banner/infineon.png";
-import ams from "../assets/banner/ams.png";
+import SpeakerModal from "../Components/SpeakerModal";
+import { speakers } from "../Components/speakerData.jsx";
 
-const truncateText = (text, limit = 20) => {
+const truncateText = (text, limit = 30) => {
   const words = text.split(" ");
   if (words.length <= limit) return { truncatedText: text, isTruncated: false };
   return {
@@ -14,28 +13,7 @@ const truncateText = (text, limit = 20) => {
   };
 };
 
-const slides = [
-  {
-    id: 1,
-    title: "Explore Natural Wonders",
-    speakerName: "Alvaro Branco",
-    description:
-      "Americo joined Littelfuse ESBU Regional Sales Southern Europe on August 1, 2022, as a Field Application Engineer for Brazil and South America, reporting to Tim Elliott. He will support Littelfuse business across ESBU technologies through distribution and direct OEM, focusing on new business development to increase revenue. Americo studied Electrical Engineering at FESP, specializing in Electronics. He has a strong background in power semiconductors, starting his career in R&D at PHILIPS do BRASIL in 1978. He has held various roles in the semiconductor industry, contributing to significant sales growth and developing solutions for major companies and projects.",
-    image: infineon,
-    tags: ["Photography", "Art", "Digital"],
-    linkedinUrl: "https://linkedin.com/in/speaker1",
-  },
-  {
-    id: 2,
-    title: "Urban Adventures",
-    speakerName: "Prof. Michael Smith",
-    description:
-      "Experience the vibrant pulse of city life through architecture and culture. Discover breathtaking landscapes and natural phenomena that will leave you in. Discover breathtaking landscapes and natural phenomena that will leave you in awe.",
-    image: ams,
-    tags: ["Photography", "Art", "Digital"],
-    linkedinUrl: "https://linkedin.com/in/speaker2",
-  },
-];
+const slides = speakers;
 
 const ImageSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -49,8 +27,8 @@ const ImageSlider = () => {
   useEffect(() => {
     const checkScreenSize = () => {
       const width = window.innerWidth;
-      if (width <= 640) setScreenSize("mobile");
-      else if (width <= 1024) setScreenSize("tablet");
+      if (width <= 768) setScreenSize("mobile");
+      else if (width <= 1023) setScreenSize("tablet");
       else setScreenSize("desktop");
     };
 
@@ -93,10 +71,10 @@ const ImageSlider = () => {
   };
 
   const toggleTextExpansion = (slideId) => {
-    if (screenSize !== "desktop") {
-      setFullTextExpanded(prev => ({
+    if (screenSize === "mobile" || screenSize === "tablet") {
+      setFullTextExpanded((prev) => ({
         ...prev,
-        [slideId]: !prev[slideId]
+        [slideId]: !prev[slideId],
       }));
     } else {
       setFullTextModalOpen(true);
@@ -113,13 +91,12 @@ const ImageSlider = () => {
     <div className="relative">
       <Section
         crosses
-        crossesOffset="lg:translate-y-[5.25rem]"
+        crossesOffset="translate-y"
         customPaddings
-        className="pt-[6rem] pb-[6rem] lg:pb-0 md:pt-[5.3rem] md:px-[1.3rem] lg:px-[1.9rem] xl:px-[1.3rem] -mt-[5.25rem] relative"
-        id="local"
+        className="md:px-[1.3rem] lg:px-[1.9rem] xl:px-[2.5rem] -mt-[5.25rem] relative"
       >
         <div
-          className="relative w-full xl:px-5 2xl:min-h-[584px] overflow-hidden"
+          className="relative w-full   overflow-hidden"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
@@ -129,13 +106,15 @@ const ImageSlider = () => {
                 <div
                   key={slide.id}
                   className={`absolute top-0 left-0 w-full h-full transition-opacity duration-500 ${
-                    currentSlide === index ? "opacity-100 z-10" : "opacity-0 z-0"
+                    currentSlide === index
+                      ? "opacity-100"
+                      : "opacity-0 z-0"
                   }`}
                 >
                   <img
                     src={slide.image}
                     alt={slide.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover "
                     loading="lazy"
                   />
                   <div className="absolute inset-0" />
@@ -146,24 +125,26 @@ const ImageSlider = () => {
             <div className="relative p-0.5 bg-gradient-to-r from-green-300 to-green-500">
               <div className="px-6 py-5 lg:pt-0 flex flex-col justify-center bg-white h-full">
                 {slides.map((slide, index) => {
-                  const { truncatedText, isTruncated } = truncateText(slide.description);
+                  const { truncatedText, isTruncated } = truncateText(
+                    slide.description
+                  );
                   const isExpanded = fullTextExpanded[slide.id];
-                  
+
                   return (
                     <div
                       key={slide.id}
                       className={`transition-opacity duration-500 ${
-                        currentSlide === index 
-                          ? "opacity-100 relative z-10" 
+                        currentSlide === index
+                          ? "opacity-100 relative z-10"
                           : "opacity-0 absolute inset-0 z-0"
                       }`}
                     >
-                      <h3 className="text-xl sm:text-xl md:text-2xl font-medium text-gray-600 mb-2 mt-4">
-                        {slide.speakerName}
+                      <h3 className="text-xl sm:text-xl md:text-xl font-medium text-gray-600 mb-2 mt-4">
+                        {slide.position}
                       </h3>
 
                       <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-xl xl:text-2xl font-bold text-gray-800">
-                        {slide.title}
+                        {slide.name}
                       </h2>
 
                       <a
@@ -180,7 +161,11 @@ const ImageSlider = () => {
                         <p
                           className={`
                             text-sm sm:text-sm md:text-base text-gray-600 mb-4
-                            ${screenSize !== "desktop" && isExpanded ? "line-clamp-none" : "line-clamp-3"}
+                            ${
+                              screenSize !== "desktop" && isExpanded
+                                ? "line-clamp-none"
+                                : "line-clamp-3"
+                            }
                           `}
                         >
                           {screenSize !== "desktop" && isExpanded
@@ -189,7 +174,7 @@ const ImageSlider = () => {
                         </p>
 
                         {isTruncated && (
-                          <div className="flex justify-start mt-4 mb-4">
+                          <div className="flex justify-start mt-6 mb-6 xl:mt-4 xl:mb-4">
                             <button
                               onClick={() => toggleTextExpansion(slide.id)}
                               className="text-green-600 hover:text-green-800 font-medium p-2 -m-2 underline hover:no-underline focus:outline-none focus:ring-2 focus:ring-green-300 rounded"
@@ -251,7 +236,7 @@ const ImageSlider = () => {
         </div>
       </Section>
 
-      <SpeakerModal 
+      <SpeakerModal
         isOpen={fullTextModalOpen && screenSize === "desktop"}
         onClose={closeFullTextModal}
         currentSlide={currentSlide}

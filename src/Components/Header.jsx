@@ -185,7 +185,7 @@ import fe from "../assets/logos/feLogo.svg";
 import { navigation } from "../constants";
 import Button from "./Button";
 import MenuSvg from "../assets/svg/MenuSvg";
-import { HamburgerMenu } from "./design/Header";
+import { HamburgerMenu } from "./design/HamburgerMenu";
 import api from "../Axios";
 
 const Header = () => {

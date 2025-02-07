@@ -8,18 +8,14 @@ import Location from "./Components/EventLocation"
 import Banner from "./Components/Banner"
 
 
-
-
 const App = () => {
   return (
-    <div className="pt-[4.75rem] lg:pt-[5.25rem] overflow-hidden">
+    <div className="pt-[4.75rem] lg:pt-[5.25rem] ">
       <Header />
       <Hero />
       <Banner />
       <Previous />
       <Location />
-
-
       {/* <Benefits /> */}
       <ButtonGradient />
       <Footer />

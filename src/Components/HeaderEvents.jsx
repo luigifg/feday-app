@@ -5,7 +5,7 @@ import api from "../Axios";
 import fe from "../assets/logos/feLogo.svg";
 import Button from "./Button";
 import MenuSvg from "../assets/svg/MenuSvg";
-import { HamburgerMenu } from "./design/Header";
+import { HamburgerMenu } from "./design/HamburgerMenu";
 
 const HeaderEvents = ({ navigation = [], logoHref = "/" }) => {
   const { hash: currentPath } = useLocation();

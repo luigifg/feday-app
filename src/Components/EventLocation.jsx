@@ -81,16 +81,16 @@ export default function EventLocation() {
       ></div>
       <Section
         crosses
-        crossesOffset="lg:translate-y-[5.25rem]"
+        crossesOffset="translate-y"
         customPaddings
-        className="pt-[8rem] pb-[5rem] md:pt-[10rem] px-4 md:px-[4rem] -mt-[5.25rem] relative"
+        className="py-12 md:py-16 lg:py-20 md:px-[1.3rem] lg:px-[1.9rem] xl:px-[2.5rem] relative scroll-mt-20"
         id="local"
       >
         <div className="relative">
-          <h2 className="font-bold text-2xl text-center sm:text-4xl md:text-5xl mb-8 md:mb-12">
+          <h2 className="font-bold text-2xl text-center sm:text-4xl md:text-4xl mb-8 md:mb-12">
             Local do Evento - 2025
           </h2>
-          <div className="container mx-auto px-4 md:px-6">
+          <div className=" mx-auto  ">
             <div className="flex flex-col gap-6 md:gap-8 max-w-4xl mx-auto">
               <div className="text-center">
                 <h3 className="text-xl md:text-2xl font-bold mb-2">
@@ -103,30 +103,30 @@ export default function EventLocation() {
               </div>
 
               <div className="grid md:grid-cols-3 md:gap-15 gap-10 mb-4">
-                <div className="flex items-start gap-3 group">
-                  <MapPin className="w-6 h-6 mt-0.5 text-primary text-green-600" />
+                <div className="flex flex-col items-center text-center gap-3 group">
+                  <MapPin className="w-6 h-6 text-primary text-green-600" />
                   <div>
                     <p className="font-bold text-xl text-green-600">Endereço</p>
                     <p className="text-lg">
                       Av. Sete de Setembro, 4211
                       <br />
-                       Curitiba, PR
+                      Curitiba, PR
                       <br />
                       CEP: 80250-205
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 group">
-                  <Calendar className="w-6 h-6 mt-0.5 text-primary text-green-600" />
+                <div className="flex flex-col items-center text-center gap-3 group">
+                  <Calendar className="w-6 h-6 text-primary text-green-600" />
                   <div>
                     <p className="font-bold text-xl text-green-600">Data</p>
                     <p className="text-lg">08 de Maio de 2024</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 group">
-                  <Clock className="w-6 h-6 mt-0.5 text-primary text-green-600" />
+                <div className="flex flex-col items-center text-center gap-3 group">
+                  <Clock className="w-6 h-6 text-primary text-green-600" />
                   <div>
                     <p className="font-bold text-xl text-green-600">Horário</p>
                     <p className="text-lg">Das 08:00 às 18:00</p>

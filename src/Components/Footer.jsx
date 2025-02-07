@@ -8,9 +8,9 @@ const Footer = () => {
     <Section crosses className="!px-0 !py-3">
       <div className="container flex sm:justify-between justify-center items-center gap-5 max-sm:flex-col">
         <p className="caption text-n-4 lg:block">
-          © {new Date().getFullYear()}. All rights reserved. {` `}
+          © {new Date().getFullYear()}. All rights reserved. <br />
+          Developed by Luigi Gerber.
         </p>
-
         {/* Substituindo "Webvulkan" por uma imagem com link */}
         <a
           href="https://webvulkan.com.br"
@@ -34,12 +34,7 @@ const Footer = () => {
               rel="noopener noreferrer"
               className="flex items-center  justify-center w-10 h-10 bg-n-7 rounded-full transition-colors hover:bg-n-6"
             >
-              <img
-                src={item.iconUrl}
-                width={16}
-                height={16}
-                alt={item.title}
-              />
+              <img src={item.iconUrl} width={16} height={16} alt={item.title} />
             </a>
           ))}
         </ul>

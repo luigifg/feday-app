@@ -167,9 +167,9 @@ const Previous = () => {
 
         <Section
           crosses
-          crossesOffset="lg:translate-y-[5.25rem] 2xl:translate-y-0"
+          crossesOffset="translate-y"
           customPaddings
-          className="pt-16 sm:pt-20 lg:pt-[10rem] -mt-[5.25rem] pb-8 sm:pb-12 lg:pb-[5rem] relative"
+          className="py-12 md:py-16 lg:py-20 md:px-[1.3rem] lg:px-[1.9rem] xl:px-[2.5rem] relative scroll-mt-20"
           id="2024"
         >
           <div className="container mx-auto px-4 sm:px-6 relative z-10">

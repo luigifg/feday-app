@@ -1,13 +1,13 @@
-import React from 'react';
+import React from "react";
 import { ChevronLeft, ChevronRight, Linkedin, X } from "lucide-react";
 
-const SpeakerModal = ({ 
-  isOpen, 
-  onClose, 
+const SpeakerModal = ({
+  isOpen,
+  onClose,
   currentSlide,
   onPrevSlide,
   onNextSlide,
-  slides 
+  slides,
 }) => {
   if (!isOpen) return null;
 
@@ -48,13 +48,21 @@ const SpeakerModal = ({
         </div>
       </button>
 
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 z-10 p-2 bg-gray-100 rounded-full hover:bg-gray-200"
+        aria-label="Close full text"
+      >
+        <X className="w-6 h-6 text-gray-600" />
+      </button>
+
       {/* Modal com scroll */}
       <div
-        className="bg-white rounded-xl bg-gradient-to-r from-green-300 to-green-500 p-1 shadow-2xl w-4/5 max-h-[80vh] grid grid-cols-3 relative"
+        className="bg-white rounded-xl bg-gradient-to-r from-green-300 to-green-500 p-1 shadow-2xl w-4/5 max-h-[80vh] 2xl:max-h-[90vh] grid grid-cols-3 relative"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Coluna da imagem */}
-        <div className="col-span-2 h-[450px]">
+        <div className="col-span-2 h-[450px] 2xl:h-[600px]">
           <img
             src={slides[currentSlide].image}
             alt={slides[currentSlide].title}
@@ -64,23 +72,15 @@ const SpeakerModal = ({
         </div>
 
         {/* Coluna do conteúdo com scroll */}
-        <div className="col-span-1 bg-white rounded-r-xl h-[450px] flex flex-col">
+        <div className="col-span-1 bg-white rounded-r-xl h-[450px] 2xl:h-[600px] flex flex-col">
           {/* Container fixo para o cabeçalho */}
           <div className="p-6 border-b">
-            <button
-              onClick={onClose}
-              className="absolute top-4 right-4 z-10 p-2 bg-gray-100 rounded-full hover:bg-gray-200"
-              aria-label="Close full text"
-            >
-              <X className="w-6 h-6 text-gray-600" />
-            </button>
-
-            <h3 className="text-xl font-medium text-gray-600 mb-2">
-              {slides[currentSlide].speakerName}
+            <h3 className="text-xl 2xl:text-2xl font-medium text-gray-600 mb-2">
+              {slides[currentSlide].position}
             </h3>
 
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              {slides[currentSlide].title}
+            <h2 className="text-xl 2xl:text-3xl font-bold text-gray-800 mb-4">
+              {slides[currentSlide].name}
             </h2>
 
             <a

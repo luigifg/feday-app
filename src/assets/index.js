@@ -87,7 +87,7 @@ import twitter from "./socials/twitter.svg";
 
 import adamtech from "./manufactures/adamtech.png";
 import artimar from "./manufactures/artimar.png";
-import cvilux from "./manufactures/cvilux.jpg";
+import cvilux from "./manufactures/cvilux.png";
 import epson from "./manufactures/epson.png";
 import flexxon from "./manufactures/flexxon.png";
 import lumileds from "./manufactures/lumileds.svg";
