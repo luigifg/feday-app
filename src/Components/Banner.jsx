@@ -101,7 +101,7 @@ const ImageSlider = () => {
           onMouseLeave={handleMouseLeave}
         >
           <div className="grid grid-cols-1 lg:grid-cols-3 h-full">
-            <div className="relative lg:col-span-2 h-[230px] md:h-[330px] lg:h-[400px] 2xl:h-[500px]">
+            <div className="relative lg:col-span-2 h-[230px] md:h-[400px] lg:h-[400px] 2xl:h-[600px]">
               {slides.map((slide, index) => (
                 <div
                   key={slide.id}
