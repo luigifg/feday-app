@@ -35,15 +35,15 @@ const CompanyLogos = () => {
     .sort((a, b) => a.title.localeCompare(b.title));
 
   return (
-    <section className="relative w-full" id="parceiros">
+    <section className="scroll-mt-20 relative w-full" id="parceiros">
       <div className="container mx-auto">
-        <div className="w-full mb-8">
+        <div className="w-full mb-8 pt-2">
           <h4 className="tagline text-center text-n-8">
             Nossos Parceiros Confirmados
           </h4>
         </div>
 
-        <div className="py-8">
+        <div className="py-6">
           {/* Primeiro carrossel */}
           <div className="relative flex overflow-hidden w-full">
             {/* Primeira cópia */}
@@ -88,7 +88,7 @@ const CompanyLogos = () => {
           </div>
 
           {/* Gap entre carrosséis */}
-          <div className="h-8"></div>
+          <div className="h-10"></div>
 
           {/* Segundo carrossel */}
           <div className="relative flex overflow-hidden w-full">
