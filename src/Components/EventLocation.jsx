@@ -96,13 +96,13 @@ export default function EventLocation() {
                 <h3 className="text-xl md:text-2xl font-bold mb-2">
                   Qoya Hotel Curitiba
                 </h3>
-                <p className="text-sm md:text-lg text-gray-600 mb-6">
+                <p className="text-sm md:text-lg text-gray-600 mb-6 mx-[2rem]">
                   Um espaço moderno e acolhedor, perfeitamente equipado para
                   proporcionar uma experiência única aos participantes.
                 </p>
               </div>
 
-              <div className="grid md:grid-cols-3 md:gap-15 gap-10 mb-4">
+              <div className="grid md:grid-cols-3 md:gap-15 gap-10 mb-4 mx-[2rem]">
                 <div className="flex flex-col items-center text-center gap-3 group">
                   <MapPin className="w-6 h-6 text-primary text-green-600" />
                   <div>
@@ -129,7 +129,7 @@ export default function EventLocation() {
                   <Clock className="w-6 h-6 text-primary text-green-600" />
                   <div>
                     <p className="font-bold text-xl text-green-600">Horário</p>
-                    <p className="text-lg">Das 08:00 às 18:00</p>
+                    <p className="text-lg"> 08:00 às 18:00</p>
                   </div>
                 </div>
               </div>

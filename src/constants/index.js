@@ -83,14 +83,20 @@ export const navigation = [
   },
   {
     id: "1",
+    title: "Palestrantes",
+    url: "#speaker",
+  },
+  {
+    id: "2",
     title: "Edições Passadas",
     url: "#2024",
   },
   {
-    id: "2",
+    id: "3",
     title: "Local",
     url: "#local",
   },
+
   // {
   //   id: "4",
   //   title: "Novo Usuário",

@@ -15,12 +15,13 @@ import horacio from "../assets/speakers/horacio.png";
 import peterson from "../assets/speakers/peterson.png";
 import savastano from "../assets/speakers/savastano.png";
 import corradi from "../assets/speakers/corradi.png";
+import gene from "../assets/speakers/gene.png";
 
 export const speakers = [
  {
    id: 1,
    name: "Flávio Mituuti",
-   position: "Field Application Engineer",
+   position: "Engenheiro de Aplicação de Campo",
    description: "Minha carreira teve início como desenvolvedor de hardware e firmware de balanças eletrônicas, atuando nessa área por 6 anos. Após essa experiência inicial, migrei para o setor de promoção e venda de componentes eletrônicos, sempre desempenhando a função de FAE (Field Application Engineer). Trabalhei por 6 anos na Arrow e por 5 anos na TCT, até chegar à minha posição atual na Ammon&Rizos, representante da Onsemi no Brasil",
    image: mituuti,
    linkedinUrl: "https://linkedin.com/in/flavio-takeshi-mituuti-a641a9ba"
@@ -28,7 +29,7 @@ export const speakers = [
  {
    id: 2,
    name: "Raphael Souza",
-   position: "Technical Solutions Manager",
+   position: "Gerente de Soluções Técnicas",
    description: "Engenheiro Elétrico formado pela USF. Especialista em soluções de iluminação LED, análise de mercado e estratégias de vendas, com mais de 8 anos de experiência e atuação no mercado da américa latina e EUA.",
    image: souza,
    linkedinUrl: "https://linkedin.com/in/raphaelnsouzaa"
@@ -36,7 +37,7 @@ export const speakers = [
  {
    id: 3,
    name: "Rodrigo Britto",
-   position: "Senior Embedded Solution Engineer",
+   position: "Engenheiro Sênior de Soluções Embarcadas",
    description: "Engenheiro eletrônico e de computação com mais de 20 anos de experiência em sistemas embarcados e a 13 anos trabalha como engenheiro de aplicações em indústria de semicondutores, atualmente participa de 3 grupos de estudos internos na Microchip. (Power Conversion, MCU e Machine Learning).",
    image: britto,
    linkedinUrl: "https://linkedin.com/in/rodrigo-britto-52ab612b"
@@ -44,15 +45,15 @@ export const speakers = [
  {
    id: 4,
    name: "Américo Paulicchi Filho",
-   position: "Sr. Concept Design Engineer, Field Applications",
-   description: "Americo joined Littelfuse ESBU Regional Sales Southern Europe on August 1, 2022, as a Field Application Engineer for Brazil and South America, reporting to Tim Elliott. He will support Littelfuse business across ESBU technologies through distribution and direct OEM, focusing on new business development to increase revenue. Americo studied Electrical Engineering at FESP, specializing in Electronics. He has a strong background in power semiconductors, starting his career in R&D at PHILIPS do BRASIL in 1978. He has held various roles in the semiconductor industry, contributing to significant sales growth and developing solutions for major companies and projects.",
+   position: "Engenheiro Sênior de Design Conceitual",
+   description: "Américo ingressou na Littelfuse ESBU Vendas Regionais Sul da Europa em 1º de agosto de 2022, como Engenheiro de Aplicação de Campo para Brasil e América do Sul, reportando-se a Tim Elliott. Ele suportará os negócios da Littelfuse em tecnologias ESBU através de distribuição e OEM direto, focando no desenvolvimento de novos negócios para aumentar a receita. Américo estudou Engenharia Elétrica na FESP, com especialização em Eletrônica. Ele tem uma forte experiência em semicondutores de potência, iniciando sua carreira em P&D na PHILIPS do BRASIL em 1978. Ocupou vários cargos na indústria de semicondutores, contribuindo para um crescimento significativo nas vendas e desenvolvendo soluções para grandes empresas e projetos.",
    image: americo,
    linkedinUrl: "https://linkedin.com/in/américo-paulicchi-filho-b118ab1"
  },
  {
    id: 5,
    name: "Álvaro Branco",
-   position: "Field Application Engineer",
+   position: "Engenheiro de Aplicação de Campo",
    description: "Formado e em Engenharia Elétrica pela Faculdade de Engenharia Mauá, com MBA Executivo e Pós-graduado em AI & ML. Mais de 25 anos de experiência no mercado, destes mais de 20 anos de experiência com desenvolvimento de hardware e software. Atuado nos mais diversos seguimentos da eletrônica tanto como desenvolvedor quanto suporte técnico. Há dois anos ingressei ao time da Infineon Technologies como FAE suportando os clientes da América do Sul",
    image: alvaro,
    linkedinUrl: "https://linkedin.com/in/alvaro-pinho-branco-16b2041b"
@@ -76,7 +77,7 @@ export const speakers = [
  {
    id: 8,
    name: "Cícero Pompeu",
-   position: "Gerente de Marketing de Produto Latin America – Microcontroladores",
+   position: "Gerente de Marketing de Produto LATAM ",
    description: "Engenheiro de marketing de produto com mais de 30 anos de experiência em desenvolvimento de hardware e software. Atualmente, ele trabalha na equipe de marketing de produtos de microcontroladores para a América Latina na STMicroelectronics. Cicero se formou em engenharia elétrica na FEI (Faculdade de Engenharia Industrial) e ingressou na STMicroelectronics em 1997 como Engenheiro de Aplicação para Microcontroladores, com sede em São Paulo.",
    image: pompeu,
    linkedinUrl: "https://linkedin.com/in/cicero-de-almeida-pompeu-57b194214"
@@ -100,7 +101,7 @@ export const speakers = [
  {
    id: 11,
    name: "Paul Siegel",
-   position: "Regional Channel Manager TOLA, LaTam, S. America",
+   position: "Gerente Regional de Canais TOLA, LATAM",
    description: "Minha família e eu moramos na região de Sacramento, Califórnia. Minha esposa Melinda é professora de pré-escola, e nossos dois filhos, Zach e Marlee, estão na faculdade. Também temos 2 cachorros (DJ e Maggie). Nossa família gosta de fazer aventuras off-road 4x4 e acampar em locais remotos. Trabalho na indústria eletrônica há mais de 30 anos. Tive algumas experiências na minha carreira, desde o início na Distribuição até trabalhar no espaço OEM. Atualmente, estou na u-blox há mais de 5 anos, desde a aquisição da Rigado.",
    image: siegel,
    linkedinUrl: "https://linkedin.com/in/paul-siegel-21434b6"
@@ -108,7 +109,7 @@ export const speakers = [
  {
   id: 12,
   name: "Rodrigo Chemin",
-  position: "Sales Leader South America",
+  position: "Líder de Vendas - América do Sul",
   description: "Gerente de Produto e Gerente de Contas de itens Automotivos voltados a Sistemistas e Chicoteiros, com 10 anos de experiencia no mercado. Atualmente Coordenador de Coordenador de Vendas América do Sul para o mercado de linha branca e Iluminação.",
   image: chemin,
   linkedinUrl: "https://www.linkedin.com/in/rodrigo-chemin/"
@@ -116,7 +117,7 @@ export const speakers = [
 {
   id: 13,
   name: "Ricardo Seiti",
-  position: "Embedded Solution Engineer",
+  position: "Engenheiro de Soluções Embarcadas",
   description: "Engenheiro Eletricista. Atua no mercado de eletrônica desde 2009 como engenheiro de aplicações da Atmel/Microchip. Atualmente especialista da Microchip em sistemas de comunicação sem fio e segurança.",
   image: seiti,
   linkedinUrl: "https://br.linkedin.com/in/ricardo-seiti-yoshizaki-959a403a"
@@ -124,7 +125,7 @@ export const speakers = [
 {
   id: 14,
   name: "Horácio Garcia",
-  position: "Field Application Engineer - MCUs",
+  position: "Engenheiro de Aplicação de Campo - MCUs",
   description: "Horacio Garcia é Field Application Engineer na NXP Semiconductors, especializado no desenvolvimento e suporte de MCUs para aplicações embarcadas. Doutor em Engenharia Elétrica e Controle Automático pelo CINVESTAV Guadalajara e pela Università degli Studi dell'Aquila, possui experiência em controle de sistemas multiagentes, sistemas embarcados e design de hardware e software. Já atuou em projetos de UAVs, sistemas inteligentes e controle distribuído. Com forte perfil técnico e acadêmico, combina pesquisa e inovação para resolver desafios em automação e sistemas embarcados.",
   image: horacio,
   linkedinUrl: "https://br.linkedin.com/in/horacio-de-jesus-garcia-vazquez"
@@ -141,18 +142,26 @@ export const speakers = [
   id: 16,
   name: "Fellipe Corradi",
   position: "Gerente de Vendas",
-  description: "Gerente de Vendas da Cvilux no Brasil, responsável por estratégias comerciais e expansão de mercado no setor de conectores. Formado em Administração e experiência de 15 anos em Supply Chain.",
+  description: "Fellipe Corradi Amaral é o Gerente de Vendas da CVILux no Brasil, onde supervisiona as estratégias comerciais e a expansão de mercado no setor de Conectores. Com formação na área de Administração de Empresas, Fellipe traz uma vasta experiência e conhecimento para seu papel, impulsionando o crescimento e a inovação na indústria.",
   image: corradi,
   linkedinUrl: "https://www.linkedin.com/in/fellipe-corradi-amaral-08569194"
 },
 {
   id: 17,
   name: "Dario Savastano",
-  position: "Business Development Manager",
-  description: "Engenheiro Eletronico, MBA, mais de 20 anos trabalhando na indústria PEMCO (Passive, Electromechanical and Connector)",
+  position: "Gerente de Desenvolvimento de Negócios",
+  description: "Engenheiro Eletrônico experiente com MBA e mais de 20 anos de expertise na indústria PEMCO (Passivos, Eletromecânicos e Conectores). Possui mais de 10 anos de experiência em vendas e marketing, com foco em geração de demanda no setor de tecnologia. Treinou clientes e parceiros em toda a América do Sul e interage regularmente com a alta gestão para discutir estratégia corporativa e objetivos organizacionais. Seu compromisso com inovação e excelência contribuiu significativamente para o avanço do setor.",
   image: savastano,
   linkedinUrl: "http://www.linkedin.com/in/dariosavastano"
-}
+},
+{
+  id: 18,
+  name: "Gene Volchenko",
+  position: "Diretor de Desenvolvimento de Negócios",
+  description: "A Inovação Disruptiva tem sido o ponto central de toda minha carreira—e um fator importante no meu sucesso. Desde meus primeiros dias como Engenheiro Chefe de Rádio/Elétrica em navio mercante; passando pela minha mudança para os EUA para trabalhar como Engenheiro Eletricista; pela transição para Engenharia de Aplicação de Campo—onde desenvolvi uma compreensão profunda dos requisitos técnicos dos clientes para resolver seus desafios diários; até meu papel atual como líder regional de marketing para uma empresa de componentes semicondutores discretos—tenho liderado o design e desenvolvimento de novos produtos, mobilizado equipes para ganhar negócios multimilionários e proporcionado crescimento de dois dígitos em receita e participação de mercado.",
+  image: gene,
+  linkedinUrl: "https://www.linkedin.com/in/genevolchenko/"
+},
 
 ];
 

@@ -4,7 +4,8 @@ import Section from "../Components/Section";
 import SpeakerModal from "../Components/SpeakerModal";
 import { speakers } from "../Components/speakerData.jsx";
 
-const truncateText = (text, limit = 10) => {
+const truncateText = (text, limit = 25) => {
+  if (!text) return { truncatedText: "", isTruncated: false };
   const words = text.split(" ");
   if (words.length <= limit) return { truncatedText: text, isTruncated: false };
   return {
@@ -93,7 +94,8 @@ const ImageSlider = () => {
         crosses
         crossesOffset="translate-y"
         customPaddings
-        className="md:px-[1.3rem] lg:px-[1.9rem] xl:px-[2.5rem] -mt-[5.25rem] relative"
+        className="scroll-mt-20 md:px-[1.3rem] lg:px-[1.9rem] xl:px-[2.5rem] -mt-[5.25rem] relative"
+        id="speaker"
       >
         <div
           className="relative w-full   overflow-hidden"
@@ -137,13 +139,24 @@ const ImageSlider = () => {
                           : "opacity-0 absolute inset-0 z-0"
                       }`}
                     >
-                      <h3 className="text-xl sm:text-xl md:text-xl font-medium text-gray-600 mb-2 mt-4">
-                        {slide.position}
-                      </h3>
-
-                      <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-xl xl:text-2xl font-bold text-gray-800">
+                      <h2 className="text-2xl md:text-3xl lg:text-2xl xl:text-2xl  2xl:text-3xl  font-bold text-gray-800">
                         {slide.name}
                       </h2>
+
+                      <h3
+                        className={`
+                          text-xl sm:text-xl md:text-lg lg:text-2xl font-medium text-gray-600 mb-2 mt-4
+                          ${
+                            screenSize !== "desktop" && isExpanded
+                              ? "line-clamp-none"
+                              : "line-clamp-1"
+                          }
+                        `}
+                      >
+                        {screenSize !== "desktop" && isExpanded
+                          ? slide.position
+                          : truncateText(slide.position, 8).truncatedText}
+                      </h3>
 
                       <a
                         href={slide.linkedinUrl}
@@ -162,7 +175,8 @@ const ImageSlider = () => {
                           ${
                             screenSize !== "desktop" && isExpanded
                               ? "line-clamp-none"
-                              : screenSize === "desktop" && window.innerWidth >= 1536 // 2xl breakpoint
+                              : screenSize === "desktop" &&
+                                window.innerWidth >= 1536 // 2xl breakpoint
                               ? "line-clamp-none"
                               : "line-clamp-3"
                           }

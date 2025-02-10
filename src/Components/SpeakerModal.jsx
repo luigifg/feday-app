@@ -58,7 +58,7 @@ const SpeakerModal = ({
 
       {/* Modal com scroll */}
       <div
-        className="bg-white rounded-xl bg-gradient-to-r from-green-300 to-green-500 p-1 shadow-2xl w-4/5 max-h-[80vh] 2xl:max-h-[90vh] grid grid-cols-3 relative"
+        className="bg-white rounded-xl bg-gradient-to-r from-green-300 to-green-500 p-1 shadow-2xl w-5/6 max-h-[80vh] 2xl:max-h-[90vh] grid grid-cols-3 relative"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Coluna da imagem */}
@@ -75,13 +75,13 @@ const SpeakerModal = ({
         <div className="col-span-1 bg-white rounded-r-xl h-[450px] 2xl:h-[600px] flex flex-col">
           {/* Container fixo para o cabeçalho */}
           <div className="p-6 border-b">
-            <h3 className="text-xl 2xl:text-2xl font-medium text-gray-600 mb-2">
-              {slides[currentSlide].position}
-            </h3>
-
-            <h2 className="text-xl 2xl:text-3xl font-bold text-gray-800 mb-4">
+            <h2 className="text-2xl 2xl:text-3xl font-bold text-gray-800 mb-4">
               {slides[currentSlide].name}
             </h2>
+
+            <h3 className="text-xl 2xl:text-2xl font-medium text-gray-600 mb-4">
+              {slides[currentSlide].position}
+            </h3>
 
             <a
               href={slides[currentSlide].linkedinUrl}
