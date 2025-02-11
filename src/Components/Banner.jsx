@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Linkedin, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import Section from "../Components/Section";
+import linkedin from "../assets/socials/linkedin.png";
 import SpeakerModal from "../Components/SpeakerModal";
 import { speakers } from "../Components/speakerData.jsx";
 
-const truncateText = (text, limit = 25) => {
+const truncateText = (text, limit = 26) => {
   if (!text) return { truncatedText: "", isTruncated: false };
   const words = text.split(" ");
   if (words.length <= limit) return { truncatedText: text, isTruncated: false };
@@ -139,46 +140,53 @@ const ImageSlider = () => {
                           : "opacity-0 absolute inset-0 z-0"
                       }`}
                     >
-                      <h2 className="text-2xl md:text-3xl lg:text-2xl xl:text-2xl  2xl:text-3xl  font-bold text-gray-800">
-                        {slide.name}
-                      </h2>
+                      <div className="flex items-center gap-3">
+                        <a
+                          href={slide.linkedinUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center transition-transform hover:scale-110"
+                        >
+                          <img
+                            src={linkedin}
+                            alt="LinkedIn"
+                            className="w-6 h-6 brightness-100"
+                          />
+                        </a>
+                        <h2 className="text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl font-bold text-gray-800">
+                          {slide.name}
+                        </h2>
+                      </div>
 
                       <h3
                         className={`
-                          text-xl sm:text-xl md:text-lg lg:text-2xl font-medium text-gray-600 mb-2 mt-4
-                          ${
-                            screenSize !== "desktop" && isExpanded
-                              ? "line-clamp-none"
-                              : "line-clamp-1"
-                          }
-                        `}
+                        text-lg sm:text-lg md:text-base lg:text-xl xl:text-lg 
+                        font-medium text-green-700 my-3
+                        tracking-wide
+                        ${
+                          screenSize !== "desktop" && isExpanded
+                            ? "line-clamp-none"
+                            : screenSize === "mobile"
+                            ? "line-clamp-1"
+                            : "line-clamp-none"
+                        }
+                      `}
                       >
-                        {screenSize !== "desktop" && isExpanded
-                          ? slide.position
-                          : truncateText(slide.position, 8).truncatedText}
+                        {slide.position}
                       </h3>
-
-                      <a
-                        href={slide.linkedinUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center lg:text-sm px-4 py-2 my-5 bg-[#0A66C2] text-white rounded-md hover:bg-[#084d93] transition-colors duration-300"
-                      >
-                        <Linkedin className="w-5 h-5 mr-2" />
-                        Connect with me
-                      </a>
 
                       <div className="relative">
                         <p
                           className={`
                           text-sm sm:text-sm md:text-base text-gray-600 mb-4
+                          leading-relaxed
                           ${
                             screenSize !== "desktop" && isExpanded
                               ? "line-clamp-none"
                               : screenSize === "desktop" &&
-                                window.innerWidth >= 1536 // 2xl breakpoint
+                                window.innerWidth >= 1536
                               ? "line-clamp-none"
-                              : "line-clamp-3"
+                              : "line-clamp-4"
                           }
                         `}
                         >
@@ -207,42 +215,49 @@ const ImageSlider = () => {
                   );
                 })}
 
-                <div className="flex items-center gap-5 pt-2 pb-6 lg:pb-0 justify-center">
+                <div className="flex items-center gap-6 pt-2 pb-6 lg:pb-0 justify-center lg:absolute lg:bottom-6 lg:left-1/2 lg:-translate-x-1/2 xl:bottom-8 2xl:bottom-10">
                   <button
                     onClick={prevSlide}
-                    className="bg-white w-6 h-6 md:w-6 md:h-6 lg:w-8 lg:h-8 rounded-full shadow-md hover:bg-gray-50 transition-colors flex items-center justify-center cursor-pointer z-20"
+                    className="bg-white w-6 h-6 md:w-6 md:h-6 lg:w-8 lg:h-8 rounded-full shadow-md 
+                    hover:bg-gray-50 hover:scale-110
+                    active:scale-95 active:bg-gray-100
+                    transition-all duration-200 ease-in-out 
+                    flex items-center justify-center cursor-pointer z-20"
                     aria-label="Previous slide"
                   >
-                    <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1">
+                    <div
+                      className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1
+                      group-hover:from-green-400 group-hover:to-green-600
+                      group-active:from-green-500 group-active:to-green-700"
+                    >
                       <div className="bg-white rounded-full p-1">
-                        <ChevronLeft className="w-6 h-6 text-gray-600" />
+                        <ChevronLeft className="w-6 h-6" />
                       </div>
                     </div>
                   </button>
 
-                  <div className="flex items-center space-x-2">
-                    {slides.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => goToSlide(index)}
-                        className={`transition-colors duration-300 ${
-                          currentSlide === index
-                            ? "text-blue-600"
-                            : "text-gray-400"
-                        }`}
-                        aria-label={`Go to slide ${index + 1}`}
-                      ></button>
-                    ))}
+                  <div className="flex items-center">
+                    <span className="text-sm md:text-base font-medium text-gray-600">
+                      {currentSlide + 1}/{slides.length}
+                    </span>
                   </div>
 
                   <button
                     onClick={nextSlide}
-                    className="bg-white w-6 h-6 md:w-6 md:h-6 lg:w-8 lg:h-8 rounded-full shadow-md hover:bg-gray-50 transition-colors flex items-center justify-center cursor-pointer z-20"
+                    className="bg-white w-6 h-6 md:w-6 md:h-6 lg:w-8 lg:h-8 rounded-full shadow-md 
+                      hover:bg-gray-50 hover:scale-110
+                      active:scale-95 active:bg-gray-100
+                      transition-all duration-200 ease-in-out 
+                      flex items-center justify-center cursor-pointer z-20"
                     aria-label="Next slide"
                   >
-                    <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1">
+                    <div
+                      className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1
+                      group-hover:from-green-400 group-hover:to-green-600
+                      group-active:from-green-500 group-active:to-green-700"
+                    >
                       <div className="bg-white rounded-full p-1">
-                        <ChevronRight className="w-6 h-6 text-gray-600" />
+                        <ChevronRight className="w-6 h-6" />
                       </div>
                     </div>
                   </button>

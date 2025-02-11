@@ -16,6 +16,7 @@ import peterson from "../assets/speakers/peterson.png";
 import savastano from "../assets/speakers/savastano.png";
 import corradi from "../assets/speakers/corradi.png";
 import gene from "../assets/speakers/gene.png";
+import fabio from "../assets/speakers/fabio.png";
 
 export const speakers = [
  {
@@ -44,7 +45,7 @@ export const speakers = [
  },
  {
    id: 4,
-   name: "Américo Paulicchi Filho",
+   name: "Américo Paulicchi",
    position: "Engenheiro Sênior de Design Conceitual",
    description: "Américo ingressou na Littelfuse ESBU Vendas Regionais Sul da Europa em 1º de agosto de 2022, como Engenheiro de Aplicação de Campo para Brasil e América do Sul, reportando-se a Tim Elliott. Ele suportará os negócios da Littelfuse em tecnologias ESBU através de distribuição e OEM direto, focando no desenvolvimento de novos negócios para aumentar a receita. Américo estudou Engenharia Elétrica na FESP, com especialização em Eletrônica. Ele tem uma forte experiência em semicondutores de potência, iniciando sua carreira em P&D na PHILIPS do BRASIL em 1978. Ocupou vários cargos na indústria de semicondutores, contribuindo para um crescimento significativo nas vendas e desenvolvendo soluções para grandes empresas e projetos.",
    image: americo,
@@ -84,7 +85,7 @@ export const speakers = [
  },
  {
    id: 9,
-   name: "José Ricardo de Freitas",
+   name: "José de Freitas",
    position: "Gerente de Aplicações",
    description: "Jose Ricardo de Freitas é Engenheiro Senior da STMicroelectronics. Graduado em Engenharia Elétrica pela Escola de Engenharia Mauá e MBA em Gestão Empresarial pela Fundação Getúlio Vargas é responsável pelas aplicações com sensores MEMs e NBIOT na STMicroelectronics da América do Sul",
    image: freitas,
@@ -93,7 +94,7 @@ export const speakers = [
  {
    id: 10,
    name: "Rogério Bueno",
-   position: "Engenheiro Marketing Produto",
+   position: "Engenheiro de Marketing de Produto",
    description: "Rogerio é Engenheiro Marketing Produto responsável pelos produtos relacionados à conversão de energia focado no mercado industrial, trabalha no escritório de São Paulo da STMicroelectronics. Ele ingressou na empresa no ano de 2012 e tem mais de 28 anos de experiência no desenvolvimento de produtos eletrônicos, trabalhando nas áreas de engenharia, marketing e gerenciamento de produtos. Seu foco atual é o setor Industrial suportando novas tecnologias na área de conversão de energia, controle de motor, automação industrial e redes inteligentes. Rogério é natural de São Paulo, tem formação em engenharia elétrica pela Escola de Engenharia Mauá e pós-graduação em marketing de produtos de tecnologia pela Escola Superior de Propaganda e Marketing.",
    image: bueno,
    linkedinUrl: "https://linkedin.com/in/rogeriobueno78"
@@ -161,6 +162,14 @@ export const speakers = [
   description: "A Inovação Disruptiva tem sido o ponto central de toda minha carreira—e um fator importante no meu sucesso. Desde meus primeiros dias como Engenheiro Chefe de Rádio/Elétrica em navio mercante; passando pela minha mudança para os EUA para trabalhar como Engenheiro Eletricista; pela transição para Engenharia de Aplicação de Campo—onde desenvolvi uma compreensão profunda dos requisitos técnicos dos clientes para resolver seus desafios diários; até meu papel atual como líder regional de marketing para uma empresa de componentes semicondutores discretos—tenho liderado o design e desenvolvimento de novos produtos, mobilizado equipes para ganhar negócios multimilionários e proporcionado crescimento de dois dígitos em receita e participação de mercado.",
   image: gene,
   linkedinUrl: "https://www.linkedin.com/in/genevolchenko/"
+},
+{
+  id: 18,
+  name: "Fábio Costa",
+  position: "Gerente Regional de Vendas",
+  description: "Com uma década na Würth Elektronik, minha jornada tem sido marcada por um compromisso inabalável em expandir nossa base de clientes e aumentar o lucro bruto através de um controle meticuloso de custos. A dedicação de nossa equipe tem sido fundamental para fomentar relacionamentos sólidos com distribuidores e elevar consistentemente os negócios em todo o Brasil. Minha expertise em engenharia, combinada com um MBA em Gestão Empresarial, me permitiu não apenas apoiar, mas também treinar engenheiros de P&D no cenário brasileiro de manufatura eletrônica. Esta combinação de conhecimento técnico e capacidade comercial nos posiciona para liderar e inovar nesta indústria dinâmica e acelerada.",
+  image: fabio,
+  linkedinUrl: "https://www.linkedin.com/in/fabiocosta/"
 },
 
 ];

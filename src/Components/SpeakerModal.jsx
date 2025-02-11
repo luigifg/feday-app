@@ -1,5 +1,6 @@
 import React from "react";
 import { ChevronLeft, ChevronRight, Linkedin, X } from "lucide-react";
+import linkedin from "../assets/socials/linkedin.png";
 
 const SpeakerModal = ({
   isOpen,
@@ -22,10 +23,16 @@ const SpeakerModal = ({
           e.stopPropagation();
           onPrevSlide();
         }}
-        className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-white w-12 h-12 rounded-full shadow-lg hover:bg-gray-50 transition-colors flex items-center justify-center mx-4"
+        className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-white w-12 h-12 rounded-full shadow-lg 
+          hover:bg-gray-50 hover:scale-110 
+          active:scale-95 active:bg-gray-100
+          transition-all duration-200 ease-in-out 
+          flex items-center justify-center mx-4"
         aria-label="Previous slide"
       >
-        <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1">
+        <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1 
+          group-hover:from-green-400 group-hover:to-green-600
+          group-active:from-green-500 group-active:to-green-700">
           <div className="bg-white rounded-full p-1">
             <ChevronLeft className="w-8 h-8 text-gray-600" />
           </div>
@@ -38,10 +45,16 @@ const SpeakerModal = ({
           e.stopPropagation();
           onNextSlide();
         }}
-        className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-white w-12 h-12 rounded-full shadow-lg hover:bg-gray-50 transition-colors flex items-center justify-center mx-4"
+        className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-white w-12 h-12 rounded-full shadow-lg 
+          hover:bg-gray-50 hover:scale-110
+          active:scale-95 active:bg-gray-100
+          transition-all duration-200 ease-in-out 
+          flex items-center justify-center mx-4"
         aria-label="Next slide"
       >
-        <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1">
+        <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1
+          group-hover:from-green-400 group-hover:to-green-600
+          group-active:from-green-500 group-active:to-green-700">
           <div className="bg-white rounded-full p-1">
             <ChevronRight className="w-8 h-8 text-gray-600" />
           </div>
@@ -50,7 +63,10 @@ const SpeakerModal = ({
 
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 z-10 p-2 bg-gray-100 rounded-full hover:bg-gray-200"
+        className="absolute top-4 right-4 z-10 p-2 bg-gray-100 rounded-full 
+          hover:bg-gray-200 hover:scale-110
+          active:scale-95 active:bg-gray-300
+          transition-all duration-200 ease-in-out"
         aria-label="Close full text"
       >
         <X className="w-6 h-6 text-gray-600" />
@@ -75,28 +91,32 @@ const SpeakerModal = ({
         <div className="col-span-1 bg-white rounded-r-xl h-[450px] 2xl:h-[600px] flex flex-col">
           {/* Container fixo para o cabeçalho */}
           <div className="p-6 border-b">
-            <h2 className="text-2xl 2xl:text-3xl font-bold text-gray-800 mb-4">
-              {slides[currentSlide].name}
-            </h2>
+            <div className="flex items-center gap-4 mb-6">
+              <a
+                href={slides[currentSlide].linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center transition-transform hover:scale-110 flex-shrink-0"
+              >
+                <img
+                  src={linkedin}
+                  alt="LinkedIn"
+                  className="w-6 h-6 brightness-100"
+                />
+              </a>
+              <h2 className="text-2xl 2xl:text-3xl font-bold text-gray-800">
+                {slides[currentSlide].name}
+              </h2>
+            </div>
 
-            <h3 className="text-xl 2xl:text-2xl font-medium text-gray-600 mb-4">
+            <h3 className="text-lg 2xl:text-xl font-medium text-green-700">
               {slides[currentSlide].position}
             </h3>
-
-            <a
-              href={slides[currentSlide].linkedinUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center px-4 py-2 bg-[#0A66C2] text-white rounded-md hover:bg-[#084d93] transition-colors duration-300"
-            >
-              <Linkedin className="w-5 h-5 mr-2" />
-              Connect on LinkedIn
-            </a>
           </div>
 
           {/* Container com scroll para o conteúdo */}
           <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-            <p className="text-base text-gray-600">
+            <p className="text-base text-gray-600 leading-relaxed">
               {slides[currentSlide].description}
             </p>
           </div>
