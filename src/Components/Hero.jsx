@@ -45,27 +45,28 @@ const Hero = () => {
       customPaddings
       id="hero"
     >
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isVisible ? 1 : 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        className="absolute inset-0 z-0 h-[50%] bg-cover bg-bottom bg-no-repeat"
-        style={{
-          backgroundImage: `url(${bg1})`,
-          willChange: "opacity",
-        }}
-      />
+<motion.div
+  initial={{ opacity: 0 }}
+  animate={{ opacity: isVisible ? 1 : 0 }}
+  transition={{ duration: 1, ease: "easeOut" }}
+  className="absolute inset-0 z-0 h-[51%] sm:h-[50%] bg-cover bg-bottom bg-no-repeat" // 51% apenas em mobile
+  style={{
+    backgroundImage: `url(${bg1})`,
+    willChange: "opacity",
+  }}
+/>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isVisible ? 1 : 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        className="absolute bottom-0 left-0 right-0 z-0 h-[50%] bg-cover bg-top bg-no-repeat"
-        style={{
-          backgroundImage: `url(${bg2})`,
-          willChange: "opacity",
-        }}
-      />
+<motion.div
+  initial={{ opacity: 0 }}
+  animate={{ opacity: isVisible ? 1 : 0 }}
+  transition={{ duration: 1, ease: "easeOut" }}
+  className="absolute bottom-0 left-0 right-0 z-0 h-[51%] sm:h-[50%] bg-cover bg-top bg-no-repeat" // 51% apenas em mobile
+  style={{
+    backgroundImage: `url(${bg2})`,
+    willChange: "opacity",
+    transform: isMobile ? 'translateY(-1px)' : 'none', // translateY apenas se for mobile
+  }}
+/>
 
       <div className="container relative" ref={parallaxRef}>
         <motion.div

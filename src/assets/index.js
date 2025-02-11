@@ -102,6 +102,7 @@ import viking from "./manufactures/viking.jpg";
 import yageo from "./manufactures/yageo.png";
 import nic from "./manufactures/nic.svg";
 import osram from "./manufactures/osram.png";
+import power from "./manufactures/power.svg";
 import aishi from "./manufactures/aishi.png";
 import hirose from "./manufactures/hirose.svg";
 import infineon from "./manufactures/infineon.png";
@@ -139,6 +140,7 @@ export {
   viking,
   yageo,
   osram,
+  power,
   nic,
   aishi,
   hirose,
