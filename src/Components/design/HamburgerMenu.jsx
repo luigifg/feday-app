@@ -1,4 +1,4 @@
-import { bg } from "../../assets";
+import { fbg } from "../../assets";
 
 export const SideLines = () => {
   return (
@@ -15,7 +15,7 @@ export const HamburgerMenu = () => {
       <div className="absolute inset-0 opacity-[.1]">
         <img
           className="w-full h-full object-cover"
-          src={bg}
+          src={fbg}
           width={688}
           height={953}
           alt="bg"

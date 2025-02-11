@@ -3,7 +3,7 @@ import { disablePageScroll, enablePageScroll } from "scroll-lock";
 import { useState, useEffect } from "react";
 import fe from "../assets/logos/feLogo.svg";
 import { navigation } from "../constants";
-import Button from "./Button";
+import Button from "./design/Button";
 import MenuSvg from "../assets/svg/MenuSvg";
 import { HamburgerMenu } from "./design/HamburgerMenu";
 import api from "../Axios";

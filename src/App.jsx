@@ -2,10 +2,10 @@ import React from "react";
 import ButtonGradient from "./assets/svg/ButtonGradient";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
-import Hero from "./Components/Hero";
-import Previous from "./Components/PreviousEvent";
-import Location from "./Components/EventLocation"
-import Banner from "./Components/Banner"
+import Hero from "./Views/Home/Hero";
+import Previous from "./Views/Home/PreviousEvent";
+import Location from "./Views/Home/EventLocation"
+import Banner from "./Views/Home/Banner"
 
 
 const App = () => {
@@ -16,7 +16,6 @@ const App = () => {
       <Banner />
       <Previous />
       <Location />
-      {/* <Benefits /> */}
       <ButtonGradient />
       <Footer />
     </div>
