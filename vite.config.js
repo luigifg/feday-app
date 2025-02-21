@@ -46,12 +46,6 @@ export default defineConfig({
   plugins: [
     react(),
     svgr(),
-    compression({
-      algorithm: "gzip",
-      ext: ".gz",
-      threshold: 10240,
-      deleteOriginFile: false,
-    }),
     visualizer({
       open: false,
       gzipSize: true,
