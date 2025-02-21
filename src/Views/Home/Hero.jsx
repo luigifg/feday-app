@@ -15,6 +15,7 @@ import CompanyLogos from "./CompanyLogos";
 const Hero = () => {
   const parallaxRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [backgroundReady, setBackgroundReady] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
@@ -38,7 +39,7 @@ const Hero = () => {
     const interval = setInterval(() => {
       setDirection(1);
       setCurrentSlide((prev) => (prev + 1) % slideContent.length);
-    }, 5000);
+    }, 7000);
 
     return () => clearInterval(interval);
   }, []);
@@ -115,23 +116,34 @@ const Hero = () => {
       {/* Backgrounds Container */}
       <div className="absolute inset-0 w-full h-full">
         <motion.div
-          animate={{ opacity: isVisible ? 1 : 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="h-1/2 w-full bg-cover bg-bottom bg-no-repeat"
-          style={{
-            backgroundImage: `url(${bg1})`,
-            willChange: "opacity",
+          animate={isVisible ? "visible" : "hidden"}
+          initial="hidden"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                duration: 0.4,
+                ease: "easeOut",
+              },
+            },
           }}
-        />
-        <motion.div
-          animate={{ opacity: isVisible ? 1 : 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="h-1/2 w-full bg-cover bg-top bg-no-repeat"
-          style={{
-            backgroundImage: `url(${bg2})`,
-            willChange: "opacity",
-          }}
-        />
+          onAnimationComplete={() => setBackgroundReady(true)} // Novo estado para controlar quando o background terminou
+          className="relative w-full h-full"
+        >
+          <div
+            className="absolute top-0 h-1/2 w-full bg-cover bg-bottom bg-no-repeat"
+            style={{
+              backgroundImage: `url(${bg1})`,
+            }}
+          />
+          <div
+            className="absolute bottom-0 h-1/2 w-full bg-cover bg-top bg-no-repeat"
+            style={{
+              backgroundImage: `url(${bg2})`,
+            }}
+          />
+        </motion.div>
       </div>
 
       {/* Main Content Section */}
@@ -143,9 +155,16 @@ const Hero = () => {
         >
           <motion.div
             initial="hidden"
-            animate={isVisible ? "visible" : "hidden"}
+            animate={backgroundReady && isVisible ? "visible" : "hidden"}
             variants={{
-              visible: { transition: { staggerChildren: 0.3 } },
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  delay: 0.2,
+                  staggerChildren: 0.3,
+                },
+              },
             }}
             className="relative z-10 w-full"
           >
