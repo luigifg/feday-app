@@ -1,3 +1,9 @@
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import compression from "vite-plugin-compression";
+import { visualizer } from "rollup-plugin-visualizer";
+import svgr from "vite-plugin-svgr"; // Plugin para suportar importação de SVGs como componentes
+
 export default defineConfig({
   build: {
     outDir: "dist", // Define o diretório de saída corretamente
