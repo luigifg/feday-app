@@ -156,11 +156,11 @@ const Hero = () => {
           className="relative w-full h-full"
         >
           <div
-            className="absolute top-0 h-[51%] w-full bg-cover bg-bottom bg-no-repeat"
+            className="absolute top-0 h-[50%] w-full bg-cover bg-bottom bg-no-repeat"
             style={{ backgroundImage: `url(${bg1})` }}
           />
           <div
-            className="absolute bottom-0 h-[51%] w-full bg-cover bg-top bg-no-repeat"
+            className="absolute bottom-0 h-[51%] sm:h-[50%] w-full bg-cover bg-top bg-no-repeat"
             style={{ backgroundImage: `url(${bg2})` }}
           />
         </motion.div>
