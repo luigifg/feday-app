@@ -195,7 +195,7 @@ const Hero = () => {
                   <div className="flex flex-col items-center mt-[2.5rem] w-full space-y-15">
                     {/* Title */}
                     <motion.div variants={fadeInUp}>
-                      <div className="md:mt-10 text-center">
+                      <div className="mt-5 md:mt-10 text-center">
                         <span className="h2 xl:h1 font-bold block">
                           {slideContent[currentSlide].welcome}
                         </span>
