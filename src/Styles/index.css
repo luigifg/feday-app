@@ -1,6 +1,30 @@
-@import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300&display=swap");
+@layer base {
+  @font-face {
+    font-family: 'Sora';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url('https://fonts.gstatic.com/s/sora/v12/xMQOuFFYT72X5wkB_18qmnndmSeSl5A.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Sora';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('https://fonts.gstatic.com/s/sora/v12/xMQOuFFYT72X5wkB_18qmnndmSeSl5A.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Sora';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('https://fonts.gstatic.com/s/sora/v12/xMQOuFFYT72X5wkB_18qmnndmSeSl5A.woff2') format('woff2');
+  }
+
+  body {
+    @apply font-sans bg-n-1 text-n-8 text-base;
+  }
+}
 
 @tailwind base;
 @tailwind components;
@@ -35,6 +59,13 @@
 /* Estilos da scrollbar personalizada */
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
+}
+
+.bg-container {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {

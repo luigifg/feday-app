@@ -16,12 +16,10 @@ const CompanyLogos = () => {
         setIsPopupOpen(false);
       }
     };
-
+  
     if (isPopupOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-      };
+      document.addEventListener("mousedown", handleClickOutside, { passive: true });
+      return () => document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [isPopupOpen]);
 
@@ -145,7 +143,7 @@ const CompanyLogos = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div
             ref={popupRef}
-            className="bg-white p-8 w-[90%] sm:w-96 max-h-[80vh] overflow-y-auto shadow-2xl rounded-2xl font-sans custom-scrollbar mx-4"
+            className="bg-white mt-20 p-8 w-[90%] sm:w-96 max-h-[80vh] overflow-y-auto shadow-2xl rounded-2xl font-sans custom-scrollbar mx-4"
             style={{
               borderRadius: "16px",
               border: "6px solid transparent",

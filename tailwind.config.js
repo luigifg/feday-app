@@ -140,8 +140,7 @@ export default {
       },
       backgroundImage: {
         "radial-gradient": "radial-gradient(var(--tw-gradient-stops))",
-        "conic-gradient":
-          "conic-gradient(from 225deg, #A5D56C, #76E9A4, #4CAF72, #89C76C, #A5D56C)",
+        "conic-gradient": "conic-gradient(from 225deg, #A5D56C, #76E9A4, #4CAF72, #89C76C, #A5D56C)",
         "benefit-card-1": "url(assets/benefits/card-1.svg)",
         "benefit-card-2": "url(assets/benefits/card-2.svg)",
         "benefit-card-3": "url(assets/benefits/card-3.svg)",
@@ -149,6 +148,12 @@ export default {
         "benefit-card-5": "url(assets/benefits/card-5.svg)",
         "benefit-card-6": "url(assets/benefits/card-6.svg)",
       },
+      extend: {
+        content: {
+          'bg1': 'url("/assets/logos/bg1.svg")',
+          'bg2': 'url("/assets/logos/bg2.svg")',
+        }
+      }
     },
   },
   plugins: [
