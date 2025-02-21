@@ -18,7 +18,6 @@ const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
-  const [bgLoaded, setBgLoaded] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -28,7 +27,17 @@ const Hero = () => {
     checkMobile();
     window.addEventListener("resize", checkMobile);
 
-    // Primeiro carregamos as imagens de background
+    // Pré-carrega as imagens do slideContent
+    slideContent.forEach(slide => {
+      const img = new Image();
+      img.src = slide.logo;
+      if (slide.mobileImage) {
+        const mobileImg = new Image();
+        mobileImg.src = slide.mobileImage;
+      }
+    });
+
+    // Carrega os backgrounds
     Promise.all([
       new Promise((resolve) => {
         const img1 = new Image();
@@ -41,7 +50,6 @@ const Hero = () => {
         img2.onload = resolve;
       }),
     ]).then(() => {
-      // Só depois que as imagens carregarem, iniciamos a animação
       setIsVisible(true);
     });
 
@@ -57,13 +65,12 @@ const Hero = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Seus variants aqui...
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.8, ease: "easeOut" },
+      transition: { duration: 0.3, ease: "easeOut" },
     },
   };
 
@@ -85,7 +92,7 @@ const Hero = () => {
       welcome: "Conheça nosso",
       title: "Palestrante Especial",
       description:
-        "Conheça Conheça Conheça Conheça Conheça Conheça Conheça nossos palestrantes internacionais que trarão as últimas tendências e inovações em tecnologia e eletrônica",
+        "Fernando Barrera é um líder de vendas com vasta experiência na indústria de Semicondutores e atualmente atua como Diretor Técnico Regional na Future Electronics, baseado no Vale do Silício",
       buttonText: "Conheça Fernando Barrera",
     },
   ];
@@ -132,9 +139,9 @@ const Hero = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: isVisible ? 1 : 0 }}
-          transition={{ duration: 1 }}
+          transition={{ duration: 0.3 }}
           onAnimationComplete={() => {
-            setBgAnimationComplete(true); // Só ativa o conteúdo quando a animação do bg terminar
+            setBgAnimationComplete(true);
           }}
           className="relative w-full h-full"
         >
@@ -168,14 +175,14 @@ const Hero = () => {
               visible: {
                 opacity: 1,
                 transition: {
-                  staggerChildren: 0.3,
-                  delayChildren: 0.2,
+                  staggerChildren: 0.2,
+                  delayChildren: 0.1,
                 },
               },
             }}
             className="relative z-10 w-full"
           >
-            {/* Seu conteúdo de slides aqui... */}
+            {/* Slides Content Block */}
             <div>
               <AnimatePresence initial={false} custom={direction} mode="wait">
                 <motion.div
@@ -187,7 +194,7 @@ const Hero = () => {
                   exit="exit"
                   transition={{
                     x: { type: "spring", stiffness: 300, damping: 30 },
-                    opacity: { duration: 0.4 },
+                    opacity: { duration: 0.3 },
                   }}
                   className="w-full flex flex-col items-center"
                 >
@@ -257,8 +264,8 @@ const Hero = () => {
                           exit="exit"
                           transition={{
                             y: { type: "spring", stiffness: 300, damping: 30 },
-                            opacity: { duration: 0.4 },
-                            rotateX: { duration: 0.4 },
+                            opacity: { duration: 0.3 },
+                            rotateX: { duration: 0.3 },
                           }}
                         >
                           <Button className="transition-all duration-300 hover:scale-105 hover:text-green-800">
@@ -278,8 +285,8 @@ const Hero = () => {
         <div className="container mt-15">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
+            animate={{ opacity: bgAnimationComplete ? 1 : 0, y: bgAnimationComplete ? 0 : 20 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
             className="relative z-10 w-full"
           >
             <div>
