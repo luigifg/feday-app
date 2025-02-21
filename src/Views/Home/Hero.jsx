@@ -67,6 +67,7 @@ const Hero = () => {
       description:
         "Conheça Conheça Conheça Conheça Conheça Conheça Conheça nossos palestrantes internacionais que trarão as últimas tendências e inovações em tecnologia e eletrônica",
       buttonText: "Conheça Fernando Barrera",
+
     },
   ];
 
@@ -145,7 +146,7 @@ const Hero = () => {
             className="relative z-10 w-full"
           >
             {/* Slides Content Block */}
-            <div>
+            <div >
               <AnimatePresence initial={false} custom={direction} mode="wait">
                 <motion.div
                   key={currentSlide}
@@ -160,30 +161,15 @@ const Hero = () => {
                   }}
                   className="w-full flex flex-col items-center"
                 >
-                  {/* Logo Container com imagem responsiva */}
+                  {/* Logo Container */}
                   <motion.div
                     className="h-[250px] md:h-[350px] lg:h-[450px] flex items-center justify-center"
                     variants={fadeInUp}
                   >
-                    {/* Imagem para desktop */}
                     <img
                       src={slideContent[currentSlide].logo}
                       alt="Event Logo"
-                      className={`hidden sm:block mt-[90px] h-full w-[370px] sm:w-[650px] md:w-[700px] lg:w-[800px] xl:w-[1000px] object-cover transition-all duration-700 ease-out ${
-                        currentSlide === 0
-                          ? ""
-                          : "h-[179px] sm:h-[100px] md:h-[300px] lg:h-[440px]"
-                      }`}
-                      loading="eager"
-                    />
-
-                    {/* Imagem para mobile */}
-                    <img
-                      src={slideContent[currentSlide].mobileImage} // Nova propriedade para imagem mobile
-                      alt="Event Logo Mobile"
-                      className={`block sm:hidden mt-[90px] h-full w-full object-cover transition-all duration-700 ease-out ${
-                        currentSlide === 0 ? "" : "h-[179px]"
-                      }`}
+                      className={`mt-[90px] h-full w-[380px] sm:w-[650px] md:w-[700px] lg:w-[800px] xl:w-[1000px] object-cover transition-all duration-700 ease-out ${currentSlide === 0 ? '' : 'h-[180px] md:h-[300px] lg:h-[440px]'}`}
                       loading="eager"
                     />
                   </motion.div>
@@ -193,20 +179,22 @@ const Hero = () => {
                     {/* Title */}
                     <motion.div variants={fadeInUp}>
                       <div className="mt-10 text-center">
-                        <span className="h2 xl:h1 font-bold block">
-                          {slideContent[currentSlide].welcome}
-                        </span>
-                        <span className="h2 xl:h1 font-bold inline-block relative">
-                          {slideContent[currentSlide].title}
-                          <img
-                            src={curve}
-                            className="absolute top-full left-0 w-full animate-pulse"
-                            width={624}
-                            height={28}
-                            alt="Curve"
-                            loading="eager"
-                          />
-                        </span>
+               
+                          <span className="h2 xl:h1 font-bold block">
+                            {slideContent[currentSlide].welcome}
+                          </span>
+                          <span className="h2 xl:h1 font-bold inline-block relative">
+                            {slideContent[currentSlide].title}
+                            <img
+                              src={curve}
+                              className="absolute top-full left-0 w-full animate-pulse"
+                              width={624}
+                              height={28}
+                              alt="Curve"
+                              loading="eager"
+                            />
+                          </span>
+                      
                       </div>
                     </motion.div>
 
@@ -258,7 +246,7 @@ const Hero = () => {
             transition={{ duration: 0.8, delay: 0.8 }}
             className="relative z-10 w-full"
           >
-            <div>
+            <div >
               <CompanyLogos showButton={false} className="hidden lg:block" />
             </div>
           </motion.div>
