@@ -14,11 +14,32 @@ import CompanyLogos from "./CompanyLogos";
 const Hero = () => {
   const parallaxRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [bgAnimationComplete, setBgAnimationComplete] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const [backgroundsLoaded, setBackgroundsLoaded] = useState(false);
+  const [contentVisible, setContentVisible] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
 
+  // Efeito para carregar os backgrounds
+  useEffect(() => {
+    Promise.all([
+      new Promise((resolve) => {
+        const img1 = new Image();
+        img1.src = bg1;
+        img1.onload = resolve;
+      }),
+      new Promise((resolve) => {
+        const img2 = new Image();
+        img2.src = bg2;
+        img2.onload = resolve;
+      }),
+    ]).then(() => {
+      setBackgroundsLoaded(true);
+      // Adiciona delay antes de mostrar o conteúdo
+      setTimeout(() => setContentVisible(true), 500);
+    });
+  }, []);
+
+  // Efeito para verificar mobile e pré-carregar imagens do slideContent
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -37,25 +58,10 @@ const Hero = () => {
       }
     });
 
-    // Carrega os backgrounds
-    Promise.all([
-      new Promise((resolve) => {
-        const img1 = new Image();
-        img1.src = bg1;
-        img1.onload = resolve;
-      }),
-      new Promise((resolve) => {
-        const img2 = new Image();
-        img2.src = bg2;
-        img2.onload = resolve;
-      }),
-    ]).then(() => {
-      setIsVisible(true);
-    });
-
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Efeito para controlar o slider
   useEffect(() => {
     const interval = setInterval(() => {
       setDirection(1);
@@ -134,30 +140,28 @@ const Hero = () => {
 
   return (
     <Section id="hero" className="relative min-h-screen overflow-hidden">
+      {/* Loading Indicator */}
+      {!backgroundsLoaded && (
+        <div className="absolute inset-0 flex items-center justify-center bg-white z-50">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-500"></div>
+        </div>
+      )}
+
       {/* Backgrounds Container */}
       <div className="absolute inset-0 w-full h-full bg-white">
-        {" "}
-        {/* Adicionado bg-white como fallback */}
-        <motion.div
+        <motion.div 
           initial={{ opacity: 0 }}
-          animate={{ opacity: isVisible ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
-          onAnimationComplete={() => {
-            setBgAnimationComplete(true);
-          }}
+          animate={{ opacity: backgroundsLoaded ? 1 : 0 }}
+          transition={{ duration: 0.5 }}
           className="relative w-full h-full"
         >
           <div
-            className="absolute top-0 h-[51%] w-full bg-cover bg-bottom bg-no-repeat" // Aumentado para 51%
-            style={{
-              backgroundImage: `url(${bg1})`,
-            }}
+            className="absolute top-0 h-[51%] w-full bg-cover bg-bottom bg-no-repeat"
+            style={{ backgroundImage: `url(${bg1})` }}
           />
           <div
-            className="absolute bottom-0 h-[51%] w-full bg-cover bg-top bg-no-repeat" // Aumentado para 51%
-            style={{
-              backgroundImage: `url(${bg2})`,
-            }}
+            className="absolute bottom-0 h-[51%] w-full bg-cover bg-top bg-no-repeat"
+            style={{ backgroundImage: `url(${bg2})` }}
           />
         </motion.div>
       </div>
@@ -165,23 +169,11 @@ const Hero = () => {
       {/* Main Content Section */}
       <div className="relative w-full min-h-screen flex flex-col">
         {/* Slider Container */}
-        <div
-          className="container mx-auto flex-grow flex items-center"
-          ref={parallaxRef}
-        >
+        <div className="container mx-auto flex-grow flex items-center" ref={parallaxRef}>
           <motion.div
-            initial="hidden"
-            animate={bgAnimationComplete ? "visible" : "hidden"}
-            variants={{
-              hidden: { opacity: 0 },
-              visible: {
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.2,
-                  delayChildren: 0.1,
-                },
-              },
-            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: contentVisible ? 1 : 0 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
             className="relative z-10 w-full"
           >
             {/* Slides Content Block */}
@@ -252,11 +244,7 @@ const Hero = () => {
                     </motion.div>
 
                     <motion.div variants={fadeInUp}>
-                      <AnimatePresence
-                        initial={false}
-                        custom={direction}
-                        mode="wait"
-                      >
+                      <AnimatePresence initial={false} custom={direction} mode="wait">
                         <motion.div
                           key={currentSlide}
                           custom={direction}
@@ -288,10 +276,10 @@ const Hero = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{
-              opacity: bgAnimationComplete ? 1 : 0,
-              y: bgAnimationComplete ? 0 : 20,
+              opacity: contentVisible ? 1 : 0,
+              y: contentVisible ? 0 : 20,
             }}
-            transition={{ duration: 0.3, delay: 0.2 }}
+            transition={{ duration: 0.3, delay: 0.4 }}
             className="relative z-10 w-full"
           >
             <div>
