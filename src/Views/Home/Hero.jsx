@@ -43,23 +43,6 @@ const animations = {
       transition: { duration: 0.3, ease: "easeOut" },
     },
   },
-  buttonVariants: {
-    enter: (direction) => ({
-      y: direction > 0 ? 50 : -50,
-      opacity: 0,
-      rotateX: direction > 0 ? 90 : -90,
-    }),
-    center: {
-      y: 0,
-      opacity: 1,
-      rotateX: 0,
-    },
-    exit: (direction) => ({
-      y: direction < 0 ? 50 : -50,
-      opacity: 0,
-      rotateX: direction < 0 ? 90 : -90,
-    }),
-  },
   slideVariants: {
     enter: (direction) => ({
       x: direction > 0 ? 1000 : -1000,
@@ -79,29 +62,9 @@ const animations = {
 };
 
 const Hero = () => {
-  const [isMobile, setIsMobile] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
-  const heroRef = useRef(null);
-  const timeoutRef = useRef(null);
   const intervalRef = useRef(null);
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      timeoutRef.current = setTimeout(() => {
-        setIsMobile(window.innerWidth <= 768);
-      }, 150);
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize, { passive: true });
-
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
@@ -109,113 +72,109 @@ const Hero = () => {
       setCurrentSlide((prev) => (prev + 1) % slideContent.length);
     }, 7000);
 
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
+    return () => intervalRef.current && clearInterval(intervalRef.current);
   }, []);
 
   return (
     <Section 
       id="hero" 
       className="relative min-h-screen overflow-hidden"
-      ref={heroRef}
     >
       <div className="absolute inset-0 w-full h-full bg-white">
         <div className="relative w-full h-full">
           <img
             src={bg1}
+            width="1920"
+            height="1080"
             className="absolute top-0 h-[50%] w-full object-cover object-bottom"
             loading="eager"
-            fetchPriority="high"
-            alt=""
+            fetchpriority="high"
+            alt="Background superior"
           />
           <img
             src={bg2}
+            width="1920"
+            height="1080"
             className="absolute bottom-0 h-[51%] sm:h-[50%] w-full object-cover object-top"
             loading="eager"
-            fetchPriority="high"
-            alt=""
+            fetchpriority="high"
+            alt="Background inferior"
           />
         </div>
       </div>
 
       <div className="relative w-full min-h-screen flex flex-col">
         <div className="container mx-auto flex-grow flex items-center">
-          <div className="relative z-10 w-full">
-            <AnimatePresence initial={false} custom={direction} mode="wait">
-              <motion.div
-                key={currentSlide}
-                custom={direction}
-                variants={animations.slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                  x: { type: "spring", stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.3 },
-                }}
-                className="w-full flex flex-col items-center"
-              >
-                <motion.div
-                  className="h-[430px] md:h-[350px] lg:h-[450px] flex items-center justify-center"
-                  variants={animations.fadeInUp}
-                >
-                  <img
-                    src={slideContent[currentSlide].logo}
-                    alt={`${slideContent[currentSlide].title} - Logo`}
-                    className={`hidden sm:block mt-[90px] h-full w-[370px] sm:w-[650px] md:w-[700px] lg:w-[800px] xl:w-[1000px] object-cover transition-all duration-700 ease-out ${
-                      currentSlide === 0
-                        ? ""
-                        : "h-[179px] sm:h-[100px] md:h-[300px] lg:h-[440px]"
-                    }`}
-                    loading="eager"
-                    fetchPriority="high"
-                  />
-                  <img
-                    src={slideContent[currentSlide].mobileImage}
-                    alt={`${slideContent[currentSlide].title} - Mobile`}
-                    className="block sm:hidden mt-[90px] h-full w-full object-cover transition-all duration-700 ease-out"
-                    loading="eager"
-                    fetchPriority="high"
-                  />
-                </motion.div>
+          <AnimatePresence initial={false} custom={direction} mode="wait">
+            <motion.div
+              key={currentSlide}
+              custom={direction}
+              variants={animations.slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.3 },
+              }}
+              className="w-full flex flex-col items-center"
+            >
+              <div className="h-[430px] md:h-[350px] lg:h-[450px] flex items-center justify-center">
+                <img
+                  src={slideContent[currentSlide].logo}
+                  alt={`${slideContent[currentSlide].title} - Logo`}
+                  width="1000"
+                  height="450"
+                  className={`hidden sm:block mt-[90px] h-full w-[370px] sm:w-[650px] md:w-[700px] lg:w-[800px] xl:w-[1000px] object-cover transition-all duration-700 ease-out ${
+                    currentSlide === 0
+                      ? ""
+                      : "h-[179px] sm:h-[100px] md:h-[300px] lg:h-[440px]"
+                  }`}
+                  loading="eager"
+                  fetchpriority="high"
+                />
+                <img
+                  src={slideContent[currentSlide].mobileImage}
+                  alt={`${slideContent[currentSlide].title} - Mobile`}
+                  width="375"
+                  height="450"
+                  className="block sm:hidden mt-[90px] h-full w-full object-cover transition-all duration-700 ease-out"
+                  loading="eager"
+                  fetchpriority="high"
+                />
+              </div>
 
-                <div className="flex flex-col items-center mt-[2.5rem] w-full space-y-15">
-                  <motion.div variants={animations.fadeInUp}>
-                    <div className="mt-5 md:mt-10 text-center">
-                      <span className="h2 md:h1 font-bold block">
-                        {slideContent[currentSlide].welcome}
-                      </span>
-                      <span className="h2 md:h1 font-bold inline-block relative">
-                        {slideContent[currentSlide].title}
-                        <img
-                          src={curve}
-                          className="absolute top-full left-0 w-full"
-                          alt=""
-                          loading="lazy"
-                        />
-                      </span>
-                    </div>
-                  </motion.div>
-
-                  <motion.div variants={animations.fadeInUp}>
-                    <p className="text-base md:text-lg lg:text-xl max-w-3xl mx-auto text-center text-n-8">
-                      {slideContent[currentSlide].description}
-                    </p>
-                  </motion.div>
-
-                  <motion.div variants={animations.fadeInUp}>
-                    <Button 
-                      className="transition-all duration-300 hover:scale-105 hover:text-green-800"
-                      aria-label={slideContent[currentSlide].buttonText}
-                    >
-                      {slideContent[currentSlide].buttonText}
-                    </Button>
-                  </motion.div>
+              <div className="flex flex-col items-center mt-[2.5rem] w-full space-y-15">
+                <div className="mt-5 md:mt-10 text-center">
+                  <span className="h2 md:h1 font-bold block">
+                    {slideContent[currentSlide].welcome}
+                  </span>
+                  <span className="h2 md:h1 font-bold inline-block relative">
+                    {slideContent[currentSlide].title}
+                    <img
+                      src={curve}
+                      width="624"
+                      height="28"
+                      className="absolute top-full left-0 w-full"
+                      alt=""
+                      loading="lazy"
+                    />
+                  </span>
                 </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
+
+                <p className="text-base md:text-lg lg:text-xl max-w-3xl mx-auto text-center text-n-8">
+                  {slideContent[currentSlide].description}
+                </p>
+
+                <Button 
+                  className="transition-all duration-300 hover:scale-105 hover:text-green-800"
+                  aria-label={slideContent[currentSlide].buttonText}
+                >
+                  {slideContent[currentSlide].buttonText}
+                </Button>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         <div className="container mt-15">

@@ -14,6 +14,9 @@ export default {
         slide: "slide 30s linear infinite",
         "slide-reverse": "slide-reverse 30s linear infinite",
         gradientBg: "gradientX 0.8s ease forwards",
+        'fade-in-up': 'fade-in-up 0.5s ease-out',
+        'fade-in': 'fade-in 0.5s ease-out',
+        'fade-in-down': 'fade-in-down 0.5s ease-out',
       },
       keyframes: {
         gradientX: {
@@ -38,6 +41,34 @@ export default {
           "0%": { transform: "translateX(-100%)" },
           "100%": { transform: "translateX(0%)" },
         },
+        'fade-in-up': {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(20px)'
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)'
+          }
+        },
+        'fade-in': {
+          '0%': {
+            opacity: '0'
+          },
+          '100%': {
+            opacity: '1'
+          }
+        },
+        'fade-in-down': {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(-20px)'
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)'
+          }
+        }
       },
       fontSize: {
         xxs: "0.65rem",
