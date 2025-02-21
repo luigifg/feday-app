@@ -28,7 +28,7 @@ const Hero = () => {
     window.addEventListener("resize", checkMobile);
 
     // Pré-carrega as imagens do slideContent
-    slideContent.forEach(slide => {
+    slideContent.forEach((slide) => {
       const img = new Image();
       img.src = slide.logo;
       if (slide.mobileImage) {
@@ -135,7 +135,9 @@ const Hero = () => {
   return (
     <Section id="hero" className="relative min-h-screen overflow-hidden">
       {/* Backgrounds Container */}
-      <div className="absolute inset-0 w-full h-full">
+      <div className="absolute inset-0 w-full h-full bg-white">
+        {" "}
+        {/* Adicionado bg-white como fallback */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: isVisible ? 1 : 0 }}
@@ -146,13 +148,13 @@ const Hero = () => {
           className="relative w-full h-full"
         >
           <div
-            className="absolute top-0 h-1/2 w-full bg-cover bg-bottom bg-no-repeat"
+            className="absolute top-0 h-[51%] w-full bg-cover bg-bottom bg-no-repeat" // Aumentado para 51%
             style={{
               backgroundImage: `url(${bg1})`,
             }}
           />
           <div
-            className="absolute bottom-0 h-1/2 w-full bg-cover bg-top bg-no-repeat"
+            className="absolute bottom-0 h-[51%] w-full bg-cover bg-top bg-no-repeat" // Aumentado para 51%
             style={{
               backgroundImage: `url(${bg2})`,
             }}
@@ -285,7 +287,10 @@ const Hero = () => {
         <div className="container mt-15">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: bgAnimationComplete ? 1 : 0, y: bgAnimationComplete ? 0 : 20 }}
+            animate={{
+              opacity: bgAnimationComplete ? 1 : 0,
+              y: bgAnimationComplete ? 0 : 20,
+            }}
             transition={{ duration: 0.3, delay: 0.2 }}
             className="relative z-10 w-full"
           >

@@ -11,26 +11,33 @@ export default {
   theme: {
     extend: {
       animation: {
-        'slide': 'slide 30s linear infinite',
-        'slide-reverse': 'slide-reverse 30s linear infinite',
+        slide: "slide 30s linear infinite",
+        "slide-reverse": "slide-reverse 30s linear infinite",
+        gradientBg: "gradientX 0.8s ease forwards",
       },
       keyframes: {
         gradientX: {
-          '0%, 100%': { 
-            'background-position': '0% 50%'
+          "0%": {
+            "background-position": "0% 50%",
+            opacity: "0",
           },
-          '50%': { 
-            'background-position': '100% 50%'
-          }
+          "50%": {
+            "background-position": "100% 50%",
+            opacity: "0.5",
+          },
+          "100%": {
+            "background-position": "0% 50%",
+            opacity: "1",
+          },
         },
         slide: {
-          '0%': { transform: 'translateX(0%)' },
-          '100%': { transform: 'translateX(-100%)' }
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-100%)" },
         },
-        'slide-reverse': {
-          '0%': { transform: 'translateX(-100%)' },
-          '100%': { transform: 'translateX(0%)' }
-        }
+        "slide-reverse": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(0%)" },
+        },
       },
       fontSize: {
         xxs: "0.65rem",
