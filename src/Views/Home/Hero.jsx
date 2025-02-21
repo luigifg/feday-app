@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { curve } from "../../assets";
 import bg1 from "../../assets/logos/bg1.svg";
-
 import bg2 from "../../assets/logos/bg2.svg";
 import fe2025 from "../../assets/logos/fedayDateR2.png";
 import fe2025M from "../../assets/logos/feday2025M.png";
@@ -15,10 +14,11 @@ import CompanyLogos from "./CompanyLogos";
 const Hero = () => {
   const parallaxRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [backgroundReady, setBackgroundReady] = useState(false);
+  const [bgAnimationComplete, setBgAnimationComplete] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [bgLoaded, setBgLoaded] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -28,9 +28,22 @@ const Hero = () => {
     checkMobile();
     window.addEventListener("resize", checkMobile);
 
-    setTimeout(() => {
+    // Primeiro carregamos as imagens de background
+    Promise.all([
+      new Promise((resolve) => {
+        const img1 = new Image();
+        img1.src = bg1;
+        img1.onload = resolve;
+      }),
+      new Promise((resolve) => {
+        const img2 = new Image();
+        img2.src = bg2;
+        img2.onload = resolve;
+      }),
+    ]).then(() => {
+      // Só depois que as imagens carregarem, iniciamos a animação
       setIsVisible(true);
-    }, 100);
+    });
 
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
@@ -44,6 +57,7 @@ const Hero = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Seus variants aqui...
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
     visible: {
@@ -116,19 +130,12 @@ const Hero = () => {
       {/* Backgrounds Container */}
       <div className="absolute inset-0 w-full h-full">
         <motion.div
-          animate={isVisible ? "visible" : "hidden"}
-          initial="hidden"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: {
-                duration: 0.4,
-                ease: "easeOut",
-              },
-            },
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isVisible ? 1 : 0 }}
+          transition={{ duration: 1 }}
+          onAnimationComplete={() => {
+            setBgAnimationComplete(true); // Só ativa o conteúdo quando a animação do bg terminar
           }}
-          onAnimationComplete={() => setBackgroundReady(true)} // Novo estado para controlar quando o background terminou
           className="relative w-full h-full"
         >
           <div
@@ -147,7 +154,7 @@ const Hero = () => {
       </div>
 
       {/* Main Content Section */}
-      <div className="relative w-full min-h-screen  flex flex-col">
+      <div className="relative w-full min-h-screen flex flex-col">
         {/* Slider Container */}
         <div
           className="container mx-auto flex-grow flex items-center"
@@ -155,20 +162,20 @@ const Hero = () => {
         >
           <motion.div
             initial="hidden"
-            animate={backgroundReady && isVisible ? "visible" : "hidden"}
+            animate={bgAnimationComplete ? "visible" : "hidden"}
             variants={{
               hidden: { opacity: 0 },
               visible: {
                 opacity: 1,
                 transition: {
-                  delay: 0.2,
                   staggerChildren: 0.3,
+                  delayChildren: 0.2,
                 },
               },
             }}
             className="relative z-10 w-full"
           >
-            {/* Slides Content Block */}
+            {/* Seu conteúdo de slides aqui... */}
             <div>
               <AnimatePresence initial={false} custom={direction} mode="wait">
                 <motion.div
@@ -184,12 +191,11 @@ const Hero = () => {
                   }}
                   className="w-full flex flex-col items-center"
                 >
-                  {/* Logo Container com imagem responsiva */}
+                  {/* Logo Container */}
                   <motion.div
                     className="h-[430px] md:h-[350px] lg:h-[450px] flex items-center justify-center"
                     variants={fadeInUp}
                   >
-                    {/* Imagem para desktop */}
                     <img
                       src={slideContent[currentSlide].logo}
                       alt="Event Logo"
@@ -201,9 +207,8 @@ const Hero = () => {
                       loading="eager"
                     />
 
-                    {/* Imagem para mobile */}
                     <img
-                      src={slideContent[currentSlide].mobileImage} // Nova propriedade para imagem mobile
+                      src={slideContent[currentSlide].mobileImage}
                       alt="Event Logo Mobile"
                       className={`block sm:hidden mt-[90px] h-full w-full object-cover transition-all duration-700 ease-out`}
                       loading="eager"
@@ -212,7 +217,6 @@ const Hero = () => {
 
                   {/* Content Container */}
                   <div className="flex flex-col items-center mt-[2.5rem] w-full space-y-15">
-                    {/* Title */}
                     <motion.div variants={fadeInUp}>
                       <div className="mt-5 md:mt-10 text-center">
                         <span className="h2 xl:h1 font-bold block">
@@ -232,14 +236,12 @@ const Hero = () => {
                       </div>
                     </motion.div>
 
-                    {/* Description */}
                     <motion.div variants={fadeInUp}>
                       <p className="body-1 max-w-3xl mx-auto text-center text-n-8">
                         {slideContent[currentSlide].description}
                       </p>
                     </motion.div>
 
-                    {/* Button */}
                     <motion.div variants={fadeInUp}>
                       <AnimatePresence
                         initial={false}
@@ -273,7 +275,7 @@ const Hero = () => {
         </div>
 
         {/* Company Logos Container */}
-        <div className="container  mt-15">
+        <div className="container mt-15">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
