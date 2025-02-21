@@ -167,7 +167,7 @@ const Hero = () => {
                 >
                   {/* Logo Container com imagem responsiva */}
                   <motion.div
-                    className="h-[450px] md:h-[350px] lg:h-[450px] flex items-center justify-center"
+                    className="h-[430px] md:h-[350px] lg:h-[450px] flex items-center justify-center"
                     variants={fadeInUp}
                   >
                     {/* Imagem para desktop */}
@@ -186,9 +186,7 @@ const Hero = () => {
                     <img
                       src={slideContent[currentSlide].mobileImage} // Nova propriedade para imagem mobile
                       alt="Event Logo Mobile"
-                      className={`block sm:hidden mt-[90px] h-full w-full object-cover transition-all duration-700 ease-out ${
-                        currentSlide === 0 ? "" : "h-[179px]"
-                      }`}
+                      className={`block sm:hidden mt-[90px] h-full w-full object-cover transition-all duration-700 ease-out`}
                       loading="eager"
                     />
                   </motion.div>
