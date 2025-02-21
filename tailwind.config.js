@@ -145,7 +145,7 @@ export default {
             {},
         },
         ".h2": {
-          "@apply text-[2.1rem] leading-[2.5rem] md:text-[2rem] md:leading-[2.5rem] lg:text-[2.5rem] lg:leading-[3.5rem] xl:text-[3rem] xl:leading-tight":
+          "@apply text-[1.9rem] leading-[2.5rem] md:text-[2rem] md:leading-[2.5rem] lg:text-[2.5rem] lg:leading-[3.5rem] xl:text-[3rem] xl:leading-tight":
             {},
         },
         ".h3": {
