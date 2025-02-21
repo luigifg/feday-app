@@ -2,9 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import compression from 'vite-plugin-compression';
 import { visualizer } from 'rollup-plugin-visualizer';
-import imageminMozjpeg from 'imagemin-mozjpeg';
-import imageminPngquant from 'imagemin-pngquant';
-import imageminWebp from 'imagemin-webp';
+import svgr from 'vite-plugin-svgr'; // Plugin para suportar importação de SVGs como componentes
 
 export default defineConfig({
   build: {
@@ -43,45 +41,16 @@ export default defineConfig({
       },
     },
   },
+  assetsInclude: ["**/*.svg"], // Garantir que o Vite reconheça SVGs como assets
   plugins: [
     react(),
+    svgr(), // Suporte para importar SVGs como componentes React
     compression({
       algorithm: 'gzip',
       ext: '.gz',
       threshold: 10240,
       deleteOriginFile: false,
     }),
-    // Plugin para otimização de imagens
-    {
-      name: 'imagemin',
-      enforce: 'pre',
-      apply: 'build',
-      transformIndexHtml: {
-        enforce: 'pre',
-        transform(html, ctx) {
-          return html;
-        },
-      },
-      async transform(code, id) {
-        if (!/\.(jpe?g|png|gif|svg)$/.test(id)) return null;
-        
-        const imagemin = (await import('imagemin')).default;
-        const plugins = [
-          imageminMozjpeg({ quality: 75 }),
-          imageminPngquant({ quality: [0.65, 0.8] }),
-          imageminWebp({ quality: 75 })
-        ];
-
-        const optimizedBuffer = await imagemin.buffer(Buffer.from(code), {
-          plugins
-        });
-
-        return {
-          code: optimizedBuffer,
-          map: null
-        };
-      }
-    },
     visualizer({
       open: false,
       gzipSize: true,
