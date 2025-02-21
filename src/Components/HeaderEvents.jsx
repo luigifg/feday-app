@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { disablePageScroll, enablePageScroll } from "scroll-lock";
 import { useState, useEffect } from "react";
-import api from "../Axios";
+import api from "../constants/Axios";
 import fe from "../assets/logos/feLogo.svg";
 import Button from "./design/Button";
 import MenuSvg from "../assets/svg/MenuSvg";

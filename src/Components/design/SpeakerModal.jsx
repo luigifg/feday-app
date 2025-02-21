@@ -1,6 +1,8 @@
+// SpeakerModal.jsx
 import React from "react";
 import { ChevronLeft, ChevronRight, Linkedin, X } from "lucide-react";
 import linkedin from "../../assets/socials/linkedin.png";
+import { speakers } from "../../data/speakerData"; // Importando o array de speakers
 
 const SpeakerModal = ({
   isOpen,
@@ -9,57 +11,68 @@ const SpeakerModal = ({
   onPrevSlide,
   onNextSlide,
   slides,
+  speakerId // Nova prop para buscar pelo ID
 }) => {
   if (!isOpen) return null;
+
+  // Se speakerId estiver presente, busca o speaker pelo ID
+  const speakerData = speakerId ? speakers.find(s => s.id === speakerId) : null;
+  // Se tiver speakerId, usa apenas esse speaker, senão usa os slides normalmente
+  const currentSlides = speakerId ? [speakerData] : slides;
 
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-5"
       onClick={onClose}
     >
-      {/* Botão de navegação esquerdo */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onPrevSlide();
-        }}
-        className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-white w-12 h-12 rounded-full shadow-lg 
-          hover:bg-gray-50 hover:scale-110 
-          active:scale-95 active:bg-gray-100
-          transition-all duration-200 ease-in-out 
-          flex items-center justify-center mx-4"
-        aria-label="Previous slide"
-      >
-        <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1 
-          group-hover:from-green-400 group-hover:to-green-600
-          group-active:from-green-500 group-active:to-green-700">
-          <div className="bg-white rounded-full p-1">
-            <ChevronLeft className="w-8 h-8 text-gray-600" />
-          </div>
-        </div>
-      </button>
+      {/* Botões de navegação apenas se não tiver speakerId */}
+      {!speakerId && (
+        <>
+          {/* Botão de navegação esquerdo */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onPrevSlide();
+            }}
+            className="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-white w-12 h-12 rounded-full shadow-lg 
+              hover:bg-gray-50 hover:scale-110 
+              active:scale-95 active:bg-gray-100
+              transition-all duration-200 ease-in-out 
+              flex items-center justify-center mx-4"
+            aria-label="Previous slide"
+          >
+            <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1 
+              group-hover:from-green-400 group-hover:to-green-600
+              group-active:from-green-500 group-active:to-green-700">
+              <div className="bg-white rounded-full p-1">
+                <ChevronLeft className="w-8 h-8 text-gray-600" />
+              </div>
+            </div>
+          </button>
 
-      {/* Botão de navegação direito */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onNextSlide();
-        }}
-        className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-white w-12 h-12 rounded-full shadow-lg 
-          hover:bg-gray-50 hover:scale-110
-          active:scale-95 active:bg-gray-100
-          transition-all duration-200 ease-in-out 
-          flex items-center justify-center mx-4"
-        aria-label="Next slide"
-      >
-        <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1
-          group-hover:from-green-400 group-hover:to-green-600
-          group-active:from-green-500 group-active:to-green-700">
-          <div className="bg-white rounded-full p-1">
-            <ChevronRight className="w-8 h-8 text-gray-600" />
-          </div>
-        </div>
-      </button>
+          {/* Botão de navegação direito */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onNextSlide();
+            }}
+            className="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-white w-12 h-12 rounded-full shadow-lg 
+              hover:bg-gray-50 hover:scale-110
+              active:scale-95 active:bg-gray-100
+              transition-all duration-200 ease-in-out 
+              flex items-center justify-center mx-4"
+            aria-label="Next slide"
+          >
+            <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1
+              group-hover:from-green-400 group-hover:to-green-600
+              group-active:from-green-500 group-active:to-green-700">
+              <div className="bg-white rounded-full p-1">
+                <ChevronRight className="w-8 h-8 text-gray-600" />
+              </div>
+            </div>
+          </button>
+        </>
+      )}
 
       <button
         onClick={onClose}
@@ -80,8 +93,8 @@ const SpeakerModal = ({
         {/* Coluna da imagem */}
         <div className="col-span-2 h-[450px] 2xl:h-[600px]">
           <img
-            src={slides[currentSlide].image}
-            alt={slides[currentSlide].title}
+            src={currentSlides[speakerId ? 0 : currentSlide].image}
+            alt={currentSlides[speakerId ? 0 : currentSlide].title}
             className="w-full h-full object-cover rounded-l-xl"
             loading="lazy"
           />
@@ -93,7 +106,7 @@ const SpeakerModal = ({
           <div className="p-6 border-b">
             <div className="flex items-center gap-4 mb-6">
               <a
-                href={slides[currentSlide].linkedinUrl}
+                href={currentSlides[speakerId ? 0 : currentSlide].linkedinUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center transition-transform hover:scale-110 flex-shrink-0"
@@ -105,19 +118,19 @@ const SpeakerModal = ({
                 />
               </a>
               <h2 className="text-2xl 2xl:text-3xl font-bold text-gray-800">
-                {slides[currentSlide].name}
+                {currentSlides[speakerId ? 0 : currentSlide].name}
               </h2>
             </div>
 
             <h3 className="text-lg 2xl:text-xl font-medium text-green-700">
-              {slides[currentSlide].position}
+              {currentSlides[speakerId ? 0 : currentSlide].position}
             </h3>
           </div>
 
           {/* Container com scroll para o conteúdo */}
           <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
             <p className="text-base text-gray-600 leading-relaxed">
-              {slides[currentSlide].description}
+              {currentSlides[speakerId ? 0 : currentSlide].description}
             </p>
           </div>
         </div>

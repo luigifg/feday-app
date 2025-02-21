@@ -6,7 +6,7 @@ import { navigation } from "../constants";
 import Button from "./design/Button";
 import MenuSvg from "../assets/svg/MenuSvg";
 import { HamburgerMenu } from "./design/HamburgerMenu";
-import api from "../Axios";
+import api from "../constants/Axios";
 
 const Header = () => {
   const pathname = useLocation();

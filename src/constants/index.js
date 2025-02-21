@@ -127,7 +127,7 @@ export const companyLogos = [
   { logo: littelfuse, url: "https://www.littelfuse.com", title: "Littelfuse" },
   { logo: atl, url: "http://atl-electronics.com", title: "ATL Electronics" },
   { logo: bpm, url: "https://bpmrep.com.br", title: "BPM Rep" },
-  { logo: power, url: "https://www.power.com", title: "Power Integration" },
+  { logo: power, url: "https://www.power.com", title: "Power Integrations" },
 ];
 
 export const companyLogos2 = [

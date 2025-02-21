@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import { Check } from "lucide-react";
-import { navigationAdmin } from "../../constants/index";
-import api from "../../Axios";
-import HeaderEvents from "../../Components/HeaderEvents";
+
+import api from "../../constants/Axios";
+
 import Section from "../../Components/Section";
-import Footer from "../../Components/Footer";
 import { horariosEvento, events } from "../../data/EventsData";
 
 const AdminList = () => {
@@ -219,9 +218,9 @@ const AdminList = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <HeaderEvents navigation={navigationAdmin} />
+
       <Section
-        className="flex-grow px-4 md:px-8 lg:px-16 pt-20 pb-16 py-12 lg:py-20"
+        className="flex-grow px-4 md:px-8 lg:px-16 pt-20 pb-16"
         crosses
         customPaddings
       >
@@ -356,7 +355,6 @@ const AdminList = () => {
         </div>
       </Section>
 
-      <Footer className="mt-auto" />
     </div>
   );
 };

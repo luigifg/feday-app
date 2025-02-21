@@ -8,6 +8,7 @@ import Location from "./Views/Home/EventLocation"
 import Banner from "./Views/Home/Banner"
 
 
+
 const App = () => {
   return (
     <div className="pt-[4.75rem] lg:pt-[5.25rem] ">

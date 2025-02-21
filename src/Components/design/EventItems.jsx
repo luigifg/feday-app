@@ -2,9 +2,18 @@ import React from "react";
 import { File, MapPin, User, X } from "lucide-react";
 import { getRoomColor } from "../../data/EventsData";
 
-const EventItem = ({ event, isSelected, onSelect, onRemove, showRemoveButton }) => {
+const EventItem = ({ 
+  event, 
+  isSelected, 
+  onSelect, 
+  onRemove, 
+  showRemoveButton,
+  isMarkedForDeletion,
+  isPreSelected, // Nova prop para controlar pré-seleção
+  isSaved // Nova prop para indicar se já está salvo
+}) => {
   const handleClick = () => {
-    if (!showRemoveButton) { // Allow toggle if not in selected events section 
+    if (!isSaved && !showRemoveButton) {
       onSelect();
     }
   };
@@ -13,13 +22,13 @@ const EventItem = ({ event, isSelected, onSelect, onRemove, showRemoveButton }) 
     <div
       onClick={handleClick}
       className={`relative cursor-pointer transform transition-all duration-300 hover:scale-[1.02] ${
-        isSelected ? "scale-[1.02]" : ""
-      }`}
+        isSelected || isPreSelected ? "scale-[1.02]" : ""
+      } ${isMarkedForDeletion ? "opacity-50" : ""}`}
     >
       <div
         className="p-[2px] rounded-3xl relative"
         style={{
-          background: isSelected
+          background: isSelected || isPreSelected
             ? "linear-gradient(to top left, #4299E1, #3182CE, #2C5282)"
             : "linear-gradient(to top left, #2E8B57, #228B22, #008000)",
         }}
@@ -39,12 +48,12 @@ const EventItem = ({ event, isSelected, onSelect, onRemove, showRemoveButton }) 
         <div
           className={`
             rounded-3xl p-4 relative overflow-hidden
-            ${isSelected ? "bg-blue-50 border-2 border-blue-500" : "bg-white"}
+            ${isSelected || isPreSelected ? "bg-blue-50 border-2 border-blue-500" : "bg-white"}
           `}
         >
           <div className="flex justify-between items-start mb-4">
             <div className="flex-grow">
-              <h2 className="text-xl font-bold text-gray-800 mb-2">
+              <h2 className="text-xl font-bold max-w-[17rem] text-gray-800 mb-4">
                 {event.title}
               </h2>
               <div className="flex items-center gap-2">

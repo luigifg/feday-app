@@ -55,7 +55,7 @@ const ImageSlider = () => {
     let slideInterval;
     // Adiciona fullTextModalOpen na condição para pausar
     if (isPlaying && !isHovered && !fullTextModalOpen) {
-      slideInterval = setInterval(nextSlide, 5000);
+      slideInterval = setInterval(nextSlide, 2500);
     }
     return () => {
       if (slideInterval) {
@@ -95,7 +95,7 @@ const ImageSlider = () => {
         crosses
         crossesOffset="translate-y"
         customPaddings
-        className="scroll-mt-20 md:px-[1.3rem] lg:px-[1.9rem] xl:px-[2.5rem] -mt-[5.25rem] relative"
+        className="scroll-mt-20 md:px-[1.3rem] lg:px-[1.9rem] xl:px-[2.5rem] relative"
         id="speaker"
       >
         <div

@@ -121,7 +121,8 @@ export default function EventLocation() {
                   <Calendar className="w-6 h-6 text-primary text-green-600" />
                   <div>
                     <p className="font-bold text-xl text-green-600">Data</p>
-                    <p className="text-lg">08 de Maio de 2024</p>
+                    <p className="text-lg">08 de Maio de 2025
+                    </p>
                   </div>
                 </div>
 

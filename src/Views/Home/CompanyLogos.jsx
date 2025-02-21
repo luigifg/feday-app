@@ -35,7 +35,7 @@ const CompanyLogos = () => {
     .sort((a, b) => a.title.localeCompare(b.title));
 
   return (
-    <section className="scroll-mt-20 relative w-full" id="parceiros">
+    <section className="scroll-mt-20 mb-20 relative w-full" id="parceiros">
       <div className="container mx-auto">
         <div className="w-full mb-8 pt-2">
           <h4 className="tagline text-center text-n-8">
@@ -135,7 +135,7 @@ const CompanyLogos = () => {
         </div>
 
         {/* Botão para abrir lista completa */}
-        <div className="text-center my-8">
+        <div className="text-center my-6">
           <Button onClick={togglePopup}>Ver lista completa</Button>
         </div>
       </div>

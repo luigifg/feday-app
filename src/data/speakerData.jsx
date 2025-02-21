@@ -17,6 +17,10 @@ import savastano from "../assets/speakers/savastano.png";
 import corradi from "../assets/speakers/corradi.png";
 import gene from "../assets/speakers/gene.png";
 import fabio from "../assets/speakers/fabio.png";
+import guarizo from "../assets/speakers/guarizo.png";
+import oliveira from "../assets/speakers/oliveira.png";
+import hueliquis from "../assets/speakers/hueliquis.png";
+import sparhawk from "../assets/speakers/sparhawk.png";
 
 export const speakers = [
  {
@@ -170,6 +174,38 @@ export const speakers = [
   description: "Com uma década na Würth Elektronik, minha jornada tem sido marcada por um compromisso inabalável em expandir nossa base de clientes e aumentar o lucro bruto através de um controle meticuloso de custos. A dedicação de nossa equipe tem sido fundamental para fomentar relacionamentos sólidos com distribuidores e elevar consistentemente os negócios em todo o Brasil. Minha expertise em engenharia, combinada com um MBA em Gestão Empresarial, me permitiu não apenas apoiar, mas também treinar engenheiros de P&D no cenário brasileiro de manufatura eletrônica. Esta combinação de conhecimento técnico e capacidade comercial nos posiciona para liderar e inovar nesta indústria dinâmica e acelerada.",
   image: fabio,
   linkedinUrl: "https://www.linkedin.com/in/fabiocosta/"
+},
+{
+  id: 20,
+  name: "Michael Guarizo",
+  position: "Engenheiro de Aplicação de Campo",
+  description: "Engenheiro de Aplicações Graduado em Engenharia Elétrica pela Universidade Federal de Itajubá, atuou por mais de 10 anos no desenvolvimento de conversores AC/DC para aplicações da área médica, que requerem um equilíbrio preciso entre custo e atendimento às normas. Desde 2023, atua como Engenheiro de Aplicações na BP&M, realizando suporte no desenvolvimento e testes de bancada, com ênfase no portfólio da Power Integrations e outros fabricantes/itens tipicamente utilizados em projetos AC/DC.",
+  image: guarizo,
+  linkedinUrl: "https://www.linkedin.com/in/michael-felipe-guarizo-813011143"
+},
+{
+  id: 21,
+  name: "André Oliveira",
+  position: "Engenheiro de Projeto de Sistemas",
+  description: "André Oliveira possui graduação em Engenharia Elétrica pela UNESP e conta com mais de 18 anos de experiência na Renesas. Como especialista em desenvolvimento de firmware, André aprimorou suas habilidades trabalhando com líderes do setor como Renesas, Freescale e Microchip. Sua extensa expertise e dedicação o tornam um profissional valioso no campo de sistemas embarcados.",
+  image: oliveira,
+  linkedinUrl: "https://www.linkedin.com/in/andr%C3%A9-oliveira-39589514/"
+},
+{
+  id: 22,
+  name: "Huéliquis Fernandes",
+  position: "Gerente de Desenvolvimento de Negócios",
+  description: "Huéliquis Fernandes é gerente de desenvolvimento de negócios na Alliance Rep. Nos últimos 25 anos trabalhou para a Motorola/Freescale, ST Microelectronics e Renesas, adquirindo experiência sobre produtos semicondutores e suas diversas aplicações.",
+  image: hueliquis,
+  linkedinUrl: "https://www.linkedin.com/in/hueliquis"
+},
+{
+  id: 23,
+  name: "Michael Sparhawk",
+  position: "Diretor de Vendas",
+  description: "Com 25 anos de experiência em vendas e marketing de componentes passivos, tenho sólida experiência tanto na distribuição quanto na fabricação. Em 2011, minha equipe lançou a presença da Viking Tech na América do Norte e do Sul. Tem sido uma jornada empolgante contribuir para uma empresa reconhecida por sua expertise em componentes passivos de precisão!",
+  image: sparhawk,
+  linkedinUrl: "https://www.linkedin.com/in/michaelsparhawk/"
 },
 
 ];

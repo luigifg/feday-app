@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import api from "../../Axios";
+import api from "../../constants/Axios";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { future, fbg } from "../../assets";
 import FieldSignUp from "../../Components/design/FieldSignUp";
