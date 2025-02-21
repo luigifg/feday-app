@@ -77,7 +77,7 @@ export default defineConfig({
 
   // 🚀 Evita otimizações erradas no ambiente de desenvolvimento
   optimizeDeps: {
-    include: ["react", "react-dom", "framer-motion"],
+    include: ["react", "react-dom", "framer-motion", "@emotion/react", "@emotion/styled"],
     force: true, // Força Vite a reanalisar dependências
   },
 
