@@ -11,24 +11,22 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     cssCodeSplit: true,
     reportCompressedSize: false,
-    sourcemap: true, // Ajuda na depuração no Vercel
+    sourcemap: true,
 
-    // 🚀 Evita minificação agressiva no Vercel
     minify: "terser",
     terserOptions: {
       compress: {
         drop_console: true,
         drop_debugger: true,
-        keep_fnames: true, // Mantém nomes de funções para evitar erros
-        keep_classnames: true, // Mantém nomes de classes
+        keep_fnames: true,
+        keep_classnames: true,
       },
       mangle: {
-        keep_fnames: true, // Evita renomeação de funções que pode quebrar no Vercel
+        keep_fnames: true,
         keep_classnames: true,
       },
     },
 
-    // 🚀 Ajuste do Rollup para evitar importações circulares e problemas no `vendor.js`
     rollupOptions: {
       output: {
         manualChunks: (id) => {
@@ -52,20 +50,17 @@ export default defineConfig({
         },
       },
       treeshake: {
-        moduleSideEffects: "no-external", // Mantém dependências necessárias
+        moduleSideEffects: false, // Evita remoção de código necessário
       },
     },
   },
-
-  // 🚀 Garante que SVGs sejam processados corretamente
-  assetsInclude: ["**/*.svg"],
 
   plugins: [
     react(),
     svgr(),
     compression({
-      algorithm: "gzip",
-      ext: ".gz",
+      algorithm: "brotliCompress", // Brotli é melhor que gzip
+      ext: ".br",
       threshold: 10240,
       deleteOriginFile: false,
     }),
@@ -76,27 +71,17 @@ export default defineConfig({
     }),
   ],
 
-  // 🚀 Evita otimizações erradas no ambiente de desenvolvimento
   optimizeDeps: {
-    include: [
-      "react",
-      "react-dom",
-      "framer-motion",
-      "@emotion/react",
-      "@emotion/styled"
-    ],
-    force: true, // Força Vite a reanalisar dependências
+    include: ["react", "react-dom", "framer-motion", "@emotion/react", "@emotion/styled"],
   },
 
-  // 🚀 Configuração do servidor para rodar localmente antes do deploy na Vercel
   server: {
     hmr: true,
     cors: true,
     compress: true,
   },
 
-  // 🚀 Garante que o Vercel use o formato correto
   esbuild: {
-    target: "esnext",
+    target: "es2020", // Melhor compatibilidade
   },
 });
