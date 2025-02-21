@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { curve } from "../../assets";
 import bg1 from "../../assets/logos/bg1.svg";
@@ -11,7 +11,7 @@ import Button from "../../Components/design/Button";
 import Section from "../../Components/Section";
 import CompanyLogos from "./CompanyLogos";
 
-// Pré-definição dos conteúdos do slide para evitar recriações
+// Pré-definição dos conteúdos do slide usando useMemo
 const slideContent = [
   {
     id: 1,
@@ -35,7 +35,7 @@ const slideContent = [
   },
 ];
 
-// Funções de animação otimizadas
+// Animações memoizadas
 const animations = {
   fadeInUp: {
     hidden: { opacity: 0, y: 20 },
@@ -85,80 +85,78 @@ const Hero = () => {
   const [backgroundsLoaded, setBackgroundsLoaded] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(0);
-  
-  // Ref para o scroll passivo
   const heroRef = useRef(null);
+  const timeoutRef = useRef(null);
+  const intervalRef = useRef(null);
 
-  // Otimização do carregamento de imagens
-  useEffect(() => {
-    const loadImages = async () => {
+  // Pré-carregamento de imagens otimizado
+  const preloadImages = useMemo(() => {
+    return async () => {
       try {
-        // Carrega backgrounds primeiro
-        const bgPromises = [bg1, bg2].map(
-          (src) =>
-            new Promise((resolve, reject) => {
-              const img = new Image();
-              img.src = src;
-              img.onload = resolve;
-              img.onerror = reject;
-            })
-        );
+        const imageUrls = [bg1, bg2, ...slideContent.flatMap(slide => [slide.logo, slide.mobileImage])];
+        const loadImage = (src) => new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = src;
+          img.onload = resolve;
+          img.onerror = reject;
+        });
 
-        await Promise.all(bgPromises);
+        // Carrega backgrounds primeiro
+        await Promise.all([bg1, bg2].map(loadImage));
         setBackgroundsLoaded(true);
 
-        // Carrega imagens do slide em segundo plano
-        const slideImages = slideContent.flatMap((slide) => [
-          slide.logo,
-          slide.mobileImage,
-        ]);
-
-        await Promise.all(
-          slideImages.map(
-            (src) =>
-              new Promise((resolve) => {
-                const img = new Image();
-                img.src = src;
-                img.onload = resolve;
-              })
-          )
-        );
+        // Carrega as imagens dos slides em segundo plano
+        await Promise.all(imageUrls.map(loadImage));
       } catch (error) {
         console.error("Erro ao carregar imagens:", error);
       }
     };
-
-    loadImages();
   }, []);
 
-  // Detector de mobile otimizado com debounce
   useEffect(() => {
-    let timeoutId;
+    preloadImages();
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [preloadImages]);
+
+  // Detector de mobile com debounce otimizado
+  useEffect(() => {
     const handleResize = () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeoutRef.current = setTimeout(() => {
         setIsMobile(window.innerWidth <= 768);
       }, 150);
     };
 
     handleResize();
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize, { passive: true });
 
     return () => {
-      clearTimeout(timeoutId);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       window.removeEventListener("resize", handleResize);
     };
   }, []);
 
   // Slider automático otimizado
   useEffect(() => {
-    const intervalId = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       setDirection(1);
       setCurrentSlide((prev) => (prev + 1) % slideContent.length);
     }, 7000);
 
-    return () => clearInterval(intervalId);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, []);
+
+  // Componente de loading memoizado
+  const LoadingSpinner = useMemo(() => (
+    <div className="absolute inset-0 flex items-center justify-center bg-white z-50">
+      <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-500"></div>
+    </div>
+  ), []);
 
   return (
     <Section 
@@ -167,13 +165,9 @@ const Hero = () => {
       ref={heroRef}
     >
       {/* Loading State */}
-      {!backgroundsLoaded && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white z-50">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-500"></div>
-        </div>
-      )}
+      {!backgroundsLoaded && LoadingSpinner}
 
-      {/* Backgrounds com dimensões explícitas */}
+      {/* Backgrounds com lazy loading */}
       <div className="absolute inset-0 w-full h-full bg-white">
         <motion.div
           initial={{ opacity: 0 }}
@@ -181,17 +175,17 @@ const Hero = () => {
           transition={{ duration: 0.3 }}
           className="relative w-full h-full"
         >
-          <div
-            className="absolute top-0 h-[51%] w-full bg-cover bg-bottom bg-no-repeat"
-            style={{ backgroundImage: `url(${bg1})` }}
-            role="img"
-            aria-label="Background superior"
+          <img
+            src={bg1}
+            className="absolute top-0 h-[51%] w-full object-cover object-bottom"
+            loading="lazy"
+            alt="Background superior"
           />
-          <div
-            className="absolute bottom-0 h-[51%] w-full bg-cover bg-top bg-no-repeat"
-            style={{ backgroundImage: `url(${bg2})` }}
-            role="img"
-            aria-label="Background inferior"
+          <img
+            src={bg2}
+            className="absolute bottom-0 h-[51%] w-full object-cover object-top"
+            loading="lazy"
+            alt="Background inferior"
           />
         </motion.div>
       </div>
@@ -220,7 +214,7 @@ const Hero = () => {
                 }}
                 className="w-full flex flex-col items-center"
               >
-                {/* Logo com dimensões explícitas */}
+                {/* Logo com lazy loading */}
                 <motion.div
                   className="h-[430px] md:h-[350px] lg:h-[450px] flex items-center justify-center"
                   variants={animations.fadeInUp}
@@ -235,7 +229,7 @@ const Hero = () => {
                         ? ""
                         : "h-[179px] sm:h-[100px] md:h-[300px] lg:h-[440px]"
                     }`}
-                    loading="eager"
+                    loading="lazy"
                   />
 
                   <img
@@ -244,11 +238,11 @@ const Hero = () => {
                     width={375}
                     height={450}
                     className="block sm:hidden mt-[90px] h-full w-full object-cover transition-all duration-700 ease-out"
-                    loading="eager"
+                    loading="lazy"
                   />
                 </motion.div>
 
-                {/* Conteúdo de texto */}
+                {/* Conteúdo de texto otimizado */}
                 <div className="flex flex-col items-center mt-[2.5rem] w-full space-y-15">
                   <motion.div variants={animations.fadeInUp}>
                     <div className="mt-5 md:mt-10 text-center">
@@ -264,7 +258,7 @@ const Hero = () => {
                           height={28}
                           alt=""
                           aria-hidden="true"
-                          loading="eager"
+                          loading="lazy"
                         />
                       </span>
                     </div>
@@ -290,7 +284,7 @@ const Hero = () => {
           </motion.div>
         </div>
 
-        {/* Logos das empresas */}
+        {/* Logos das empresas com lazy loading */}
         <div className="container mt-15">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
