@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import compression from "vite-plugin-compression";
 import { visualizer } from "rollup-plugin-visualizer";
-import svgr from "vite-plugin-svgr"; // Plugin para suportar importação de SVGs como componentes
+import svgr from "vite-plugin-svgr"; // Suporte para SVG como componentes
 
 export default defineConfig({
   build: {
@@ -11,24 +11,24 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     cssCodeSplit: true,
     reportCompressedSize: false,
-    sourcemap: false,
+    sourcemap: true, // Ajuda na depuração no Vercel
 
-    // 🚀 Ajuste da minificação para evitar erros
+    // 🚀 Evita minificação agressiva no Vercel
     minify: "terser",
     terserOptions: {
       compress: {
         drop_console: true,
         drop_debugger: true,
-        keep_fnames: true, // Mantém os nomes das funções
-        keep_classnames: true, // Mantém os nomes das classes
+        keep_fnames: true, // Mantém nomes de funções para evitar erros
+        keep_classnames: true, // Mantém nomes de classes
       },
       mangle: {
-        keep_fnames: true, // Evita renomeação de funções
+        keep_fnames: true, // Evita renomeação de funções que pode quebrar no Vercel
         keep_classnames: true,
       },
     },
 
-    // 🚀 Ajuste do Rollup para evitar importações circulares
+    // 🚀 Ajuste do Rollup para evitar importações circulares e problemas no `vendor.js`
     rollupOptions: {
       output: {
         manualChunks: (id) => {
@@ -51,12 +51,12 @@ export default defineConfig({
         },
       },
       treeshake: {
-        moduleSideEffects: "no-external", // Mantém efeitos colaterais necessários
+        moduleSideEffects: "no-external", // Mantém dependências necessárias
       },
     },
   },
 
-  // 🚀 Ajuste para evitar conflitos com arquivos comprimidos
+  // 🚀 Garante que SVGs sejam processados corretamente
   assetsInclude: ["**/*.svg"],
 
   plugins: [
@@ -75,16 +75,21 @@ export default defineConfig({
     }),
   ],
 
-  // 🚀 Evita otimizações erradas no desenvolvimento
+  // 🚀 Evita otimizações erradas no ambiente de desenvolvimento
   optimizeDeps: {
     include: ["react", "react-dom", "framer-motion"],
-    force: true, // Garante que o Vite reanalise dependências
+    force: true, // Força Vite a reanalisar dependências
   },
 
-  // 🚀 Ajustes do servidor para garantir que os arquivos Gzip sejam servidos corretamente
+  // 🚀 Configuração do servidor para rodar localmente antes do deploy na Vercel
   server: {
     hmr: true,
     cors: true,
     compress: true,
+  },
+
+  // 🚀 Garante que o Vercel use o formato correto
+  esbuild: {
+    target: "esnext",
   },
 });
