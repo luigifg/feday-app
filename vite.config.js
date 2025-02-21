@@ -35,6 +35,7 @@ export default defineConfig({
           if (id.includes("node_modules")) {
             if (id.includes("react")) return "react";
             if (id.includes("framer-motion")) return "animations";
+            if (id.includes("@emotion/react") || id.includes("@emotion/styled")) return "emotion";
             return "vendor";
           }
         },
@@ -77,7 +78,13 @@ export default defineConfig({
 
   // 🚀 Evita otimizações erradas no ambiente de desenvolvimento
   optimizeDeps: {
-    include: ["react", "react-dom", "framer-motion", "@emotion/react", "@emotion/styled"],
+    include: [
+      "react",
+      "react-dom",
+      "framer-motion",
+      "@emotion/react",
+      "@emotion/styled"
+    ],
     force: true, // Força Vite a reanalisar dependências
   },
 
