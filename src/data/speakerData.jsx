@@ -21,6 +21,7 @@ import guarizo from "../assets/speakersBanner/guarizo.png";
 import oliveira from "../assets/speakersBanner/oliveira.png";
 import hueliquis from "../assets/speakersBanner/hueliquis.png";
 import sparhawk from "../assets/speakersBanner/sparhawk.png";
+import eduardo from "../assets/speakersBanner/eduardo.png";
 
 export const speakers = [
  {
@@ -206,6 +207,14 @@ export const speakers = [
   description: "Com 25 anos de experiência em vendas e marketing de componentes passivos, tenho sólida experiência tanto na distribuição quanto na fabricação. Em 2011, minha equipe lançou a presença da Viking Tech na América do Norte e do Sul. Tem sido uma jornada empolgante contribuir para uma empresa reconhecida por sua expertise em componentes passivos de precisão!",
   image: sparhawk,
   linkedinUrl: "https://www.linkedin.com/in/michaelsparhawk/"
+},
+{
+  id: 24,
+  name: "Eduardo Conrad Jr.",
+  position: "Engenheiro de Projetos Embarcados",
+  description: "Mestre em Microeletrônica e Engenheiro Eletrônico pela UFRGS, formação CI Brasil/MCTI para projetos Mistos.  Atuando a mais de 11 anos no mercado de semicondutores como engenheiro de vendas e especialista em sistemas.  Extensa experiencia em projetos mistos e analógicos, suportando clientes da América do Sul nas áreas IoT, analógicos e MCUs.",
+  image: eduardo,
+  linkedinUrl: "https://www.linkedin.com/in/eduardo-conrad-junior/"
 },
 
 ];
