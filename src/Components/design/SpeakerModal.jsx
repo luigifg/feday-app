@@ -1,8 +1,7 @@
-// SpeakerModal.jsx
 import React from "react";
 import { ChevronLeft, ChevronRight, Linkedin, X } from "lucide-react";
 import linkedin from "../../assets/socials/linkedin.png";
-import { speakers } from "../../data/speakerData"; // Importando o array de speakers
+import { speakers } from "../../data/speakerData";
 
 const SpeakerModal = ({
   isOpen,
@@ -11,13 +10,13 @@ const SpeakerModal = ({
   onPrevSlide,
   onNextSlide,
   slides,
-  speakerId // Nova prop para buscar pelo ID
+  speakerId,
 }) => {
   if (!isOpen) return null;
 
-  // Se speakerId estiver presente, busca o speaker pelo ID
-  const speakerData = speakerId ? speakers.find(s => s.id === speakerId) : null;
-  // Se tiver speakerId, usa apenas esse speaker, senão usa os slides normalmente
+  const speakerData = speakerId
+    ? speakers.find((s) => s.id === speakerId)
+    : null;
   const currentSlides = speakerId ? [speakerData] : slides;
 
   return (
@@ -25,7 +24,6 @@ const SpeakerModal = ({
       className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-5"
       onClick={onClose}
     >
-      {/* Botões de navegação apenas se não tiver speakerId */}
       {!speakerId && (
         <>
           {/* Botão de navegação esquerdo */}
@@ -41,9 +39,11 @@ const SpeakerModal = ({
               flex items-center justify-center mx-4"
             aria-label="Previous slide"
           >
-            <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1 
+            <div
+              className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1 
               group-hover:from-green-400 group-hover:to-green-600
-              group-active:from-green-500 group-active:to-green-700">
+              group-active:from-green-500 group-active:to-green-700"
+            >
               <div className="bg-white rounded-full p-1">
                 <ChevronLeft className="w-8 h-8 text-gray-600" />
               </div>
@@ -63,9 +63,11 @@ const SpeakerModal = ({
               flex items-center justify-center mx-4"
             aria-label="Next slide"
           >
-            <div className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1
+            <div
+              className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1
               group-hover:from-green-400 group-hover:to-green-600
-              group-active:from-green-500 group-active:to-green-700">
+              group-active:from-green-500 group-active:to-green-700"
+            >
               <div className="bg-white rounded-full p-1">
                 <ChevronRight className="w-8 h-8 text-gray-600" />
               </div>
@@ -85,26 +87,26 @@ const SpeakerModal = ({
         <X className="w-6 h-6 text-gray-600" />
       </button>
 
-      {/* Modal com scroll */}
+      {/* Modal com estrutura responsiva */}
       <div
-        className="bg-white rounded-xl bg-gradient-to-r from-green-300 to-green-500 p-1 shadow-2xl w-5/6 max-h-[80vh] 2xl:max-h-[90vh] grid grid-cols-3 relative"
+        className="bg-white rounded-xl bg-gradient-to-r from-green-300 to-green-500 p-1 shadow-2xl w-5/6 max-h-[85vh] 2xl:max-h-[90vh] grid grid-cols-1 md:grid-cols-3 relative"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Coluna da imagem */}
-        <div className="col-span-2 h-[450px] 2xl:h-[600px]">
+        {/* Coluna da imagem - responsiva */}
+        <div className="col-span-1 md:col-span-2 h-[200px] md:h-[450px] 2xl:h-[600px]">
           <img
             src={currentSlides[speakerId ? 0 : currentSlide].image}
             alt={currentSlides[speakerId ? 0 : currentSlide].title}
-            className="w-full h-full object-cover rounded-l-xl"
+            className="w-full h-full object-cover md:rounded-l-xl rounded-t-xl md:rounded-tr-none"
             loading="lazy"
           />
         </div>
 
-        {/* Coluna do conteúdo com scroll */}
-        <div className="col-span-1 bg-white rounded-r-xl h-[450px] 2xl:h-[600px] flex flex-col">
+        {/* Coluna do conteúdo com scroll - responsiva */}
+        <div className="col-span-1 bg-white md:rounded-r-xl rounded-b-xl md:rounded-bl-none flex flex-col max-h-[50vh] xl:max-h-[85vh] md:h-[450px]  2xl:h-[600px]">
           {/* Container fixo para o cabeçalho */}
-          <div className="p-6 border-b">
-            <div className="flex items-center gap-4 mb-6">
+          <div className="p-4 md:p-6 border-b">
+            <div className="flex items-center gap-4 mb-4 md:mb-6">
               <a
                 href={currentSlides[speakerId ? 0 : currentSlide].linkedinUrl}
                 target="_blank"
@@ -114,22 +116,22 @@ const SpeakerModal = ({
                 <img
                   src={linkedin}
                   alt="LinkedIn"
-                  className="w-6 h-6 brightness-100"
+                  className="w-5 h-5 md:w-6 md:h-6 brightness-100"
                 />
               </a>
-              <h2 className="text-2xl 2xl:text-3xl font-bold text-gray-800">
+              <h2 className="text-xl md:text-2xl 2xl:text-3xl font-bold text-gray-800">
                 {currentSlides[speakerId ? 0 : currentSlide].name}
               </h2>
             </div>
 
-            <h3 className="text-lg 2xl:text-xl font-medium text-green-700">
+            <h3 className="text-base md:text-lg 2xl:text-xl font-medium text-green-700">
               {currentSlides[speakerId ? 0 : currentSlide].position}
             </h3>
           </div>
 
           {/* Container com scroll para o conteúdo */}
-          <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-            <p className="text-base text-gray-600 leading-relaxed">
+          <div className="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar">
+            <p className="text-sm md:text-base text-gray-600 leading-relaxed">
               {currentSlides[speakerId ? 0 : currentSlide].description}
             </p>
           </div>

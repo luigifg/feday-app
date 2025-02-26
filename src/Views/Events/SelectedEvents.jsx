@@ -4,6 +4,7 @@ import EventItem from "../../Components/design/EventItems";
 import { horariosEvento, events } from "../../data/EventsData";
 import api from "../../constants/Axios";
 import { useEvents } from './EventsContext';
+import SpeakerModal from "../../Components/design/SpeakerModal.jsx";
 
 const SelectedEvents = () => {
   const [userData, setUserData] = useState(null);
@@ -12,6 +13,8 @@ const SelectedEvents = () => {
   const [pendingDeletions, setPendingDeletions] = useState(new Set());
   const [pendingChanges, setPendingChanges] = useState(new Set());
   const { refreshTrigger, refreshEvents } = useEvents();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedSpeaker, setSelectedSpeaker] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -46,9 +49,11 @@ const SelectedEvents = () => {
             palestrante: participation.speaker,
             room: participation.room,
             dbId: participation.id,
-            description: eventDetails.description,
+            position: eventDetails.position,
             image: eventDetails.image || "",
             companyLogo: eventDetails.companyLogo || "",
+            description: eventDetails.description || "",
+            linkedinUrl: eventDetails.linkedinUrl || "#",
           };
         }
       });
@@ -60,12 +65,106 @@ const SelectedEvents = () => {
     }
   };
 
-  // Marca evento para exclusão
-  const markForDeletion = (event) => {
-    setPendingDeletions(prev => new Set([...prev, event.dbId]));
-    setPendingChanges(prev => new Set([...prev, event.hour]));
+  // Função para abrir o modal do palestrante
+  const openEventModal = (event) => {
+    setSelectedSpeaker({
+      id: event.eventId,
+      name: event.palestrante,
+      position: event.title,
+      description: event.description,
+      image: event.image,
+      linkedinUrl: event.linkedinUrl || "#",
+    });
+    setModalOpen(true);
   };
 
+  // Função para fechar o modal
+  const closeEventModal = () => {
+    setModalOpen(false);
+    setSelectedSpeaker(null);
+  };
+
+  // Remove um evento individualmente
+  const removeEventIndividually = async (event) => {
+    if (!userData?.id) return;
+    
+    try {
+      // Remove evento do banco de dados
+      await api.delete(`/participation/${event.dbId}`);
+      
+      // Atualiza a interface removendo o evento
+      setSelectedEvents(prev => {
+        const newEvents = { ...prev };
+        delete newEvents[event.hour];
+        return newEvents;
+      });
+      
+      setStagedEvents(prev => {
+        const newEvents = { ...prev };
+        delete newEvents[event.hour];
+        return newEvents;
+      });
+      
+      // Atualiza pendingDeletions e pendingChanges
+      setPendingDeletions(prev => {
+        const newDeletions = new Set(prev);
+        newDeletions.delete(event.dbId);
+        return newDeletions;
+      });
+      
+      setPendingChanges(prev => {
+        const newChanges = new Set(prev);
+        newChanges.delete(event.hour);
+        return newChanges;
+      });
+      
+      // Dispara a atualização global
+      refreshEvents();
+      
+      alert("Evento removido com sucesso!");
+    } catch (error) {
+      console.error("Erro ao remover evento:", error);
+      alert("Erro ao remover evento. Por favor, tente novamente.");
+    }
+  };
+
+  // Marca evento para exclusão (não usado mais diretamente, mantido para compatibilidade)
+  const markForDeletion = (event) => {
+    setPendingDeletions(prev => {
+      const newDeletions = new Set(prev);
+      if (newDeletions.has(event.dbId)) {
+        newDeletions.delete(event.dbId);
+      } else {
+        newDeletions.add(event.dbId);
+      }
+      return newDeletions;
+    });
+    
+    // Atualiza pendingChanges
+    setPendingChanges(prev => {
+      const newChanges = new Set(prev);
+      if (newChanges.has(event.hour)) {
+        // Se já está marcado, verificamos se devemos remover
+        // (isto é, se não há mais nenhum evento marcado para deleção)
+        const newDeletions = new Set(pendingDeletions);
+        if (newDeletions.has(event.dbId)) {
+          newDeletions.delete(event.dbId);
+        } else {
+          newDeletions.add(event.dbId);
+        }
+        
+        // Se após a mudança não houver elementos, removemos do pendingChanges
+        if (newDeletions.size === 0) {
+          newChanges.delete(event.hour);
+        }
+      } else {
+        // Se não está marcado, adicionamos
+        newChanges.add(event.hour);
+      }
+      return newChanges;
+    });
+  };
+  
   const handleSaveChanges = async () => {
     if (!userData?.id) return;
 
@@ -87,12 +186,6 @@ const SelectedEvents = () => {
     }
   };
 
-  const handleCancelChanges = () => {
-    setStagedEvents(selectedEvents);
-    setPendingDeletions(new Set());
-    setPendingChanges(new Set());
-  };
-
   return (
     <Section
       className="px-[1rem] md:px-[8rem] pt-[3rem] pb-[4rem]"
@@ -100,14 +193,22 @@ const SelectedEvents = () => {
       customPaddings
       id="eventos"
     >
-      <h1
-        className="text-4xl font-extrabold text-center mb-10 text-gray-800"
+      <SpeakerModal
+        isOpen={modalOpen}
+        onClose={closeEventModal}
+        currentSlide={0}
+        onPrevSlide={() => {}}
+        onNextSlide={() => {}}
+        slides={selectedSpeaker ? [selectedSpeaker] : []}
+        speakerId={selectedSpeaker?.id}
+      />
+      
+      <h1 className="text-4xl font-extrabold text-center mb-10 text-gray-800"
         style={{
           background: "linear-gradient(to right, #A8E6CF, #56B87B, #8FC93A)",
           WebkitBackgroundClip: "text",
           color: "transparent",
-        }}
-      >
+        }}>
         Eventos Selecionados
       </h1>
 
@@ -129,35 +230,26 @@ const SelectedEvents = () => {
                     event={event}
                     isSelected={true}
                     onSelect={() => {}}
-                    onRemove={() => markForDeletion(event)}
-                    showRemoveButton={true}
+                    onRemove={() => {}}
+                    showRemoveButton={false}
                     isMarkedForDeletion={isMarkedForDeletion}
+                    onOpenModal={() => openEventModal(event)}
+                    isSaved={true}
+                    onRemoveConfirm={() => removeEventIndividually(event)}
+                    onRemoveCancel={() => {}}
                   />
-                  {isMarkedForDeletion && (
-                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 whitespace-nowrap">
-                      <span className="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                        Marcado para Exclusão
-                      </span>
-                    </div>
-                  )}
                 </div>
               );
             })}
           </div>
 
-          {pendingChanges.size > 0 && (
+          {pendingDeletions.size > 0 && (
             <div className="flex justify-center gap-4 mt-6">
               <button
                 onClick={handleSaveChanges}
-                className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
+                className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md border-2 border-red-600"
               >
-                Remover Eventos ({pendingChanges.size})
-              </button>
-              <button
-                onClick={handleCancelChanges}
-                className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
-              >
-                Cancelar
+                Confirmar Remoção ({pendingDeletions.size})
               </button>
             </div>
           )}

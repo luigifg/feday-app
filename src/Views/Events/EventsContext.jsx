@@ -12,10 +12,39 @@ export const useEvents = () => {
 
 export const EventsProvider = ({ children }) => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [preSelectedEvents, setPreSelectedEvents] = useState({}); // Para controlar eventos pré-selecionados
+  const [preSelectedEvents, setPreSelectedEvents] = useState({});
+  const [selectedEventIds, setSelectedEventIds] = useState(new Set());
 
   const refreshEvents = () => {
     setRefreshTrigger(prev => prev + 1);
+  };
+
+  const selectEvent = (eventId, hour) => {
+    setPreSelectedEvents(prev => ({
+      ...prev,
+      [hour]: eventId
+    }));
+    setSelectedEventIds(prev => new Set([...prev, eventId]));
+  };
+
+  const unselectEvent = (eventId, hour) => {
+    setPreSelectedEvents(prev => {
+      const newEvents = { ...prev };
+      if (newEvents[hour]) {
+        delete newEvents[hour];
+      }
+      return newEvents;
+    });
+    setSelectedEventIds(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(eventId);
+      return newSet;
+    });
+  };
+
+  const clearSelections = () => {
+    setPreSelectedEvents({});
+    setSelectedEventIds(new Set());
   };
 
   return (
@@ -23,7 +52,11 @@ export const EventsProvider = ({ children }) => {
       refreshTrigger,
       refreshEvents,
       preSelectedEvents,
-      setPreSelectedEvents
+      setPreSelectedEvents,
+      selectedEventIds,
+      selectEvent,
+      unselectEvent,
+      clearSelections
     }}>
       {children}
     </EventsContext.Provider>

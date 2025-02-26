@@ -1,6 +1,8 @@
 import micrologo from "../assets/micrologo.jpg";
 import nxplogo from "../assets/nxplogo.jpg";
 import ramos from "../assets/ramos.png";
+import horacio from "../assets/speakers/horacio.jpeg";
+
 
 export const horariosEvento = [
   { id: "1", label: "09:00 às 10:00" },
@@ -16,29 +18,29 @@ export const events = [
   {
     id: 1,
     title: "MCX W Series: Plataforma Segura e Escalável para Conectividade Sem Fio",
-    description: "Field Application Engineer - MCUs",
+    position: "Field Application Engineer - MCUs",
     palestrante: "Horacio Garcia",
     hour: "1",
     room: "Sao Lourenco",
     link: "#",
-    image: ramos,
+    image: horacio,
     companyLogo: nxplogo,
   },
   {
     id: 2,
-    title: "Evento 2",
-    description: "Descrição do evento 2",
+    title: "MCX W Series: Plataforma Segura e Escalável para Conectividade Sem Fio",
+    position: "Descrição do evento 2",
     palestrante: "José Pereira",
     hour: "1",
     room: "Sao Lourenco",
     link: "#",
-    image: ramos,
+    image: horacio,
     companyLogo: micrologo,
   },
   {
     id: 3,
-    title: "Evento 3",
-    description: "Descrição do evento 3",
+    title: "MCX W Series: Plataforma Segura e Escalável para Conectividade Sem Fio",
+    position: "Descrição do evento 3",
     palestrante: "José Pereira",
     hour: "1",
     room: "Sao Lourenco",
@@ -48,8 +50,8 @@ export const events = [
   },
   {
     id: 4,
-    title: "Evento 4",
-    description: "Descrição do evento 4",
+    title: "MCX W Series: Plataforma Segura e Escalável para Conectividade Sem Fio",
+    position: "Descrição do evento 4",
     palestrante: "José Pereira",
     hour: "1",
     room: "Barigui",
@@ -61,8 +63,8 @@ export const events = [
   // Eventos para o horário das 10h10 às 11h10
   {
     id: 5,
-    title: "Evento 5",
-    description: "Descrição do evento 5",
+    title: "MCX W Series: Plataforma Segura e Escalável para Conectividade Sem Fio",
+    position: "Descrição do evento 5",
     palestrante: "José Pereira",
     hour: "2",
     room: "Barigui",
@@ -72,8 +74,8 @@ export const events = [
   },
   {
     id: 6,
-    title: "Evento 6",
-    description: "Descrição do evento 6",
+    title: "MCX W Series: Plataforma Segura e Escalável para Conectividade Sem Fio",
+    position: "Descrição do evento 6",
     palestrante: "José Pereira",
     hour: "2",
     room: "Bacacheri",
@@ -84,7 +86,7 @@ export const events = [
   {
     id: 7,
     title: "Evento 7",
-    description: "Descrição do evento 7",
+    position: "Descrição do evento 7",
     palestrante: "José Pereira",
     hour: "2",
     room: "Tangua",
@@ -95,7 +97,7 @@ export const events = [
   {
     id: 8,
     title: "Evento 8",
-    description: "Descrição do evento 8",
+    position: "Descrição do evento 8",
     palestrante: "José Pereira",
     hour: "2",
     room: "Tingui",
@@ -108,7 +110,7 @@ export const events = [
   {
     id: 9,
     title: "Evento 9",
-    description: "Descrição do evento 9",
+    position: "Descrição do evento 9",
     palestrante: "José Pereira",
     hour: "3",
     room: "Sao Lourenco",
@@ -119,7 +121,7 @@ export const events = [
   {
     id: 10,
     title: "Evento 10",
-    description: "Descrição do evento 10",
+    position: "Descrição do evento 10",
     palestrante: "José Pereira",
     hour: "3",
     room: "Barigui",
@@ -130,7 +132,7 @@ export const events = [
   {
     id: 11,
     title: "Evento 11",
-    description: "Descrição do evento 11",
+    position: "Descrição do evento 11",
     palestrante: "José Pereira",
     hour: "3",
     room: "Bacacheri",
@@ -141,7 +143,7 @@ export const events = [
   {
     id: 12,
     title: "Evento 12",
-    description: "Descrição do evento 12",
+    position: "Descrição do evento 12",
     palestrante: "José Pereira",
     hour: "3",
     room: "Tangua",
@@ -154,7 +156,7 @@ export const events = [
   {
     id: 13,
     title: "Evento 13",
-    description: "Descrição do evento 13",
+    position: "Descrição do evento 13",
     palestrante: "José Pereira",
     hour: "4",
     room: "Tangua",
@@ -165,7 +167,7 @@ export const events = [
   {
     id: 14,
     title: "Evento 14",
-    description: "Descrição do evento 14",
+    position: "Descrição do evento 14",
     palestrante: "José Pereira",
     hour: "4",
     room: "Tingui",
@@ -176,7 +178,7 @@ export const events = [
   {
     id: 15,
     title: "Evento 15",
-    description: "Descrição do evento 15",
+    position: "Descrição do evento 15",
     palestrante: "José Pereira",
     hour: "4",
     room: "Sao Lourenco",
@@ -187,7 +189,7 @@ export const events = [
   {
     id: 16,
     title: "Evento 16",
-    description: "Descrição do evento 16",
+    position: "Descrição do evento 16",
     palestrante: "José Pereira",
     hour: "4",
     room: "Barigui",
@@ -200,7 +202,7 @@ export const events = [
   {
     id: 17,
     title: "Evento 17",
-    description: "Descrição do evento 17",
+    position: "Descrição do evento 17",
     palestrante: "José Pereira",
     hour: "5",
     room: "Tangua",
@@ -211,7 +213,7 @@ export const events = [
   {
     id: 18,
     title: "Evento 18",
-    description: "Descrição do evento 18",
+    position: "Descrição do evento 18",
     palestrante: "José Pereira",
     hour: "5",
     room: "Tingui",
@@ -222,7 +224,7 @@ export const events = [
   {
     id: 19,
     title: "Evento 19",
-    description: "Descrição do evento 19",
+    position: "Descrição do evento 19",
     palestrante: "José Pereira",
     hour: "5",
     room: "Sao Lourenco",
@@ -233,7 +235,7 @@ export const events = [
   {
     id: 20,
     title: "Evento 20",
-    description: "Descrição do evento 20",
+    position: "Descrição do evento 20",
     palestrante: "José Pereira",
     hour: "5",
     room: "Barigui",
@@ -246,7 +248,7 @@ export const events = [
   {
     id: 21,
     title: "Evento 21",
-    description: "Descrição do evento 21",
+    position: "Descrição do evento 21",
     palestrante: "José Pereira",
     hour: "6",
     room: "Tangua",
@@ -257,7 +259,7 @@ export const events = [
   {
     id: 22,
     title: "Evento 22",
-    description: "Descrição do evento 22",
+    position: "Descrição do evento 22",
     palestrante: "José Pereira",
     hour: "6",
     room: "Tingui",
@@ -268,7 +270,7 @@ export const events = [
   {
     id: 23,
     title: "Evento 23",
-    description: "Descrição do evento 23",
+    position: "Descrição do evento 23",
     palestrante: "José Pereira",
     hour: "6",
     room: "Sao Lourenco",
@@ -279,7 +281,7 @@ export const events = [
   {
     id: 24,
     title: "Evento 24",
-    description: "Descrição do evento 24",
+    position: "Descrição do evento 24",
     palestrante: "José Pereira",
     hour: "6",
     room: "Barigui",
@@ -290,7 +292,7 @@ export const events = [
   {
     id: 25,
     title: "Evento 25",
-    description: "Descrição do evento 24",
+    position: "Descrição do evento 24",
     palestrante: "José Pereira",
     hour: "6",
     room: "Barigui",

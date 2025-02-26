@@ -10,6 +10,7 @@ const RegistrationForm = () => {
     name: "",
     phone: "",
     email: "",
+    confirmEmail: "", // Novo campo para confirmar email
     company: "",
     position: "",
     password: "",
@@ -21,6 +22,7 @@ const RegistrationForm = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [emailError, setEmailError] = useState(""); // Estado para erros específicos de email
 
   const navigate = useNavigate();
 
@@ -36,13 +38,35 @@ const RegistrationForm = () => {
     return passwordRequirements.every((req) => req.test(password));
   };
 
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    
+    // Limpar mensagens de erro ao digitar
+    if (name === "email" || name === "confirmEmail") {
+      setEmailError("");
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validar formato do email
+    if (!validateEmail(formData.email)) {
+      setEmailError("Formato de e-mail inválido.");
+      return;
+    }
+    
+    // Validar confirmação de email
+    if (formData.email !== formData.confirmEmail) {
+      setEmailError("Os emails não coincidem!");
+      return;
+    }
 
     if (!validatePassword(formData.password)) {
       setErrorMessage(
@@ -57,7 +81,10 @@ const RegistrationForm = () => {
     }
 
     try {
-      const response = await api.post("/user", formData);
+      // Remover confirmEmail antes de enviar ao servidor
+      const { confirmEmail, ...dataToSubmit } = formData;
+      
+      const response = await api.post("/user", dataToSubmit);
       const loginResponse = await api.post("/login", {
         email: formData.email,
         password: formData.password,
@@ -74,6 +101,7 @@ const RegistrationForm = () => {
         name: "",
         phone: "",
         email: "",
+        confirmEmail: "",
         company: "",
         position: "",
         password: "",
@@ -82,6 +110,7 @@ const RegistrationForm = () => {
 
       setSuccessMessage("Cadastro realizado com sucesso!");
       setErrorMessage("");
+      setEmailError("");
     } catch (error) {
       setErrorMessage(
         error.response?.data?.errors?.[0] ||
@@ -148,6 +177,7 @@ const RegistrationForm = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
+                  required
                 />
                 <FieldSignUp
                   placeholder="Digite seu telefone"
@@ -155,15 +185,35 @@ const RegistrationForm = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
+                  required
                 />
               </div>
-              <FieldSignUp
-                placeholder="Digite seu email"
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-              />
+              
+              {/* Campo de email e confirmação de email */}
+              <div className="space-y-4">
+                <FieldSignUp
+                  placeholder="Digite seu email"
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+                <FieldSignUp
+                  placeholder="Confirme seu email"
+                  type="email"
+                  name="confirmEmail"
+                  value={formData.confirmEmail}
+                  onChange={handleChange}
+                  required
+                />
+                {emailError && (
+                  <div className="text-red-500 text-xs text-center">
+                    {emailError}
+                  </div>
+                )}
+              </div>
+              
               <div className="flex gap-4">
                 <FieldSignUp
                   placeholder="Digite sua empresa"
@@ -190,6 +240,7 @@ const RegistrationForm = () => {
                       value={formData.password}
                       onChange={handleChange}
                       onFocus={() => setIsPasswordFocused(true)}
+                      required
                     />
                     <button
                       type="button"
@@ -210,6 +261,7 @@ const RegistrationForm = () => {
                       name="confirmPassword"
                       value={formData.confirmPassword}
                       onChange={handleChange}
+                      required
                     />
                     <button
                       type="button"

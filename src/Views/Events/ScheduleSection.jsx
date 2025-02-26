@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import Section from "../../Components/Section";
 import EventItem from "../../Components/design/EventItems";
 import { horariosEvento, events } from "../../data/EventsData";
 import api from "../../constants/Axios";
-import { useEvents } from './EventsContext';
+import { useEvents } from "./EventsContext";
+import SpeakerModal from "../../Components/design/SpeakerModal.jsx";
 
 const ScheduleSection = () => {
   const [eventList] = useState(events);
@@ -11,11 +12,14 @@ const ScheduleSection = () => {
   const [userData, setUserData] = useState(null);
   const [selectedEvents, setSelectedEvents] = useState({});
   const [pendingChanges, setPendingChanges] = useState(new Set());
-  const { 
-    refreshTrigger, 
-    refreshEvents, 
-    preSelectedEvents, 
-    setPreSelectedEvents 
+  const [pendingDeletions, setPendingDeletions] = useState(new Set());
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedSpeaker, setSelectedSpeaker] = useState(null);
+  const {
+    refreshTrigger,
+    refreshEvents,
+    preSelectedEvents,
+    setPreSelectedEvents,
   } = useEvents();
 
   useEffect(() => {
@@ -40,10 +44,84 @@ const ScheduleSection = () => {
     }
   }, [refreshTrigger, userData]);
 
+  const openEventModal = (event) => {
+    setSelectedSpeaker({
+      id: event.id,
+      name: event.palestrante,
+      position: event.title,
+      description: event.description,
+      image: event.image,
+      linkedinUrl: event.linkedinUrl || "#",
+    });
+    setModalOpen(true);
+  };
+
+  // Função para fechar o modal
+  const closeEventModal = () => {
+    setModalOpen(false);
+    setSelectedSpeaker(null);
+  };
+
+  // Função para remover evento
+  const removeEvent = async (event) => {
+    if (!userData?.id) return;
+    
+    try {
+      // Remove evento do banco de dados
+      await api.delete(`/participation/${event.dbId}`);
+      
+      // Atualiza a interface removendo o evento
+      setSelectedEvents(prev => {
+        const newEvents = { ...prev };
+        delete newEvents[event.hour];
+        return newEvents;
+      });
+      
+      // Limpar pendingDeletions e pendingChanges
+      setPendingDeletions(prev => {
+        const newDeletions = new Set(prev);
+        newDeletions.delete(event.dbId);
+        return newDeletions;
+      });
+      
+      setPendingChanges(prev => {
+        const newChanges = new Set(prev);
+        newChanges.delete(event.hour);
+        return newChanges;
+      });
+      
+      // Disparar refresh global para atualizar "Meus Eventos"
+      refreshEvents();
+      
+      alert("Evento removido com sucesso!");
+    } catch (error) {
+      console.error("Erro ao remover evento:", error);
+      alert("Erro ao remover evento. Por favor, tente novamente.");
+    }
+  };
+
+  const markEventForDeletion = (event) => {
+    setPendingDeletions((prev) => {
+      const newDeletions = new Set(prev);
+      if (newDeletions.has(event.dbId)) {
+        newDeletions.delete(event.dbId);
+        setPendingChanges((prev) => {
+          const newChanges = new Set(prev);
+          newChanges.delete(event.hour);
+          return newChanges;
+        });
+      } else {
+        newDeletions.add(event.dbId);
+        setPendingChanges((prev) => new Set([...prev, event.hour]));
+      }
+      return newDeletions;
+    });
+  };
+
   const fetchUserEvents = async (userId) => {
     try {
       const participationsResponse = await api.get(`/participation`, {
-        params: { userId }
+        params: { userId },
       });
       const currentEvents = {};
       participationsResponse.data.data.forEach((participation) => {
@@ -60,6 +138,8 @@ const ScheduleSection = () => {
             description: eventDetails.description,
             image: eventDetails.image || "",
             companyLogo: eventDetails.companyLogo || "",
+            position: eventDetails.position || "",
+            linkedinUrl: eventDetails.linkedinUrl || "#",
           };
         }
       });
@@ -81,32 +161,74 @@ const ScheduleSection = () => {
     // Se o evento já está salvo, não permite alteração
     if (selectedEvents[event.hour]) return;
 
-    setPreSelectedEvents((prev) => {
-      const newEvents = { ...prev };
-      const currentEvent = prev[event.hour];
+    const eventDetails = events.find((e) => e.id === event.id);
+    const isCurrentlySelected =
+      preSelectedEvents[event.hour]?.eventId === event.id;
 
-      if (currentEvent?.eventId === event.id) {
-        // Se clicou no mesmo evento pré-selecionado, remove a seleção
+    if (isCurrentlySelected) {
+      // Se o evento já está selecionado, remove a seleção
+      setPreSelectedEvents((prev) => {
+        const newEvents = { ...prev };
         delete newEvents[event.hour];
-      } else {
-        // Adiciona ou substitui o evento pré-selecionado
-        const eventDetails = events.find((e) => e.id === event.id);
-        newEvents[event.hour] = {
+        return newEvents;
+      });
+      setPendingChanges((prev) => {
+        const newChanges = new Set(prev);
+        newChanges.delete(event.hour);
+        return newChanges;
+      });
+    } else {
+      // Se o evento não está selecionado, adiciona a seleção
+      setPreSelectedEvents((prev) => ({
+        ...prev,
+        [event.hour]: {
           ...event,
+          eventId: event.id,
           image: eventDetails?.image || "",
           companyLogo: eventDetails?.companyLogo || "",
-        };
-      }
-      
-      setPendingChanges(prev => new Set([...prev, event.hour]));
-      return newEvents;
-    });
+        },
+      }));
+      setPendingChanges((prev) => new Set([...prev, event.hour]));
+    }
   };
 
-  const handleSaveChanges = async () => {
+  const handleSaveChanges = async (event = null) => {
     if (!userData?.id) return;
 
     try {
+      // Se um evento específico foi passado, salvar apenas ele
+      if (event) {
+        const eventDetails = events.find((e) => e.id === event.id);
+        
+        await api.post("/participation", {
+          userId: userData.id,
+          scheduleId: event.hour,
+          eventId: event.id,
+          title: event.title,
+          speaker: event.palestrante,
+          room: event.room,
+        });
+
+        // Atualizar estados locais
+        setPreSelectedEvents((prev) => {
+          const newEvents = { ...prev };
+          delete newEvents[event.hour];
+          return newEvents;
+        });
+
+        setPendingChanges((prev) => {
+          const newChanges = new Set(prev);
+          newChanges.delete(event.hour);
+          return newChanges;
+        });
+
+        // Disparar refresh global para atualizar "Meus Eventos"
+        refreshEvents();
+        await fetchUserEvents(userData.id);
+        alert("Evento salvo com sucesso!");
+        return;
+      }
+
       // Handle new creations
       for (const hour of pendingChanges) {
         const event = preSelectedEvents[hour];
@@ -128,16 +250,30 @@ const ScheduleSection = () => {
       setPreSelectedEvents({});
       refreshEvents();
       alert("Alterações salvas com sucesso!");
-      
     } catch (error) {
       console.error("Erro ao salvar alterações:", error);
       alert("Erro ao salvar alterações. Por favor, tente novamente.");
     }
   };
 
-  const handleCancelChanges = () => {
-    setPreSelectedEvents({});
-    setPendingChanges(new Set());
+  const handleCancelChanges = (event = null) => {
+    if (event) {
+      // Cancelar seleção de um evento específico
+      setPreSelectedEvents((prev) => {
+        const newEvents = { ...prev };
+        delete newEvents[event.hour];
+        return newEvents;
+      });
+      setPendingChanges((prev) => {
+        const newChanges = new Set(prev);
+        newChanges.delete(event.hour);
+        return newChanges;
+      });
+    } else {
+      // Cancelar todas as alterações
+      setPreSelectedEvents({});
+      setPendingChanges(new Set());
+    }
   };
 
   const getEventsByHour = (hour) => {
@@ -151,6 +287,15 @@ const ScheduleSection = () => {
       customPaddings
       id="schedule"
     >
+      <SpeakerModal
+        isOpen={modalOpen}
+        onClose={closeEventModal}
+        currentSlide={0}
+        onPrevSlide={() => {}}
+        onNextSlide={() => {}}
+        slides={selectedSpeaker ? [selectedSpeaker] : []}
+        speakerId={selectedSpeaker?.id}
+      />
       <h1
         className="text-4xl font-extrabold text-center mb-10 text-gray-800"
         style={{
@@ -171,6 +316,7 @@ const ScheduleSection = () => {
       {horariosEvento.map((horario) => {
         const hasSelectedEvent = Boolean(selectedEvents[horario.id]);
         const hasPreSelectedEvent = Boolean(preSelectedEvents[horario.id]);
+        const hasPendingChangesInThisHour = pendingChanges.has(horario.id);
 
         return (
           <div key={horario.id} className="mb-6">
@@ -210,13 +356,18 @@ const ScheduleSection = () => {
                   {getEventsByHour(horario.id).map((event) => {
                     const savedEvent = selectedEvents[horario.id];
                     const preSelectedEvent = preSelectedEvents[horario.id];
-                    
+
                     const isSelected = savedEvent?.eventId === event.id;
-                    const isPreSelected = preSelectedEvent?.eventId === event.id;
-                    const isOtherSelected = 
+                    const isPreSelected =
+                      preSelectedEvent?.eventId === event.id;
+                    const isOtherSelected =
                       (savedEvent && savedEvent.eventId !== event.id) ||
-                      (preSelectedEvent && preSelectedEvent.eventId !== event.id);
+                      (preSelectedEvent &&
+                        preSelectedEvent.eventId !== event.id);
                     const isSaved = Boolean(savedEvent?.eventId === event.id);
+                    const isMarkedForDeletion = savedEvent
+                      ? pendingDeletions.has(savedEvent.dbId)
+                      : false;
 
                     return (
                       <div
@@ -232,29 +383,37 @@ const ScheduleSection = () => {
                           isSaved={isSaved}
                           onSelect={() => toggleEventSelection(event)}
                           onRemove={() => {}}
+                          onOpenModal={() => openEventModal(event)}
+                          // Novos props para controlar o estado dos botões
+                          buttonsState={isPreSelected ? "selected" : "normal"}
+                          onCancelSelection={() => handleCancelChanges(event)}
+                          onSaveEvent={() => handleSaveChanges(event)}
+                          // Propriedades para o sistema de remoção interno
+                          onRemoveConfirm={() => removeEvent(savedEvent)}
+                          onRemoveCancel={() => {}}
                         />
                       </div>
                     );
                   })}
                 </div>
-                
-                {pendingChanges.size > 0 && (
+
+                {hasPendingChangesInThisHour && (
                   <div className="flex justify-center gap-4 mt-6">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleSaveChanges();
                       }}
-                      className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
+                      className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md border-2 border-green-600"
                     >
-                      Salvar Alterações ({pendingChanges.size})
+                      Salvar Alterações
                     </button>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleCancelChanges();
                       }}
-                      className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md"
+                      className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md border-2 border-red-600"
                     >
                       Cancelar
                     </button>

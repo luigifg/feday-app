@@ -16,3 +16,5 @@ export default defineConfig({
     include: ["qrcode.react"], // Dependências que devem ser pré-otimizadas
   },
 });
+
+
