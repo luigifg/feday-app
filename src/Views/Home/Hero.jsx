@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { curve } from "../../assets";
 import bg1 from "../../assets/logos/bg1.svg";
-import bg2 from "../../assets/logos/bg2.svg";
+import bg2 from "../../assets/logos/bg2.jpg";
 import fe2025 from "../../assets/logos/fedayDateR2.png";
 import fe2025M from "../../assets/logos/feday2025M.png";
 import keynote1 from "../../assets/speakersBanner/barrera4.png";
