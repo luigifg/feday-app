@@ -121,7 +121,7 @@ const SpeakerModal = ({
         </div>
 
         {/* Coluna do conteúdo com scroll - responsiva */}
-        <div className="col-span-1 bg-white xl:rounded-r-xl rounded-b-xl xl:rounded-bl-none flex flex-col max-h-[50vh] md:max-h-[60vh] lg:max-h-[70vh] xl:max-h-[85vh] xl:h-[450px] 2xl:h-[600px]">
+        <div className="col-span-1 bg-white xl:rounded-r-xl rounded-b-xl xl:rounded-bl-none flex flex-col max-h-[50vh] md:max-h-[60vh] lg:max-h-[70vh]  xl:max-h-[85vh] xl:h-[450px] 2xl:h-[600px]">
           {/* Container fixo para o cabeçalho */}
           <div className="p-4 md:p-5 xl:p-6 border-b">
             <div className="flex items-center gap-4 mb-4 xl:mb-6">
@@ -148,7 +148,7 @@ const SpeakerModal = ({
           </div>
 
           {/* Container com scroll para o conteúdo */}
-          <div className="flex-1 overflow-y-auto p-4 md:p-5 md:h-[160px] lg:h-[200px] xl:h-auto xl:p-6 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto h-[200px] p-4 md:p-5 lg:h-[250px] xl:h-auto xl:p-6 custom-scrollbar">
             {/* Aqui substituímos o <p> único por nossa função que gera múltiplos parágrafos */}
             {formatDescriptionToJsx(currentSlides[speakerId ? 0 : currentSlide].description)}
           </div>
