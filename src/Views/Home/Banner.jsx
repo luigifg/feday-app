@@ -5,10 +5,48 @@ import linkedin from "../../assets/socials/linkedin.png";
 import SpeakerModal from "../../Components/design/SpeakerModal.jsx";
 import { speakers } from "../../data/speakerData.jsx";
 
-const truncateText = (text, limit = 26) => {
+// Função para processar parágrafos em JSX
+const formatDescriptionToJsx = (description, lineClampClass = "") => {
+  if (!description) return null;
+  
+  // Divide o texto nas quebras de linha duplas
+  const paragraphs = description.split('\n\n');
+  
+  // Mapeia cada parágrafo para um elemento <p>
+  return paragraphs.map((paragraph, index) => (
+    <p
+      key={index}
+      className={`text-sm sm:text-sm md:text-base text-gray-600 leading-relaxed ${
+        index < paragraphs.length - 1 ? "mb-4" : ""
+      } ${lineClampClass}`}
+    >
+      {paragraph}
+    </p>
+  ));
+};
+
+const truncateText = (text, screenSize) => {
   if (!text) return { truncatedText: "", isTruncated: false };
-  const words = text.split(" ");
-  if (words.length <= limit) return { truncatedText: text, isTruncated: false };
+  
+  // Remover quebras de linha para considerar apenas o texto
+  const cleanText = text.replace(/\n\n/g, " ");
+  const words = cleanText.split(" ");
+  
+  // Definir limites específicos para cada tipo de dispositivo
+  let limit = 26; // Desktop (padrão)
+  
+  if (screenSize === "mobile") {
+    limit = 20; // Menos palavras para celulares
+  } else if (screenSize === "tablet") {
+    limit = 17; // Limite específico para tablets
+  }
+  
+  if (words.length <= limit) return { 
+    truncatedText: text, 
+    isTruncated: false 
+  };
+  
+  // Retornamos o texto truncado sem quebras de linha
   return {
     truncatedText: words.slice(0, limit).join(" ") + "...",
     isTruncated: true,
@@ -24,11 +62,14 @@ const ImageSlider = () => {
   const [fullTextExpanded, setFullTextExpanded] = useState({});
   const [fullTextModalOpen, setFullTextModalOpen] = useState(false);
   const [screenSize, setScreenSize] = useState("desktop");
+  const [is2XL, setIs2XL] = useState(false);
 
   // Check screen sizes
   useEffect(() => {
     const checkScreenSize = () => {
       const width = window.innerWidth;
+      setIs2XL(width >= 1536);
+      
       if (width <= 768) setScreenSize("mobile");
       else if (width <= 1023) setScreenSize("tablet");
       else setScreenSize("desktop");
@@ -99,7 +140,7 @@ const ImageSlider = () => {
         id="speaker"
       >
         <div
-          className="relative w-full   overflow-hidden"
+          className="relative w-full overflow-hidden"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
@@ -127,7 +168,8 @@ const ImageSlider = () => {
               <div className="px-6 py-5 lg:pt-0 flex flex-col justify-center bg-white h-full">
                 {slides.map((slide, index) => {
                   const { truncatedText, isTruncated } = truncateText(
-                    slide.description
+                    slide.description,
+                    screenSize
                   );
                   const isExpanded = fullTextExpanded[slide.id];
 
@@ -176,29 +218,33 @@ const ImageSlider = () => {
                       </h3>
 
                       <div className="relative">
-                        <p
-                          className={`
-                          text-sm sm:text-sm md:text-base text-gray-600 mb-4
-                          leading-relaxed
-                          ${
-                            screenSize !== "desktop" && isExpanded
-                              ? "line-clamp-none"
-                              : screenSize === "desktop" &&
-                                window.innerWidth >= 1536
-                              ? "line-clamp-none"
-                              : "line-clamp-4"
-                          }
-                        `}
-                        >
-                          {screenSize !== "desktop" && isExpanded
-                            ? slide.description
-                            : screenSize === "desktop" &&
-                              window.innerWidth >= 1536
-                            ? slide.description
-                            : truncatedText}
-                        </p>
+                        {/* Renderiza diferente baseado na tela e estado */}
+                        {(is2XL || (screenSize !== "desktop" && isExpanded)) ? (
+                          // Para 2XL ou conteúdo expandido - mostra com parágrafos
+                          <div className="text-sm sm:text-sm md:text-base text-gray-600 leading-relaxed">
+                            {formatDescriptionToJsx(
+                              (screenSize !== "desktop" && isExpanded) 
+                                ? slide.description 
+                                : is2XL 
+                                  ? slide.description
+                                  : truncatedText
+                            )}
+                          </div>
+                        ) : (
+                          // Para telas menores com texto truncado - sem quebra de linha
+                          <p className={`
+                            text-sm sm:text-sm md:text-base text-gray-600 leading-relaxed 
+                            ${screenSize === "mobile" 
+                              ? "line-clamp-2" 
+                              : screenSize === "tablet" 
+                                ? "line-clamp-3" 
+                                : "line-clamp-4"} mb-4
+                          `}>
+                            {truncatedText}
+                          </p>
+                        )}
 
-                        {isTruncated && window.innerWidth < 1536 && (
+                        {isTruncated && !is2XL && (
                           <div className="flex justify-start mt-6 mb-6 xl:mt-4 xl:mb-4">
                             <button
                               onClick={() => toggleTextExpansion(slide.id)}
@@ -215,7 +261,7 @@ const ImageSlider = () => {
                   );
                 })}
 
-                <div className="flex items-center gap-6 pt-2 pb-6 lg:pb-0 justify-center lg:absolute lg:bottom-6 lg:left-1/2 lg:-translate-x-1/2 xl:bottom-8 2xl:bottom-10">
+                <div className="flex items-center gap-6 pt-2 pb-6 lg:pb-0 justify-center lg:absolute lg:bottom-6 lg:left-1/2 lg:-translate-x-1/2 xl:bottom-8 2xl:bottom-6">
                   <button
                     onClick={prevSlide}
                     className="bg-white w-6 h-6 md:w-6 md:h-6 lg:w-8 lg:h-8 rounded-full shadow-md 

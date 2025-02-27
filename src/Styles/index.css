@@ -137,3 +137,73 @@
 .-rotate-360 {
   @apply rotate-[-360deg];
 }
+
+/* Regras para sobrescrever classes do Tailwind em landscape */
+
+/* Sobrescreve alturas do container de imagem para tablets (md) em landscape */
+@media (min-width: 768px) and (max-width: 1023px) and (orientation: landscape) {
+  .md\:h-\[290px\] {
+    height: 220px !important;
+  }
+  
+  .md\:h-\[340px\] {
+    height: 220px !important;
+  }
+}
+
+/* Sobrescreve alturas do container de texto para tablets (md) em landscape */
+@media (min-width: 768px) and (max-width: 1023px) and (orientation: landscape) {
+  .md\:p-5 {
+    padding: 1.25rem !important;
+  }
+  
+  /* Para aquele caso específico da resolução 1174x857 */
+  .flex-1.overflow-y-auto.md\:p-5 {
+    height: 250px !important;
+  }
+}
+
+/* Sobrescreve alturas do container de imagem para desktops (lg) em landscape */
+@media (min-width: 1024px) and (max-width: 1279px) and (orientation: landscape) {
+  .lg\:h-\[400px\] {
+    height: 280px !important;
+  }
+}
+
+/* Sobrescreve alturas do container de texto para desktops (lg) em landscape */
+@media (min-width: 1024px) and (max-width: 1279px) and (orientation: landscape) {
+  .flex-1.overflow-y-auto {
+    height: 300px !important;
+  }
+  
+  /* Especificação extra para resolução problemática 1174x857 */
+  @media (max-width: 1175px) and (max-height: 860px) {
+    .flex-1.overflow-y-auto {
+      height: 320px !important;
+    }
+  }
+}
+
+/* Correções específicas apenas para o modal em landscape */
+@media (orientation: landscape) {
+  /* Ensure the modal container allows scrolling if needed */
+  .fixed.inset-0.bg-black.bg-opacity-50.z-50.flex.items-center.justify-center.p-5 {
+    overflow: auto !important;
+  }
+  
+  /* Limit the modal size to viewport height */
+  .bg-white.rounded-xl.bg-gradient-to-r.from-green-300.to-green-500.p-1.shadow-2xl.w-5\/6 {
+    max-height: 85vh !important;
+  }
+  
+  /* Specific fix for 1024x857 resolution */
+  @media (width: 1024px) and (height: 857px) {
+    .lg\:h-\[400px\] {
+      height: 240px !important;
+    }
+    
+    .flex-1.overflow-y-auto {
+      max-height: 200px !important;
+    }
+  }
+}

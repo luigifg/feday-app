@@ -11,6 +11,7 @@ import keynote1M from "../../assets/speakersBanner/barreraM.png";
 import Button from "../../Components/design/Button";
 import Section from "../../Components/Section";
 import CompanyLogos from "./CompanyLogos";
+import SpeakerModal from "../../Components/design/SpeakerModal";  // Importando o componente SpeakerModal
 
 const slideContent = [
   {
@@ -31,7 +32,8 @@ const slideContent = [
     title: "Palestrante Especial",
     description:
       "Fernando Barrera é um líder de vendas com vasta experiência na indústria de Semicondutores e atualmente atua como Diretor Técnico Regional na Future Electronics, baseado no Vale do Silício",
-    buttonText: "Conheça Fernando Barrera - Em breve",
+    buttonText: "Conheça Fernando Barrera",
+    speakerId: 25, // Adicionando o ID do palestrante para o segundo slide
   },
 ];
 
@@ -67,6 +69,9 @@ const Hero = () => {
   const [direction, setDirection] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const intervalRef = useRef(null);
+  
+  // Estado para controlar a exibição do modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Função para verificar se é dispositivo móvel
   useEffect(() => {
@@ -141,6 +146,30 @@ const Hero = () => {
     if (intervalRef.current) {
       handleManualNavigation();
     }
+  };
+
+  // Função para abrir o modal quando o botão do slide com o palestrante for clicado
+  const handleOpenModal = () => {
+    // Verifica se o slide atual tem um speakerId
+    if (slideContent[currentSlide].speakerId) {
+      setIsModalOpen(true);
+      setIsPaused(true); // Pausa o slider quando o modal está aberto
+    }
+  };
+
+  // Função para fechar o modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    
+    // Limpar qualquer timeout existente
+    if (pauseTimeoutRef.current) {
+      clearTimeout(pauseTimeoutRef.current);
+    }
+    
+    // Retomar o slider automático após 5 segundos
+    pauseTimeoutRef.current = setTimeout(() => {
+      setIsPaused(false);
+    }, 5000);
   };
 
   // Verificar se os botões devem estar desabilitados
@@ -241,6 +270,7 @@ const Hero = () => {
                   <Button
                     className="transition-all duration-300 hover:scale-105 hover:text-green-800"
                     aria-label={slideContent[currentSlide].buttonText}
+                    onClick={slideContent[currentSlide].speakerId ? handleOpenModal : undefined}
                   >
                     {slideContent[currentSlide].buttonText}
                   </Button>
@@ -316,6 +346,17 @@ const Hero = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal do Palestrante */}
+      <SpeakerModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        speakerId={25} // Definindo fixo como 25, independente do slide
+        currentSlide={0} // Não utilizado quando speakerId é fornecido
+        onPrevSlide={() => {}} // Não utilizado quando speakerId é fornecido
+        onNextSlide={() => {}} // Não utilizado quando speakerId é fornecido
+        slides={[]} // Não utilizado quando speakerId é fornecido
+      />
     </Section>
   );
 };
