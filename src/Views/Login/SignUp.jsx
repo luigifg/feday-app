@@ -129,7 +129,7 @@ const RegistrationForm = () => {
         backgroundPosition: "center",
       }}
     >
-      <div className="relative shadow-custom 2xl:max-w-screen-xl lg:max-w-screen-lg max-h-[97vh] bg-white rounded-3xl flex flex-1 mx-auto">
+      <div className="relative shadow-custom 2xl:max-w-screen-xl lg:max-w-screen-lg max-h-[120vh] 2xl:max-h-[120vh] bg-white rounded-3xl flex flex-1 mx-auto">
         <a
           href="/"
           className="absolute left-6 md:left-8 p-2 hover:bg-gray-100 rounded-full transition-colors flex items-center gap-2 text-n-14"
@@ -147,7 +147,7 @@ const RegistrationForm = () => {
             }}
           ></div>
         </div>
-        <div className=" rounded-3xl lg:mx-10 lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
+        <div className=" rounded-3xl lg:mx-10 lg:w-1/2 xl:w-5/12 p-6 sm:p-11 xl:p-8 2xl:p-12">
           <div className="text-center">
             <h1 className="text-2xl  xl:text-4xl font-extrabold text-n-14">
               Crie sua conta
