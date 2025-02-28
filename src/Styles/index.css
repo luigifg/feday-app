@@ -32,9 +32,18 @@
   animation: slide-reverse 30s linear infinite;
 }
 
+/* Aplicando scroll sempre visível para todos os dispositivos */
+.custom-scrollbar {
+  overflow-y: scroll !important;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af #f3f4f6;
+}
+
 /* Estilos da scrollbar personalizada */
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
+  display: block !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
