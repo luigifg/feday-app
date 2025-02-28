@@ -1,6 +1,4 @@
-// Adicione este código ao arquivo SpeakerModal.jsx
-
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { ChevronLeft, ChevronRight, Linkedin, X } from "lucide-react";
 import linkedin from "../../assets/socials/linkedin.png";
 import { speakers } from "../../data/speakerData";
@@ -20,57 +18,6 @@ const SpeakerModal = ({
     ? speakers.find((s) => s.id === speakerId)
     : null;
   const currentSlides = speakerId ? [speakerData] : slides;
-  
-  // Função para detectar iOS e adicionar indicador de rolagem
-  useEffect(() => {
-    if (!isOpen) return;
-    
-    // Detectar se é um dispositivo iOS
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    
-    if (isIOS) {
-      // Criar um indicador de rolagem
-      const scrollIndicator = document.createElement('div');
-      scrollIndicator.className = 'ios-scroll-indicator';
-      
-      // Estilizar o indicador
-      scrollIndicator.style.cssText = `
-        position: fixed;
-        bottom: 30px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: rgba(0, 0, 0, 0.6);
-        color: white;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 14px;
-        z-index: 9999;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-      `;
-      
-      // Adicionar o texto ao indicador
-      scrollIndicator.textContent = 'Deslize para ver mais';
-      
-      // Adicionar ao DOM
-      document.body.appendChild(scrollIndicator);
-      
-      // Remover após 3 segundos
-      const timeout = setTimeout(() => {
-        if (scrollIndicator && scrollIndicator.parentNode) {
-          document.body.removeChild(scrollIndicator);
-        }
-      }, 3000);
-      
-      // Limpar ao fechar o modal
-      return () => {
-        clearTimeout(timeout);
-        if (scrollIndicator && scrollIndicator.parentNode) {
-          document.body.removeChild(scrollIndicator);
-        }
-      };
-    }
-  }, [isOpen]); // Dependência em isOpen para que execute quando o modal abrir
 
   // Função para converter texto com quebras de linha em parágrafos JSX
   const formatDescriptionToJsx = (description) => {
