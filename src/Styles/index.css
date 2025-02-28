@@ -32,18 +32,9 @@
   animation: slide-reverse 30s linear infinite;
 }
 
-/* Aplicando scroll sempre visível para todos os dispositivos */
-.custom-scrollbar {
-  overflow-y: scroll !important;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-  scrollbar-color: #9ca3af #f3f4f6;
-}
-
-/* Estilos da scrollbar personalizada */
+/* Estilos da scrollbar personalizada - exatamente como no original */
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
-  display: block !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -64,6 +55,21 @@
 
 .custom-scrollbar::-webkit-scrollbar-button {
   display: none;
+}
+
+/* Apenas forçando overflow-y: scroll para todos os dispositivos */
+.custom-scrollbar {
+  overflow-y: scroll !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Indicador visual sutil apenas para iOS - mantém formato original */
+@supports (-webkit-touch-callout: none) {
+  /* Um pequeno indicador de scroll na borda para devices iOS */
+  .overflow-y-auto.custom-scrollbar {
+    position: relative !important;
+    border-right: 2px solid #9ca3af !important;
+  }
 }
 
 :root {
