@@ -32,7 +32,7 @@
   animation: slide-reverse 30s linear infinite;
 }
 
-/* Estilos da scrollbar personalizada - exatamente como no original */
+/* Estilos da scrollbar personalizada */
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
@@ -55,21 +55,6 @@
 
 .custom-scrollbar::-webkit-scrollbar-button {
   display: none;
-}
-
-/* Apenas forçando overflow-y: scroll para todos os dispositivos */
-.custom-scrollbar {
-  overflow-y: scroll !important;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* Indicador visual sutil apenas para iOS - mantém formato original */
-@supports (-webkit-touch-callout: none) {
-  /* Um pequeno indicador de scroll na borda para devices iOS */
-  .overflow-y-auto.custom-scrollbar {
-    position: relative !important;
-    border-right: 2px solid #9ca3af !important;
-  }
 }
 
 :root {
