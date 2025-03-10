@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Section from "../../Components/Section";
 import EventItem from "../../Components/design/EventItems";
-import { horariosEvento, events } from "../../data/EventsData";
+import { horariosEvento, events } from "../../data/speakerData";
 import api from "../../constants/Axios";
 import { useEvents } from "./EventsContext";
 import SpeakerModal from "../../Components/design/SpeakerModal.jsx";
@@ -47,11 +47,6 @@ const ScheduleSection = () => {
   const openEventModal = (event) => {
     setSelectedSpeaker({
       id: event.id,
-      name: event.palestrante,
-      position: event.title,
-      description: event.description,
-      image: event.image,
-      linkedinUrl: event.linkedinUrl || "#",
     });
     setModalOpen(true);
   };
@@ -135,7 +130,7 @@ const ScheduleSection = () => {
             palestrante: participation.speaker,
             room: participation.room,
             dbId: participation.id,
-            description: eventDetails.description,
+            description: eventDetails.descriptionLecture,
             image: eventDetails.image || "",
             companyLogo: eventDetails.companyLogo || "",
             position: eventDetails.position || "",
@@ -282,7 +277,7 @@ const ScheduleSection = () => {
 
   return (
     <Section
-      className="px-[1rem] md:px-[8rem] pt-[3rem] pb-[4rem]"
+      className="px-[1rem] md:px-[3rem] lg:px-[8rem] pt-[3rem] pb-[4rem]"
       crosses
       customPaddings
       id="schedule"
@@ -352,7 +347,7 @@ const ScheduleSection = () => {
 
             {expandedHours[horario.id] && (
               <div className="mt-4 p-6 rounded-2xl bg-slate-20 shadow-custom">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {getEventsByHour(horario.id).map((event) => {
                     const savedEvent = selectedEvents[horario.id];
                     const preSelectedEvent = preSelectedEvents[horario.id];

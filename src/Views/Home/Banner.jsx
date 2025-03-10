@@ -3,14 +3,14 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import Section from "../../Components/Section.jsx";
 import linkedin from "../../assets/socials/linkedin.png";
 import SpeakerModal from "../../Components/design/SpeakerModal.jsx";
-import { speakers } from "../../data/speakerData.jsx";
+import { events } from "../../data/speakerData.jsx";
 
 // Função para processar parágrafos em JSX
-const formatDescriptionToJsx = (description, lineClampClass = "") => {
-  if (!description) return null;
+const formatDescriptionToJsx = (descriptionBanner, lineClampClass = "") => {
+  if (!descriptionBanner) return null;
   
   // Divide o texto nas quebras de linha duplas
-  const paragraphs = description.split('\n\n');
+  const paragraphs = descriptionBanner.split('\n\n');
   
   // Mapeia cada parágrafo para um elemento <p>
   return paragraphs.map((paragraph, index) => (
@@ -53,7 +53,7 @@ const truncateText = (text, screenSize) => {
   };
 };
 
-const slides = speakers;
+const slides = events;
 
 const ImageSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -154,8 +154,8 @@ const ImageSlider = () => {
                   }`}
                 >
                   <img
-                    src={slide.image}
-                    alt={slide.title}
+                    src={slide.imageBanner}
+                    alt={slide.palestrante}
                     className="w-full h-full object-cover "
                     loading="lazy"
                   />
@@ -168,7 +168,7 @@ const ImageSlider = () => {
               <div className="px-6 py-5 lg:pt-0 flex flex-col justify-center bg-white h-full">
                 {slides.map((slide, index) => {
                   const { truncatedText, isTruncated } = truncateText(
-                    slide.description,
+                    slide.descriptionBanner,
                     screenSize
                   );
                   const isExpanded = fullTextExpanded[slide.id];
@@ -196,7 +196,7 @@ const ImageSlider = () => {
                           />
                         </a>
                         <h2 className="text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl font-bold text-gray-800">
-                          {slide.name}
+                          {slide.palestrante}
                         </h2>
                       </div>
 
@@ -224,9 +224,9 @@ const ImageSlider = () => {
                           <div className="text-sm sm:text-sm md:text-base text-gray-600 leading-relaxed">
                             {formatDescriptionToJsx(
                               (screenSize !== "desktop" && isExpanded) 
-                                ? slide.description 
+                                ? slide.descriptionBanner 
                                 : is2XL 
-                                  ? slide.description
+                                  ? slide.descriptionBanner
                                   : truncatedText
                             )}
                           </div>

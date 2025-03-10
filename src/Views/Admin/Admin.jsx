@@ -6,7 +6,7 @@ import { Check } from "lucide-react";
 import api from "../../constants/Axios";
 
 import Section from "../../Components/Section";
-import { horariosEvento, events } from "../../data/EventsData";
+import { horariosEvento, events } from "../../data/speakerData";
 
 const AdminList = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);

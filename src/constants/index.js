@@ -3,7 +3,7 @@ import {
   instagram,
   felogo,
   linkedin,
-  stLogo,
+  st,
   adamtech,
   artimar,
   cvilux,
@@ -12,6 +12,7 @@ import {
   lumileds,
   mcc,
   murata,
+  microchip,
   onsemi,
   recom,
   smc,
@@ -118,7 +119,7 @@ export const companyLogos = [
   { logo: epson, url: "https://www.epson.com", title: "Epson" },
   { logo: flexxon, url: "https://www.flexxon.com", title: "Flexxon" },
   { logo: lumileds, url: "https://www.lumileds.com", title: "Lumileds" },
-  { logo: stLogo, url: "https://www.st.com", title: "STMicroelectronics" },
+  { logo: st, url: "https://www.st.com", title: "STMicroelectronics" },
   { logo: nic, url: "https://www.niccomp.com", title: "NIC Components" },
   { logo: mcc, url: "https://www.mccsemi.com/", title: "MCC Semiconductor" },
   { logo: aishi, url: "https://www.aishi.com", title: "Aishi" },
@@ -128,6 +129,7 @@ export const companyLogos = [
   { logo: atl, url: "http://atl-electronics.com", title: "ATL Electronics" },
   { logo: bpm, url: "https://bpmrep.com.br", title: "BPM Rep" },
   { logo: power, url: "https://www.power.com", title: "Power Integrations" },
+  { logo: microchip, url: "https://www.microchip.com", title: "Microchip" },
 ];
 
 export const companyLogos2 = [

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Section from "../../Components/Section";
 import EventItem from "../../Components/design/EventItems";
-import { horariosEvento, events } from "../../data/EventsData";
+import { horariosEvento, events } from "../../data/speakerData";
 import api from "../../constants/Axios";
 import { useEvents } from './EventsContext';
 import SpeakerModal from "../../Components/design/SpeakerModal.jsx";
@@ -52,7 +52,8 @@ const SelectedEvents = () => {
             position: eventDetails.position,
             image: eventDetails.image || "",
             companyLogo: eventDetails.companyLogo || "",
-            description: eventDetails.description || "",
+            companyUrl: eventDetails.companyUrl || "",
+            description: eventDetails.descriptionLecture || "",
             linkedinUrl: eventDetails.linkedinUrl || "#",
           };
         }
@@ -69,11 +70,6 @@ const SelectedEvents = () => {
   const openEventModal = (event) => {
     setSelectedSpeaker({
       id: event.eventId,
-      name: event.palestrante,
-      position: event.title,
-      description: event.description,
-      image: event.image,
-      linkedinUrl: event.linkedinUrl || "#",
     });
     setModalOpen(true);
   };
@@ -188,7 +184,7 @@ const SelectedEvents = () => {
 
   return (
     <Section
-      className="px-[1rem] md:px-[8rem] pt-[3rem] pb-[4rem]"
+      className="px-[1rem] md:px-[5rem] pt-[3rem] pb-[4rem]"
       crosses
       customPaddings
       id="eventos"
@@ -214,7 +210,7 @@ const SelectedEvents = () => {
 
       {Object.keys(stagedEvents).length > 0 ? (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 lg">
             {Object.entries(stagedEvents).map(([hour, event]) => {
               if (!event) return null;
               

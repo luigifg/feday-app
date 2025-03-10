@@ -73,6 +73,7 @@ export default {
       fontSize: {
         xxs: "0.65rem",
         xxxs: "0.55rem",
+        mdp: "1rem",
       },
       boxShadow: {
         custom: "0px 15px 40px rgba(0, 0, 0, 0.4)", // Sombra personalizada

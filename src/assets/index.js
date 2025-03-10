@@ -33,29 +33,30 @@ import artimar from "./manufactures/artimar.png";
 import cvilux from "./manufactures/cvilux.png";
 import epson from "./manufactures/epson.png";
 import flexxon from "./manufactures/flexxon.png";
-import lumileds from "./manufactures/lumileds.svg";
-import stLogo from "./manufactures/st-logo.svg";
+import lumileds from "./manufactures/lumileds.png";
+import st from "./manufactures/st.png";
 import mcc from "./manufactures/mcc.png";
 import murata from "./manufactures/murata.png";
+import microchip from "./manufactures/microchip.png";
 import onsemi from "./manufactures/onsemi.png";
-import recom from "./manufactures/recom.svg";
+import recom from "./manufactures/recom.png";
 import smc from "./manufactures/smc.png";
 import ublox from "./manufactures/ublox.png";
 import vermont from "./manufactures/vermont.png";
-import viking from "./manufactures/viking.jpg";
+import viking from "./manufactures/viking.png";
 import yageo from "./manufactures/yageo.png";
-import nic from "./manufactures/nic.svg";
+import nic from "./manufactures/nic.png";
 import osram from "./manufactures/osram.png";
-import power from "./manufactures/power.svg";
+import power from "./manufactures/power.png";
 import aishi from "./manufactures/aishi.png";
-import hirose from "./manufactures/hirose.svg";
+import hirose from "./manufactures/hirose.png";
 import infineon from "./manufactures/infineon.png";
 import littelfuse from "./manufactures/littelfuse.png";
 import nxp from "./manufactures/nxp.png";
-import renesas from "./manufactures/renesas.jpg";
+import renesas from "./manufactures/renesas.png";
 import seed4b from "./manufactures/seed4b.png";
 import te from "./manufactures/te.png";
-import vishay from "./manufactures/vishay.svg";
+import vishay from "./manufactures/vishay.png";
 import wurth from "./manufactures/wurth.png";
 import atl from "./manufactures/atl.png";
 import bpm from "./manufactures/bpm.png";
@@ -76,6 +77,7 @@ export {
   lumileds,
   mcc,
   murata,
+  microchip,
   onsemi,
   recom,
   smc,
@@ -100,7 +102,7 @@ export {
   fbg,
   future,
   micrologo,
-  stLogo,
+  st,
   onlogo,
   nxplogo,
   wvulkan,

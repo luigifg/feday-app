@@ -1,7 +1,7 @@
 import React from "react";
 import { ChevronLeft, ChevronRight, Linkedin, X } from "lucide-react";
 import linkedin from "../../assets/socials/linkedin.png";
-import { speakers } from "../../data/speakerData";
+import { events } from "../../data/speakerData";
 
 const SpeakerModal = ({
   isOpen,
@@ -15,16 +15,16 @@ const SpeakerModal = ({
   if (!isOpen) return null;
 
   const speakerData = speakerId
-    ? speakers.find((s) => s.id === speakerId)
+    ? events.find((s) => s.id === speakerId)
     : null;
   const currentSlides = speakerId ? [speakerData] : slides;
 
   // Função para converter texto com quebras de linha em parágrafos JSX
-  const formatDescriptionToJsx = (description) => {
-    if (!description) return null;
+  const formatDescriptionToJsx = (descriptionBanner) => {
+    if (!descriptionBanner) return null;
     
     // Divide o texto nas quebras de linha duplas que formatamos anteriormente
-    const paragraphs = description.split('\n\n');
+    const paragraphs = descriptionBanner.split('\n\n');
     
     // Mapeia cada parágrafo para um elemento <p> com margem inferior
     return paragraphs.map((paragraph, index) => (
@@ -113,8 +113,8 @@ const SpeakerModal = ({
         {/* Coluna da imagem - responsiva */}
         <div className="col-span-1 xl:col-span-2 h-[220px] md:h-[290px] lg:h-[400px] xl:h-[450px] 2xl:h-[600px]">
           <img
-            src={currentSlides[speakerId ? 0 : currentSlide].image}
-            alt={currentSlides[speakerId ? 0 : currentSlide].title}
+            src={currentSlides[speakerId ? 0 : currentSlide].imageBanner}
+            alt={currentSlides[speakerId ? 0 : currentSlide].palestrante}
             className="w-full h-full object-cover xl:rounded-l-xl rounded-t-xl xl:rounded-tr-none"
             loading="lazy"
           />
@@ -138,7 +138,7 @@ const SpeakerModal = ({
                 />
               </a>
               <h2 className="text-xl md:text-2xl 2xl:text-3xl font-bold text-gray-800">
-                {currentSlides[speakerId ? 0 : currentSlide].name}
+                {currentSlides[speakerId ? 0 : currentSlide].palestrante}
               </h2>
             </div>
 
@@ -149,7 +149,7 @@ const SpeakerModal = ({
 
           {/* Container com scroll para o conteúdo - CORRIGIDO */}
           <div className="overflow-y-auto p-4 md:p-5 xl:p-6 custom-scrollbar flex-1 min-h-0">
-            {formatDescriptionToJsx(currentSlides[speakerId ? 0 : currentSlide].description)}
+            {formatDescriptionToJsx(currentSlides[speakerId ? 0 : currentSlide].descriptionBanner)}
           </div>
         </div>
       </div>
