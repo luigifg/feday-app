@@ -9,8 +9,6 @@ const Previous = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [imagesPerView, setImagesPerView] = useState(3);
   const [isMobile, setIsMobile] = useState(false);
-  const [touchStart, setTouchStart] = useState(null);
-  const [touchEnd, setTouchEnd] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
@@ -26,9 +24,6 @@ const Previous = () => {
         "Porto Alegre, que já sediou várias edições do Future Day, superou todas as expectativas na edição de 2024. Nossos clientes da região tiveram acesso a lançamentos exclusivos e às últimas tendências de mercado, com uma programação ainda mais enriquecedora e a participação de um número maior de fabricantes. A escolha da cidade ofereceu uma experiência única, com espaços modernos e uma atmosfera inspiradora, que impulsionaram a troca de ideias e fortaleceram as conexões entre os participantes.",
     },
   };
-
-  // Rest of the state management and helper functions remain the same...
-  const minSwipeDistance = 50;
 
   const updateImagesPerView = () => {
     const width = window.innerWidth;
@@ -74,38 +69,6 @@ const Previous = () => {
       window.removeEventListener("resize", updateImagesPerView);
     };
   }, []);
-
-  // Touch handlers and other functions remain the same...
-  const onTouchStart = (e) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const onTouchMove = (e) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
-
-    if (showModal) {
-      if (isLeftSwipe) {
-        nextModalImage();
-      } else if (isRightSwipe) {
-        prevModalImage();
-      }
-    } else {
-      if (isLeftSwipe && !isNextDisabled) {
-        nextSlide();
-      } else if (isRightSwipe && !isPrevDisabled) {
-        prevSlide();
-      }
-    }
-  };
 
   const nextSlide = () => {
     const maxIndex = Math.max(0, images.length - imagesPerView);
@@ -209,7 +172,7 @@ const Previous = () => {
               </p>
             </div>
 
-            {/* Rest of the component remains the same... */}
+            {/* Image Gallery */}
             <div className="relative w-full max-w-7xl mx-auto">
               {images.length > 0 ? (
                 <div className="flex items-center justify-center w-full space-x-2 sm:space-x-4 px-4 sm:px-6 lg:px-10">
@@ -233,12 +196,7 @@ const Previous = () => {
                     </button>
                   )}
 
-                  <div
-                    className="flex-grow flex justify-center space-x-3 sm:space-x-4 lg:space-x-6 w-full"
-                    onTouchStart={onTouchStart}
-                    onTouchMove={onTouchMove}
-                    onTouchEnd={onTouchEnd}
-                  >
+                  <div className="flex-grow flex justify-center space-x-3 sm:space-x-4 lg:space-x-6 w-full">
                     {displayImages.map((src, index) => (
                       <div key={index} className="flex-1 max-w-xs">
                         <div className="p-1 sm:p-1.5 bg-gradient-to-r from-green-300 to-green-500 rounded-xl shadow-lg">
@@ -300,12 +258,8 @@ const Previous = () => {
                   />
                 ))}
               </div>
-
-              {isMobile && (
-                <div className="text-center mt-4 text-sm text-gray-500">
-                  ← Deslize para navegar →
-                </div>
-              )}
+              
+              {/* Removida a mensagem "Deslize para navegar" para dispositivos móveis */}
             </div>
           </div>
         </Section>
@@ -317,12 +271,7 @@ const Previous = () => {
           className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center"
           onClick={closeModal}
         >
-          <div
-            className="relative w-full h-full flex items-center justify-center"
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={onTouchEnd}
-          >
+          <div className="relative w-full h-full flex items-center justify-center">
             <button
               onClick={closeModal}
               className="absolute top-4 right-4 text-white hover:text-gray-300 z-50"
