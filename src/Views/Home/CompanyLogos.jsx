@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { companyLogos, companyLogos2 } from "../../constants";
 import Button from "../../Components/design/Button";
+import ReactDOM from "react-dom";
 
 const CompanyLogos = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -23,6 +24,19 @@ const CompanyLogos = () => {
     }
   }, [isPopupOpen]);
 
+  // Desabilitar scroll quando o popup estiver aberto
+  useEffect(() => {
+    if (isPopupOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isPopupOpen]);
+
   const allLogos = [...companyLogos, ...companyLogos2];
   const sortedLogoTitles = allLogos
     .map((logo) => logo)
@@ -31,6 +45,30 @@ const CompanyLogos = () => {
         self.findIndex((l) => l.title === logo.title) === index
     )
     .sort((a, b) => a.title.localeCompare(b.title));
+
+  // Portal para renderizar o popup fora da hierarquia DOM normal
+  const PopupPortal = ({ children }) => {
+    // Cria um elemento portal se não existir
+    const [portalElement] = useState(() => {
+      const el = document.createElement('div');
+      el.style.position = 'fixed';
+      el.style.top = '0';
+      el.style.left = '0';
+      el.style.width = '100%';
+      el.style.height = '100%';
+      el.style.zIndex = '100000'; // z-index extremamente alto
+      return el;
+    });
+
+    useEffect(() => {
+      document.body.appendChild(portalElement);
+      return () => {
+        document.body.removeChild(portalElement);
+      };
+    }, [portalElement]);
+
+    return ReactDOM.createPortal(children, portalElement);
+  };
 
   return (
     <section className="scroll-mt-20 mb-20 relative w-full" id="parceiros">
@@ -138,61 +176,64 @@ const CompanyLogos = () => {
         </div>
       </div>
 
-      {/* Pop-up com lista de títulos */}
+      {/* Pop-up com lista de títulos usando Portal */}
       {isPopupOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div
-            ref={popupRef}
-            className="bg-white mt-20 p-8 w-[90%] sm:w-96 max-h-[80vh] overflow-y-auto shadow-2xl rounded-2xl font-sans custom-scrollbar mx-4"
-            style={{
-              borderRadius: "16px",
-              border: "6px solid transparent",
-              backgroundImage:
-                "linear-gradient(white, white), linear-gradient(45deg, #48bb78, #38b2ac)",
-              backgroundOrigin: "border-box",
-              backgroundClip: "padding-box, border-box",
-            }}
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h3
-                className="text-2xl font-bold text-gray-800"
-                style={{
-                  fontFamily: "'Rounded Mplus 1c', system-ui, sans-serif",
-                }}
-              >
-                Lista de Parceiros
-              </h3>
-              <button
-                onClick={togglePopup}
-                className="text-gray-600 hover:text-green-600 rounded-full w-8 h-8 flex items-center justify-center transition-colors"
-              >
-                ✕
-              </button>
-            </div>
-            <ul className="space-y-1">
-              {sortedLogoTitles.map((logo, index) => (
-                <li
-                  key={index}
-                  className="py-2 px-4 hover:bg-gray-50 rounded-lg transition-colors"
+        <PopupPortal>
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" style={{ backdropFilter: 'blur(2px)' }}>
+            <div
+              ref={popupRef}
+              className="bg-white p-8 w-[90%] sm:w-96 max-h-[80vh] overflow-y-auto shadow-2xl rounded-2xl font-sans custom-scrollbar mx-4"
+              style={{
+                position: 'relative',
+                borderRadius: "16px",
+                border: "6px solid transparent",
+                backgroundImage:
+                  "linear-gradient(white, white), linear-gradient(45deg, #48bb78, #38b2ac)",
+                backgroundOrigin: "border-box",
+                backgroundClip: "padding-box, border-box",
+              }}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3
+                  className="text-2xl font-bold text-gray-800"
+                  style={{
+                    fontFamily: "'Rounded Mplus 1c', system-ui, sans-serif",
+                  }}
                 >
-                  <a
-                    href={logo.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-green-700 hover:text-gray-800 flex items-center gap-3"
+                  Lista de Parceiros
+                </h3>
+                <button
+                  onClick={togglePopup}
+                  className="text-gray-600 hover:text-green-600 rounded-full w-8 h-8 flex items-center justify-center transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+              <ul className="space-y-1">
+                {sortedLogoTitles.map((logo, index) => (
+                  <li
+                    key={index}
+                    className="py-2 px-4 hover:bg-gray-50 rounded-lg transition-colors"
                   >
-                    <img
-                      src={logo.logo}
-                      alt={`Logo ${logo.title}`}
-                      className="w-6 h-6 object-contain"
-                    />
-                    <span>{logo.title}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
+                    <a
+                      href={logo.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-green-700 hover:text-gray-800 flex items-center gap-3"
+                    >
+                      <img
+                        src={logo.logo}
+                        alt={`Logo ${logo.title}`}
+                        className="w-10 h-10 object-contain"
+                      />
+                      <span>{logo.title}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-        </div>
+        </PopupPortal>
       )}
     </section>
   );

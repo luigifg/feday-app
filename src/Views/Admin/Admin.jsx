@@ -122,6 +122,7 @@ const AdminList = () => {
               // Realizar o check-in
               const checkInData = {
                 userId: qrData.id,
+                userName: qrData.name,
                 hour: selectedHour,
                 eventId: selectedEvent,
                 adminId: userData.id,

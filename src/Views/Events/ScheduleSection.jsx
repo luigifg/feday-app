@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Section from "../../Components/Section";
 import EventItem from "../../Components/design/EventItems";
 import { horariosEvento, events } from "../../data/speakerData";
@@ -8,18 +8,25 @@ import SpeakerModal from "../../Components/design/SpeakerModal.jsx";
 
 const ScheduleSection = () => {
   const [eventList] = useState(events);
-  const [expandedHours, setExpandedHours] = useState({});
   const [userData, setUserData] = useState(null);
   const [selectedEvents, setSelectedEvents] = useState({});
   const [pendingChanges, setPendingChanges] = useState(new Set());
   const [pendingDeletions, setPendingDeletions] = useState(new Set());
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSpeaker, setSelectedSpeaker] = useState(null);
+  
+  // Referências para os elementos de horário para fazer o scroll
+  const hourRefs = useRef({});
+  
   const {
     refreshTrigger,
     refreshEvents,
     preSelectedEvents,
     setPreSelectedEvents,
+    expandHour,
+    isHourExpanded,
+    expandedHour,
+    toggleSelectedEventsVisibility
   } = useEvents();
 
   useEffect(() => {
@@ -44,6 +51,20 @@ const ScheduleSection = () => {
     }
   }, [refreshTrigger, userData]);
 
+  // Efeito para rolar até o horário expandido
+  useEffect(() => {
+    if (expandedHour && hourRefs.current[expandedHour]) {
+      const yOffset = -100; // Ajuste para dar um espaço acima do elemento
+      const element = hourRefs.current[expandedHour];
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      
+      window.scrollTo({
+        top: y,
+        behavior: 'smooth'
+      });
+    }
+  }, [expandedHour]);
+
   const openEventModal = (event) => {
     setSelectedSpeaker({
       id: event.id,
@@ -51,43 +72,36 @@ const ScheduleSection = () => {
     setModalOpen(true);
   };
 
-  // Função para fechar o modal
   const closeEventModal = () => {
     setModalOpen(false);
     setSelectedSpeaker(null);
   };
 
-  // Função para remover evento
   const removeEvent = async (event) => {
     if (!userData?.id) return;
-    
+
     try {
-      // Remove evento do banco de dados
       await api.delete(`/participation/${event.dbId}`);
-      
-      // Atualiza a interface removendo o evento
-      setSelectedEvents(prev => {
+
+      setSelectedEvents((prev) => {
         const newEvents = { ...prev };
         delete newEvents[event.hour];
         return newEvents;
       });
-      
-      // Limpar pendingDeletions e pendingChanges
-      setPendingDeletions(prev => {
+
+      setPendingDeletions((prev) => {
         const newDeletions = new Set(prev);
         newDeletions.delete(event.dbId);
         return newDeletions;
       });
-      
-      setPendingChanges(prev => {
+
+      setPendingChanges((prev) => {
         const newChanges = new Set(prev);
         newChanges.delete(event.hour);
         return newChanges;
       });
-      
-      // Disparar refresh global para atualizar "Meus Eventos"
+
       refreshEvents();
-      
       alert("Evento removido com sucesso!");
     } catch (error) {
       console.error("Erro ao remover evento:", error);
@@ -146,14 +160,19 @@ const ScheduleSection = () => {
   };
 
   const toggleDropdown = (hour) => {
-    setExpandedHours((prev) => ({
-      ...prev,
-      [hour]: !prev[hour],
-    }));
+    // Ao expandir um horário, fechamos a seção "Meus Eventos"
+    toggleSelectedEventsVisibility(false);
+    
+    // Se o horário já está expandido, fechamos ele
+    if (isHourExpanded(hour)) {
+      expandHour(null);
+    } else {
+      // Caso contrário, expandimos este horário
+      expandHour(hour);
+    }
   };
 
   const toggleEventSelection = (event) => {
-    // Se o evento já está salvo, não permite alteração
     if (selectedEvents[event.hour]) return;
 
     const eventDetails = events.find((e) => e.id === event.id);
@@ -161,7 +180,6 @@ const ScheduleSection = () => {
       preSelectedEvents[event.hour]?.eventId === event.id;
 
     if (isCurrentlySelected) {
-      // Se o evento já está selecionado, remove a seleção
       setPreSelectedEvents((prev) => {
         const newEvents = { ...prev };
         delete newEvents[event.hour];
@@ -173,7 +191,6 @@ const ScheduleSection = () => {
         return newChanges;
       });
     } else {
-      // Se o evento não está selecionado, adiciona a seleção
       setPreSelectedEvents((prev) => ({
         ...prev,
         [event.hour]: {
@@ -190,13 +207,14 @@ const ScheduleSection = () => {
   const handleSaveChanges = async (event = null) => {
     if (!userData?.id) return;
 
+    console.log("userdata:", userData)
     try {
-      // Se um evento específico foi passado, salvar apenas ele
       if (event) {
         const eventDetails = events.find((e) => e.id === event.id);
-        
+
         await api.post("/participation", {
           userId: userData.id,
+          userName:userData.name,
           scheduleId: event.hour,
           eventId: event.id,
           title: event.title,
@@ -204,7 +222,6 @@ const ScheduleSection = () => {
           room: event.room,
         });
 
-        // Atualizar estados locais
         setPreSelectedEvents((prev) => {
           const newEvents = { ...prev };
           delete newEvents[event.hour];
@@ -217,19 +234,18 @@ const ScheduleSection = () => {
           return newChanges;
         });
 
-        // Disparar refresh global para atualizar "Meus Eventos"
         refreshEvents();
         await fetchUserEvents(userData.id);
         alert("Evento salvo com sucesso!");
         return;
       }
 
-      // Handle new creations
       for (const hour of pendingChanges) {
         const event = preSelectedEvents[hour];
         if (event) {
           await api.post("/participation", {
             userId: userData.id,
+            userName: userData.name,
             scheduleId: event.hour,
             eventId: event.id,
             title: event.title,
@@ -239,7 +255,6 @@ const ScheduleSection = () => {
         }
       }
 
-      // Refresh events
       await fetchUserEvents(userData.id);
       setPendingChanges(new Set());
       setPreSelectedEvents({});
@@ -253,7 +268,6 @@ const ScheduleSection = () => {
 
   const handleCancelChanges = (event = null) => {
     if (event) {
-      // Cancelar seleção de um evento específico
       setPreSelectedEvents((prev) => {
         const newEvents = { ...prev };
         delete newEvents[event.hour];
@@ -265,7 +279,6 @@ const ScheduleSection = () => {
         return newChanges;
       });
     } else {
-      // Cancelar todas as alterações
       setPreSelectedEvents({});
       setPendingChanges(new Set());
     }
@@ -277,7 +290,7 @@ const ScheduleSection = () => {
 
   return (
     <Section
-      className="px-[1rem] md:px-[3rem] lg:px-[8rem] pt-[3rem] pb-[4rem]"
+      className="px-[1rem] md:px-[5rem] xl:px-[6rem] pt-[3rem] pb-[4rem]"
       crosses
       customPaddings
       id="schedule"
@@ -290,6 +303,8 @@ const ScheduleSection = () => {
         onNextSlide={() => {}}
         slides={selectedSpeaker ? [selectedSpeaker] : []}
         speakerId={selectedSpeaker?.id}
+        titleField="title"
+        descriptionField="descriptionLecture"
       />
       <h1
         className="text-4xl font-extrabold text-center mb-10 text-gray-800"
@@ -312,17 +327,22 @@ const ScheduleSection = () => {
         const hasSelectedEvent = Boolean(selectedEvents[horario.id]);
         const hasPreSelectedEvent = Boolean(preSelectedEvents[horario.id]);
         const hasPendingChangesInThisHour = pendingChanges.has(horario.id);
+        const isExpanded = isHourExpanded(horario.id);
 
         return (
-          <div key={horario.id} className="mb-6">
+          <div 
+            key={horario.id} 
+            className="mb-6"
+            ref={el => hourRefs.current[horario.id] = el}
+          >
             <div
               className={`flex items-center justify-between p-4 rounded-lg cursor-pointer transition-all duration-300 
                 ${
                   hasSelectedEvent || hasPreSelectedEvent
-                    ? "bg-blue-600 hover:bg-blue-700"
-                    : expandedHours[horario.id]
+                    ? "bg-green-800 hover:bg-green-900"
+                    : isExpanded
                     ? "bg-green-700"
-                    : "bg-green-500 hover:bg-green-700"
+                    : "bg-green-500 hover:bg-green-600"
                 }`}
               onClick={() => toggleDropdown(horario.id)}
             >
@@ -341,79 +361,79 @@ const ScheduleSection = () => {
                 )}
               </div>
               <span className="text-white text-lg font-semibold">
-                {expandedHours[horario.id] ? "▲" : "▼"}
+                {isExpanded ? "▲" : "▼"}
               </span>
             </div>
 
-            {expandedHours[horario.id] && (
-              <div className="mt-4 p-6 rounded-2xl bg-slate-20 shadow-custom">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {getEventsByHour(horario.id).map((event) => {
-                    const savedEvent = selectedEvents[horario.id];
-                    const preSelectedEvent = preSelectedEvents[horario.id];
+            {isExpanded && (
+              <div className="mt-4 transition-all duration-300 ease-in-out animate-fadeIn">
+                <div className="p-6 rounded-2xl bg-slate-20 shadow-custom">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {getEventsByHour(horario.id).map((event) => {
+                      const savedEvent = selectedEvents[horario.id];
+                      const preSelectedEvent = preSelectedEvents[horario.id];
 
-                    const isSelected = savedEvent?.eventId === event.id;
-                    const isPreSelected =
-                      preSelectedEvent?.eventId === event.id;
-                    const isOtherSelected =
-                      (savedEvent && savedEvent.eventId !== event.id) ||
-                      (preSelectedEvent &&
-                        preSelectedEvent.eventId !== event.id);
-                    const isSaved = Boolean(savedEvent?.eventId === event.id);
-                    const isMarkedForDeletion = savedEvent
-                      ? pendingDeletions.has(savedEvent.dbId)
-                      : false;
+                      const isSelected = savedEvent?.eventId === event.id;
+                      const isPreSelected =
+                        preSelectedEvent?.eventId === event.id;
+                      const isOtherSelected =
+                        (savedEvent && savedEvent.eventId !== event.id) ||
+                        (preSelectedEvent &&
+                          preSelectedEvent.eventId !== event.id);
+                      const isSaved = Boolean(savedEvent?.eventId === event.id);
+                      const isMarkedForDeletion = savedEvent
+                        ? pendingDeletions.has(savedEvent.dbId)
+                        : false;
 
-                    return (
-                      <div
-                        key={event.id}
-                        className={`transition-all duration-300 ${
-                          isOtherSelected ? "opacity-50" : ""
-                        }`}
-                      >
-                        <EventItem
-                          event={event}
-                          isSelected={isSelected}
-                          isPreSelected={isPreSelected}
-                          isSaved={isSaved}
-                          onSelect={() => toggleEventSelection(event)}
-                          onRemove={() => {}}
-                          onOpenModal={() => openEventModal(event)}
-                          // Novos props para controlar o estado dos botões
-                          buttonsState={isPreSelected ? "selected" : "normal"}
-                          onCancelSelection={() => handleCancelChanges(event)}
-                          onSaveEvent={() => handleSaveChanges(event)}
-                          // Propriedades para o sistema de remoção interno
-                          onRemoveConfirm={() => removeEvent(savedEvent)}
-                          onRemoveCancel={() => {}}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {hasPendingChangesInThisHour && (
-                  <div className="flex justify-center gap-4 mt-6">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleSaveChanges();
-                      }}
-                      className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md border-2 border-green-600"
-                    >
-                      Salvar Alterações
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCancelChanges();
-                      }}
-                      className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md border-2 border-red-600"
-                    >
-                      Cancelar
-                    </button>
+                      return (
+                        <div
+                          key={event.id}
+                          className={`transition-all duration-300 ${
+                            isOtherSelected ? "opacity-50" : ""
+                          }`}
+                        >
+                          <EventItem
+                            event={event}
+                            isSelected={isSelected}
+                            isPreSelected={isPreSelected}
+                            isSaved={isSaved}
+                            onSelect={() => toggleEventSelection(event)}
+                            onRemove={() => {}}
+                            onOpenModal={() => openEventModal(event)}
+                            buttonsState={isPreSelected ? "selected" : "normal"}
+                            onCancelSelection={() => handleCancelChanges(event)}
+                            onSaveEvent={() => handleSaveChanges(event)}
+                            onRemoveConfirm={() => removeEvent(savedEvent)}
+                            onRemoveCancel={() => {}}
+                          />
+                        </div>
+                      );
+                    })}
                   </div>
-                )}
+
+                  {hasPendingChangesInThisHour && (
+                    <div className="flex justify-center gap-4 mt-6">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSaveChanges();
+                        }}
+                        className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md border-2 border-green-600"
+                      >
+                        Salvar Alterações
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCancelChanges();
+                        }}
+                        className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md border-2 border-red-600"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>

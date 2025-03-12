@@ -56,6 +56,7 @@ import nxplogo from "../assets/nxplogo.jpg";
 
 // Função para transformar pontos em quebras de linha para parágrafos
 const formatDescription = (text) => {
+  if (!text) return "";
   // Substitui os pontos finais seguidos de espaço por ponto final + quebra de linha
   return text.replace(/\.\s+/g, ".\n\n");
 };
@@ -71,10 +72,9 @@ const getCompanyInfo = (title) => {
 
   return {
     companyLogo: company?.logo || "", // Retorna logo ou string vazia se não encontrado
-    companyUrl: company?.url || "",   // Retorna URL ou string vazia se não encontrado
+    companyUrl: company?.url || "", // Retorna URL ou string vazia se não encontrado
   };
 };
-
 
 export const horariosEvento = [
   { id: "1", label: "09:00 às 10:00" },
@@ -100,9 +100,9 @@ export const events = [
       "Desvende toda as caracteriscas de cada tecnologia e decubra aonde podem ser aplicadas "
     ),
     hour: "1",
-    room: "Sao Lourenco",
+    room: "São Lourenço",
     image: alvaroFace,
-    ...getCompanyInfo("Infineon"),// Adicionamos a URL aqui
+    ...getCompanyInfo("Infineon"), // Adicionamos a URL aqui
   },
   {
     id: 2,
@@ -115,10 +115,11 @@ export const events = [
     linkedinUrl: "https://linkedin.com/in/américo-paulicchi-filho-b118ab1",
     title:
       "Soluções Multi tecnologia em SiC e encapsulamentos isolados avançados \n \n ",
-    descriptionLecture:
-      "Participe da nossa palestra sobre a nova linha de produtos de Silicon Carbide (SiC) da Littelfuse. Descubra como essa tecnologia revolucionária permite aumentar as frequências de chaveamento com menores perdas por condução e chaveamento. Saiba como isso resulta na redução do tamanho dos dissipadores de alumínio, das placas de circuito impresso e dos indutores em projetos de conversores DC/DC, AC/DC e DC/AC, utilizando diversas topologias de conversão.",
+    descriptionLecture: formatDescription(
+      "Participe da nossa palestra sobre a nova linha de produtos de Silicon Carbide (SiC) da Littelfuse. Descubra como essa tecnologia revolucionária permite aumentar as frequências de chaveamento com menores perdas por condução e chaveamento. Saiba como isso resulta na redução do tamanho dos dissipadores de alumínio, das placas de circuito impresso e dos indutores em projetos de conversores DC/DC, AC/DC e DC/AC, utilizando diversas topologias de conversão."
+    ),
     hour: "1",
-    room: "Sao Lourenco",
+    room: "São Lourenço",
     image: americoFace,
     ...getCompanyInfo("Littelfuse"),
   },
@@ -132,10 +133,11 @@ export const events = [
     imageBanner: heller,
     linkedinUrl: "https://linkedin.com/in/andre-heller-51004545",
     title: "Perdas de Potência e Desempenho de Comutação em MOSFETs \n \n",
-    descriptionLecture:
-      "As perdas de potência em um circuito se traduzem em calor e perda de eficiência. Elas são críticas em MOSFETs de Potência para garantir a operação dentro de uma faixa de temperatura segura e a confiabilidade do produto. Neste seminário, abordaremos as perdas por condução e comutação no MOSFET, com expressões analíticas e métodos para calcular e estimar a dissipação de calor causada tanto pela condução quanto pela comutação.",
+    descriptionLecture: formatDescription(
+      "As perdas de potência em um circuito se traduzem em calor e perda de eficiência. Elas são críticas em MOSFETs de Potência para garantir a operação dentro de uma faixa de temperatura segura e a confiabilidade do produto. Neste seminário, abordaremos as perdas por condução e comutação no MOSFET, com expressões analíticas e métodos para calcular e estimar a dissipação de calor causada tanto pela condução quanto pela comutação."
+    ),
     hour: "1",
-    room: "Sao Lourenco",
+    room: "São Lourenço",
     image: hellerFace,
     ...getCompanyInfo("MCC Semiconductor"),
   },
@@ -150,8 +152,9 @@ export const events = [
     linkedinUrl: "https://www.linkedin.com/in/andr%C3%A9-oliveira-39589514/",
     title:
       "Como a Renesas Pode Acelerar Projetos de AIoT: Visão, Voz e Análises em Tempo Real \n \n",
-    descriptionLecture:
-      "Apresentação das principais novidades de produtos para o mercado de iluminação externa, explorando soluções e tendências do mercado, bem como introduzir uma visão geral das aplicações dos produtos desde chicotes especiais até o fornecimento de sistemas completos. Alguns dos principais produtos de nosso portifólio contemplam soluções técnicas como a família LUMiNAWISE, conectores CPC, soluções para iluminação de agricultura e cidades inteligentes.",
+    descriptionLecture: formatDescription(
+      "Apresentação das principais novidades de produtos para o mercado de iluminação externa, explorando soluções e tendências do mercado, bem como introduzir uma visão geral das aplicações dos produtos desde chicotes especiais até o fornecimento de sistemas completos. Alguns dos principais produtos de nosso portifólio contemplam soluções técnicas como a família LUMiNAWISE, conectores CPC, soluções para iluminação de agricultura e cidades inteligentes."
+    ),
     hour: "1",
     room: "Barigui",
     image: oliveiraFace,
@@ -167,9 +170,10 @@ export const events = [
     imageBanner: pompeu,
     linkedinUrl: "https://linkedin.com/in/cicero-de-almeida-pompeu-57b194214",
     title:
-      "Inovação e Performance com STM32N6: Desvendando o Futuro dos Microcontroladores \n ",
-    descriptionLecture:
-      "O STM32N6 oferece alta performance, eficiência energética, segurança avançada, conectividade robusta e suporte a inteligência artificial, ideal para aplicações industriais, IoT e automação",
+      "Inovação e Performance com STM32N6: Desvendando o Futuro dos Microcontroladores  \n \n ",
+    descriptionLecture: formatDescription(
+      "O STM32N6 oferece alta performance, eficiência energética, segurança avançada, conectividade robusta e suporte a inteligência artificial, ideal para aplicações industriais, IoT e automação"
+    ),
     hour: "2",
     room: "Barigui",
     image: pompeuFace,
@@ -185,8 +189,9 @@ export const events = [
     imageBanner: savastano,
     linkedinUrl: "http://www.linkedin.com/in/dariosavastano",
     title: "Conectores: Muito Mais do que Plástico e Metal! \n \n \n  ",
-    descriptionLecture:
-      "Os conectores são uma parte fundamental de todo equipamento eletrônico. Qualquer dispositivo possui pelo menos um. Paradoxalmente, é um produto cuja escolha geralmente é relegada ao final do projeto, optando-se muitas vezes por opções conhecidas (embora nem sempre as mais indicadas). Nesta breve apresentação, vamos mostrar a tecnologia por trás dos conectores: as considerações de design básicas e avançadas que qualquer engenheiro deve levar em conta ao escolher o melhor produto para sua aplicação final.",
+    descriptionLecture: formatDescription(
+      "Os conectores são uma parte fundamental de todo equipamento eletrônico. Qualquer dispositivo possui pelo menos um. Paradoxalmente, é um produto cuja escolha geralmente é relegada ao final do projeto, optando-se muitas vezes por opções conhecidas (embora nem sempre as mais indicadas). Nesta breve apresentação, vamos mostrar a tecnologia por trás dos conectores: as considerações de design básicas e avançadas que qualquer engenheiro deve levar em conta ao escolher o melhor produto para sua aplicação final."
+    ),
     hour: "2",
     room: "Barigui",
     image: savastanoFace,
@@ -201,9 +206,10 @@ export const events = [
     ),
     imageBanner: eduardo,
     linkedinUrl: "https://www.linkedin.com/in/eduardo-conrad-junior/",
-    title: "O Tempo Importa – RTC Externo vs. RTC Integrado em MCUs \n \n ",
-    descriptionLecture:
-      "Discorrerá sobre a divisão de Timing da Epson, enfatizando as especificidades de  dos principais componentes . Apresentará um case muito interessante sobre os limites de até onde usar RTCs internos ao MCU versus RTC externo. Será avaliado a  periferia necessária em ambas as aplicações de RTC.",
+    title: "O Tempo Importa – RTC Externo vs. RTC Integrado em MCUs \n \n \n ",
+    descriptionLecture: formatDescription(
+      "Discorrerá sobre a divisão de Timing da Epson, enfatizando as especificidades de  dos principais componentes . Apresentará um case muito interessante sobre os limites de até onde usar RTCs internos ao MCU versus RTC externo. Será avaliado a  periferia necessária em ambas as aplicações de RTC."
+    ),
     hour: "2",
     room: "Barigui",
     image: eduardoFace,
@@ -214,15 +220,16 @@ export const events = [
     palestrante: "Fábio Costa",
     position: "Gerente Regional de Vendas",
     descriptionBanner: formatDescription(
-      "Com uma década na Würth Elektronik, minha jornada tem sido marcada por um compromisso inabalável em expandir nossa base de clientes e aumentar o lucro bruto através de um controle meticuloso de custos. A dedicação de nossa equipe tem sido fundamental para fomentar relaciopalestrantentos sólidos com distribuidores e elevar consistentemente os negócios em todo o Brasil. Minha expertise em engenharia, combinada com um MBA em Gestão Empresarial, me permitiu não apenas apoiar, mas também treinar engenheiros de P&D no cenário brasileiro de manufatura eletrônica. Esta combinação de conhecimento técnico e capacidade comercial nos posiciona para liderar e inovar nesta indústria dinâmica e acelerada."
+      "Com uma década na Würth Elektronik, minha jornada tem sido marcada por um compromisso inabalável em expandir nossa base de clientes e aumentar o lucro bruto através de um controle meticuloso de custos. A dedicação de nossa equipe tem sido fundamental para fomentar relacionamentos sólidos com distribuidores e elevar consistentemente os negócios em todo o Brasil. Minha expertise em engenharia, combinada com um MBA em Gestão Empresarial, me permitiu não apenas apoiar, mas também treinar engenheiros de P&D no cenário brasileiro de manufatura eletrônica. Esta combinação de conhecimento técnico e capacidade comercial nos posiciona para liderar e inovar nesta indústria dinâmica e acelerada."
     ),
     imageBanner: fabio,
     linkedinUrl: "https://www.linkedin.com/in/fabiocosta/",
     title: "Depuração de EMC em Conversores Flyback \n \n \n",
-    descriptionLecture:
-      "Neste estudo de caso veremos a influência de diversos componentes para evitar e eliminar ruídos EMI em uma fonte Flyback.",
+    descriptionLecture: formatDescription(
+      "Neste estudo de caso veremos a influência de diversos componentes para evitar e eliminar ruídos EMI em uma fonte Flyback."
+    ),
     hour: "2",
-    room: "Tangua",
+    room: "Tanguá",
     image: fabioFace,
     ...getCompanyInfo("Würth"),
   },
@@ -236,10 +243,11 @@ export const events = [
     imageBanner: corradi,
     linkedinUrl: "https://www.linkedin.com/in/fellipe-corradi-amaral-08569194",
     title: "Conectores: Muito Mais do que Plástico e Metal! \n \n \n ",
-    descriptionLecture:
-      "Os conectores são uma parte fundamental de todo equipamento eletrônico. Qualquer dispositivo possui pelo menos um. Paradoxalmente, é um produto cuja escolha geralmente é relegada ao final do projeto, optando-se muitas vezes por opções conhecidas (embora nem sempre as mais indicadas). Nesta breve apresentação, vamos mostrar a tecnologia por trás dos conectores: as considerações de design básicas e avançadas que qualquer engenheiro deve levar em conta ao escolher o melhor produto para sua aplicação final.",
+    descriptionLecture: formatDescription(
+      "Os conectores são uma parte fundamental de todo equipamento eletrônico. Qualquer dispositivo possui pelo menos um. Paradoxalmente, é um produto cuja escolha geralmente é relegada ao final do projeto, optando-se muitas vezes por opções conhecidas (embora nem sempre as mais indicadas). Nesta breve apresentação, vamos mostrar a tecnologia por trás dos conectores: as considerações de design básicas e avançadas que qualquer engenheiro deve levar em conta ao escolher o melhor produto para sua aplicação final."
+    ),
     hour: "3",
-    room: "Tangua",
+    room: "Tanguá",
     image: corradiFace,
     ...getCompanyInfo("Cvilux"),
   },
@@ -253,10 +261,11 @@ export const events = [
     imageBanner: mituuti,
     linkedinUrl: "https://linkedin.com/in/flavio-takeshi-mituuti-a641a9ba",
     title: "SiC JFET \n \n \n \n",
-    descriptionLecture:
-      "A complementação da tecnologia SiC JFET na linha onsemi expande a família EliteSiC e nos torna capazes de endereçar as necessidades por alta eficiência energética e densidade de potencia no estagio AC-DC em fontes para data centers de inteligência artificial. Em veículos elétricos o SiC JFET ajuda a aumentar eficiência e robustez substituindo múltiplos componentes com um circuito de chaveamento baseado na tecnologia SiC JFET nas unidades de desacoplamento de baterias. Nas indústrias o SiC JFET habilita algumas topologias de armazenamento de energia e de disjuntores de estado sólido.",
+    descriptionLecture: formatDescription(
+      "A complementação da tecnologia SiC JFET na linha onsemi expande a família EliteSiC e nos torna capazes de endereçar as necessidades por alta eficiência energética e densidade de potencia no estagio AC-DC em fontes para data centers de inteligência artificial. Em veículos elétricos o SiC JFET ajuda a aumentar eficiência e robustez substituindo múltiplos componentes com um circuito de chaveamento baseado na tecnologia SiC JFET nas unidades de desacoplamento de baterias. Nas indústrias o SiC JFET habilita algumas topologias de armazenamento de energia e de disjuntores de estado sólido."
+    ),
     hour: "3",
-    room: "Tangua",
+    room: "Tanguá",
     image: mituutiFace,
     ...getCompanyInfo("ON Semiconductor"),
   },
@@ -269,9 +278,10 @@ export const events = [
     ),
     imageBanner: gabriel,
     linkedinUrl: "https://www.linkedin.com/in/gabrielbarbosaflor/",
-    title: "Soluções de Iluminação e Sensoriamento da ams-OSRAM \n \n ",
-    descriptionLecture:
-      "Venha saber mais sobre os produtos inovadores da ams-OSRAM em sensores e luz. Apresentaremos os mais recentes lançamentos em sensores de imagem, luz, magnéticos e ToF (Time of Flight), além de produtos de iluminação e visualização baseados nas mais modernas tecnologias em LEDs!",
+    title: "Soluções de Iluminação e Sensoriamento da ams-OSRAM \n \n \n ",
+    descriptionLecture: formatDescription(
+      "Venha saber mais sobre os produtos inovadores da ams-OSRAM em sensores e luz. Apresentaremos os mais recentes lançamentos em sensores de imagem, luz, magnéticos e ToF (Time of Flight), além de produtos de iluminação e visualização baseados nas mais modernas tecnologias em LEDs!"
+    ),
     hour: "4",
     room: "Tingui",
     image: gabrielFace,
@@ -288,10 +298,11 @@ export const events = [
     linkedinUrl: "https://www.linkedin.com/in/genevolchenko/",
     title:
       "Tendências Futuras em Eletrônica de Potência - Eficiência Energética e Sustentabilidade",
-    descriptionLecture:
-      "A eletrônica de potência é um campo crítico que impulsiona inovações na conversão de energia, gerenciamento de potência e sustentabilidade. Conforme cresce a demanda global por soluções energeticamente eficientes, a indústria está se voltando para tecnologias que minimizam perdas de energia, reduzem a pegada de carbono e apoiam a integração de fontes renováveis. A Vishay, um dos principais fabricantes de semicondutores discretos e componentes passivos, está na vanguarda desses avanços e apresentará os produtos mais recentes e os roadmaps de produtos para demonstrar sua estratégia para o futuro.",
+    descriptionLecture: formatDescription(
+      "A eletrônica de potência é um campo crítico que impulsiona inovações na conversão de energia, gerenciamento de potência e sustentabilidade. Conforme cresce a demanda global por soluções energeticamente eficientes, a indústria está se voltando para tecnologias que minimizam perdas de energia, reduzem a pegada de carbono e apoiam a integração de fontes renováveis. A Vishay, um dos principais fabricantes de semicondutores discretos e componentes passivos, está na vanguarda desses avanços e apresentará os produtos mais recentes e os roadmaps de produtos para demonstrar sua estratégia para o futuro."
+    ),
     hour: "3",
-    room: "Tangua",
+    room: "Tanguá",
     image: geneFace,
     ...getCompanyInfo("Vishay"),
   },
@@ -306,8 +317,9 @@ export const events = [
     linkedinUrl: "https://br.linkedin.com/in/horacio-de-jesus-garcia-vazquez",
     title:
       "MCX W Series: Plataforma Segura e Escalável para Conectividade Sem Fio \n \n",
-    descriptionLecture:
-      "A série MCX W da NXP é uma plataforma de microcontroladores sem fio multiprotocolo projetada para maximizar a flexibilidade em aplicações IoT, industriais e de casa inteligente. Oferece integração com Matter, Thread, Zigbee e Bluetooth LE, além de avançados recursos de localização e segurança EdgeLock. Nesta sessão, exploraremos as principais características do MCX W71, seu ecossistema de desenvolvimento com MCUXpresso, e realizaremos um hands-on para configuração, atualização de firmware e testes de conectividade sem fio com o kit FRDM-MCXW71.",
+    descriptionLecture: formatDescription(
+      "A série MCX W da NXP é uma plataforma de microcontroladores sem fio multiprotocolo projetada para maximizar a flexibilidade em aplicações IoT, industriais e de casa inteligente. Oferece integração com Matter, Thread, Zigbee e Bluetooth LE, além de avançados recursos de localização e segurança EdgeLock. Nesta sessão, exploraremos as principais características do MCX W71, seu ecossistema de desenvolvimento com MCUXpresso, e realizaremos um hands-on para configuração, atualização de firmware e testes de conectividade sem fio com o kit FRDM-MCXW71."
+    ),
     hour: "3",
     room: "Tingui",
     image: horacioFace,
@@ -323,8 +335,9 @@ export const events = [
     imageBanner: freitas,
     linkedinUrl: "https://linkedin.com/in/ricardo-freitas-92b9183",
     title: "Estúdio MEMs \n \n \n \n  ",
-    descriptionLecture:
-      "Aprendendo a Explorar os Sensores da ST com a ferramenta MEMs-Studio",
+    descriptionLecture: formatDescription(
+      "Aprendendo a Explorar os Sensores da ST com a ferramenta MEMs-Studio"
+    ),
     hour: "4",
     room: "Tingui",
     image: freitasFace,
@@ -341,7 +354,7 @@ export const events = [
     linkedinUrl: "https://www.linkedin.com/in/michael-felipe-guarizo-813011143",
     title:
       "Desvendando a linha de conectividade e inteligência artificial NXP \n \n",
-    descriptionLecture: "",
+    descriptionLecture: formatDescription(""),
     hour: "4",
     room: "Tingui",
     image: guarizoFace,
@@ -358,8 +371,9 @@ export const events = [
     linkedinUrl: "https://www.linkedin.com/in/michaelsparhawk/",
     title:
       "Resistores de Filme Fino vs. Resistores de Filme Grosso: Precisão e Desempenho com a Viking Tech",
-    descriptionLecture:
-      "Nesta apresentação, exploraremos as principais diferenças entre resistores de filme fino e resistores de filme grosso, destacando a precisão superior, estabilidade e confiabilidade da tecnologia de filme fino. Como líder global em componentes passivos avançados, a Viking Tech está comprometida em oferecer soluções inovadoras em resistores que atendem às exigentes necessidades de indústrias como aeroespacial, médica e eletrônica de alto padrão. Descubra por que a transição para resistores de filme fino pode melhorar o desempenho dos produtos e proporcionar valor a longo prazo para suas aplicações no mercado brasileiro.",
+    descriptionLecture: formatDescription(
+      "Nesta apresentação, exploraremos as principais diferenças entre resistores de filme fino e resistores de filme grosso, destacando a precisão superior, estabilidade e confiabilidade da tecnologia de filme fino. Como líder global em componentes passivos avançados, a Viking Tech está comprometida em oferecer soluções inovadoras em resistores que atendem às exigentes necessidades de indústrias como aeroespacial, médica e eletrônica de alto padrão. Descubra por que a transição para resistores de filme fino pode melhorar o desempenho dos produtos e proporcionar valor a longo prazo para suas aplicações no mercado brasileiro."
+    ),
     hour: "4",
     room: "Bacacheri",
     image: sparhawkFace,
@@ -375,8 +389,9 @@ export const events = [
     imageBanner: luna,
     linkedinUrl: "https://linkedin.com/in/carlos-miguel-luna-zavala-4b771157",
     title: "Perdas de Potência e Desempenho de Comutação em MOSFETs \n \n ",
-    descriptionLecture:
-      "As perdas de potência em um circuito se traduzem em calor e perda de eficiência. Elas são críticas em MOSFETs de Potência para garantir a operação dentro de uma faixa de temperatura segura e a confiabilidade do produto. Neste seminário, abordaremos as perdas por condução e comutação no MOSFET, com expressões analíticas e métodos para calcular e estimar a dissipação de calor causada tanto pela condução quanto pela comutação.",
+    descriptionLecture: formatDescription(
+      "As perdas de potência em um circuito se traduzem em calor e perda de eficiência. Elas são críticas em MOSFETs de Potência para garantir a operação dentro de uma faixa de temperatura segura e a confiabilidade do produto. Neste seminário, abordaremos as perdas por condução e comutação no MOSFET, com expressões analíticas e métodos para calcular e estimar a dissipação de calor causada tanto pela condução quanto pela comutação."
+    ),
     hour: "5",
     room: "Bacacheri",
     image: lunaFace,
@@ -392,8 +407,9 @@ export const events = [
     imageBanner: siegel,
     linkedinUrl: "https://linkedin.com/in/paul-siegel-21434b6",
     title: "Localize e Conecte-se com a U-blox \n \n \n",
-    descriptionLecture:
-      "Participe da nossa palestra para conhecer a linha de produtos de curto alcance da U-Blox, com foco nos produtos MAYA, IRIS e no módulo BLE/atualização de CPU aberta. Além disso, apresentaremos uma visão geral dos produtos GNSS, destacando os modelos ZED-F9P, ZED-X20 e MIA-M10. Descubra as últimas inovações e atualizações que a U-Blox tem a oferecer!",
+    descriptionLecture: formatDescription(
+      "Participe da nossa palestra para conhecer a linha de produtos de curto alcance da U-Blox, com foco nos produtos MAYA, IRIS e no módulo BLE/atualização de CPU aberta. Além disso, apresentaremos uma visão geral dos produtos GNSS, destacando os modelos ZED-F9P, ZED-X20 e MIA-M10. Descubra as últimas inovações e atualizações que a U-Blox tem a oferecer!"
+    ),
     hour: "5",
     room: "Bacacheri",
     image: siegelFace,
@@ -410,8 +426,9 @@ export const events = [
     linkedinUrl: "https://linkedin.com/in/peterson-roberto-dos-santos-3438a29",
     title:
       "Desvendando a linha de conectividade e inteligência artificial NXP \n \n",
-    descriptionLecture:
-      "Foram anos investindo em soluções que trouxessem para o mercado a inovação necessária para falarmos de conectividade com propriedade. Pretendemos nesta palestra apresentar a estratégia e soluções para o mercado de conectividade e IA. Pretentemos entregar para o mercado uma linha de produtos sólida para a aplicações de Edge Computing, e isto é só o começo.",
+    descriptionLecture: formatDescription(
+      "Foram anos investindo em soluções que trouxessem para o mercado a inovação necessária para falarmos de conectividade com propriedade. Pretendemos nesta palestra apresentar a estratégia e soluções para o mercado de conectividade e IA. Pretentemos entregar para o mercado uma linha de produtos sólida para a aplicações de Edge Computing, e isto é só o começo."
+    ),
     hour: "5",
     room: "Bacacheri",
     image: petersonFace,
@@ -426,11 +443,12 @@ export const events = [
     ),
     imageBanner: souza,
     linkedinUrl: "https://linkedin.com/in/raphaelnsouzaa",
-    title:
-      "Desvendando a linha de conectividade e inteligência artificial NXP \n \n",
-    descriptionLecture: "",
+    title: "Lumileds: Soluções em LED Sob Medida para o Mercado Brasileiro \n \n ",
+    descriptionLecture: formatDescription(
+      "Você está convidado para uma palestra exclusiva onde apresentaremos as mais recentes inovações da Lumileds em soluções de LED, desenvolvidas especialmente para atender às necessidades do mercado brasileiro. Destaques da Palestra: Novos Produtos: Conheça os LEDs 5050 e 2835, projetados exclusivamente para o Brasil. Inovação e Tecnologia: Descubra como nossas soluções em LED podem transformar seus projetos com eficiência energética e durabilidade. Aplicações Práticas: Veja exemplos reais de como nossos produtos estão sendo utilizados em diversos setores."
+    ),
     hour: "5",
-    room: "Sao Lourenco",
+    room: "São Lourenço",
     image: souzaFace,
     ...getCompanyInfo("Lumileds"),
   },
@@ -444,10 +462,11 @@ export const events = [
     imageBanner: seiti,
     linkedinUrl: "https://br.linkedin.com/in/ricardo-seiti-yoshizaki-959a403a",
     title: "Ecossistema de desenvolvimento Microchip \n \n \n",
-    descriptionLecture:
-      "Neste treinamento iremos apresentar as ferramentas que a Microchip oferece para auxiliar no desenvolvimento de projetos em diversas áreas, passando por ferramentas de Geração de código Automatizados, Compiladores, Ambientes de desenvolvimento, Visualizadores de dados, Análise de redes com e sem fio, Criação de interface gráfica e touch e Ferramentas de Machine Learning.",
+    descriptionLecture: formatDescription(
+      "Neste treinamento iremos apresentar as ferramentas que a Microchip oferece para auxiliar no desenvolvimento de projetos em diversas áreas, passando por ferramentas de Geração de código Automatizados, Compiladores, Ambientes de desenvolvimento, Visualizadores de dados, Análise de redes com e sem fio, Criação de interface gráfica e touch e Ferramentas de Machine Learning."
+    ),
     hour: "6",
-    room: "Sao Lourenco",
+    room: "São Lourenço",
     image: seitiFace,
     ...getCompanyInfo("Microchip"),
   },
@@ -462,10 +481,11 @@ export const events = [
     linkedinUrl: "https://linkedin.com/in/rodrigo-britto-52ab612b",
     title:
       "Conhecendo Soluções e Ferramentas da Microchip para Desenvolvimento com  Machine Learning",
-    descriptionLecture:
-      "Nessa palestra será apresentado conceitos de Machine Learning, aplicações de Machine Learning em Sistemas Embarcados, Ferramentas de Desenvolvimento da Microchip para Machine Learning.",
+    descriptionLecture: formatDescription(
+      "Nessa palestra será apresentado conceitos de Machine Learning, aplicações de Machine Learning em Sistemas Embarcados, Ferramentas de Desenvolvimento da Microchip para Machine Learning."
+    ),
     hour: "6",
-    room: "Sao Lourenco",
+    room: "São Lourenço",
     image: brittoFace,
     ...getCompanyInfo("Microchip"),
   },
@@ -479,10 +499,11 @@ export const events = [
     imageBanner: chemin,
     linkedinUrl: "https://www.linkedin.com/in/rodrigo-chemin/",
     title: "Produtos de Iluminação para Áreas Externas \n \n \n",
-    descriptionLecture:
-      "Apresentação das principais novidades de produtos para o mercado de iluminação externa, explorando soluções e tendências do mercado, bem como introduzir uma visão geral das aplicações dos produtos desde chicotes especiais até o fornecimento de sistemas completos. Alguns dos principais produtos de nosso portifólio contemplam soluções técnicas como a família LUMiNAWISE, conectores CPC, soluções para iluminação de agricultura e cidades inteligentes.",
+    descriptionLecture: formatDescription(
+      "Apresentação das principais novidades de produtos para o mercado de iluminação externa, explorando soluções e tendências do mercado, bem como introduzir uma visão geral das aplicações dos produtos desde chicotes especiais até o fornecimento de sistemas completos. Alguns dos principais produtos de nosso portifólio contemplam soluções técnicas como a família LUMiNAWISE, conectores CPC, soluções para iluminação de agricultura e cidades inteligentes."
+    ),
     hour: "6",
-    room: "Sao Lourenco",
+    room: "São Lourenço",
     image: cheminFace,
     ...getCompanyInfo("TE Connectivity"),
   },
@@ -497,10 +518,11 @@ export const events = [
     linkedinUrl: "https://linkedin.com/in/rogeriobueno78",
     title:
       "Estudo de caso: Soluções ST para iluminação pública inteligente em cidades conectadas.",
-    descriptionLecture:
-      "Nesta palestra abordaremos todos os blocos para implementação de um sistema de iluminação pública conectada e inteligente. Apresentaremos as tecnologias de comunicação NBIoT e Power Line, metrologia, conversores chaveados, isoladores digitais, led drivers e acelerômetros.",
+    descriptionLecture: formatDescription(
+      "Nesta palestra abordaremos todos os blocos para implementação de um sistema de iluminação pública conectada e inteligente. Apresentaremos as tecnologias de comunicação NBIoT e Power Line, metrologia, conversores chaveados, isoladores digitais, led drivers e acelerômetros."
+    ),
     hour: "6",
-    room: "Sao Lourenco",
+    room: "São Lourenço",
     image: buenoFace,
     ...getCompanyInfo("STMicroelectronics"),
   },
@@ -509,21 +531,21 @@ export const events = [
     palestrante: "Fernando Barrera",
     position: "Diretor Técnico Regional",
     descriptionBanner: formatDescription(
-      "Fernando Barrera é um líder de vendas com mais de 20 anos de experiência na indústria de Alta Tecnologia, especializado em Semicondutores e Soluções Eletrônicas Avançadas. Como Diretor Técnico Regional da Future Electronics, baseado no Vale do Silício, ele lidera equipes e apoia clientes na Costa Oeste dos EUA, Canadá e América Latina, Engenheiro Eletricista pela Universidade da Califórnia - San Diego, Fernando ocupou cargos de liderança na Future Electronics, Texas Instruments e National Semiconductor, Sua expertise inclui Liderança de Vendas, Desenvolvimento de Negócios e Gestão Estratégica de Contas. Reconhecido por sua capacidade de construir relaciopalestrantentos e desenvolver estratégias inovadoras, Como Keynote, Fernando abordará os desafios enfrentados por Engenheiros e times de Supply Chain ao longo do ciclo de vida dos produtos, apresentando estratégias e ferramentas para mitigar riscos nesse processo."
+      "Fernando Barrera é um líder de vendas com mais de 20 anos de experiência na indústria de Alta Tecnologia, especializado em Semicondutores e Soluções Eletrônicas Avançadas. Como Diretor Técnico Regional da Future Electronics, baseado no Vale do Silício, ele lidera equipes e apoia clientes na Costa Oeste dos EUA, Canadá e América Latina, Engenheiro Eletricista pela Universidade da Califórnia - San Diego, Fernando ocupou cargos de liderança na Future Electronics, Texas Instruments e National Semiconductor, Sua expertise inclui Liderança de Vendas, Desenvolvimento de Negócios e Gestão Estratégica de Contas. Reconhecido por sua capacidade de construir relacionamentos e desenvolver estratégias inovadoras, Como Keynote, Fernando abordará os desafios enfrentados por Engenheiros e times de Supply Chain ao longo do ciclo de vida dos produtos, apresentando estratégias e ferramentas para mitigar riscos nesse processo."
     ),
     imageBanner: barrera,
     linkedinUrl: "https://www.linkedin.com/in/fernandoabarrera/",
     title: "",
-    descriptionLecture: "",
+    descriptionLecture: formatDescription(""),
     hour: "",
-    room: "Sao Lourenco",
+    room: "São Lourenço",
     image: barreraFace,
     companyLogo: nxplogo,
   },
 ];
 
 export const ROOM_COLORS = {
-  tangua: {
+  tanguá: {
     name: "Tanguá",
     color: "bg-green-500",
   },
@@ -531,7 +553,7 @@ export const ROOM_COLORS = {
     name: "Tingüi",
     color: "bg-blue-500",
   },
-  "sao lourenco": {
+  "são lourenço": {
     name: "São Lourenço",
     color: "bg-orange-500",
   },
@@ -544,7 +566,6 @@ export const ROOM_COLORS = {
     color: "bg-pink-500",
   },
 };
-
 // Função para obter a cor da sala
 export const getRoomColor = (room) => {
   const roomData = ROOM_COLORS[room.toLowerCase()];

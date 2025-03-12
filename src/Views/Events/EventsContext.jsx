@@ -14,6 +14,8 @@ export const EventsProvider = ({ children }) => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [preSelectedEvents, setPreSelectedEvents] = useState({});
   const [selectedEventIds, setSelectedEventIds] = useState(new Set());
+  const [expandedHour, setExpandedHour] = useState(null);
+  const [isSelectedEventsVisible, setIsSelectedEventsVisible] = useState(true);
 
   const refreshEvents = () => {
     setRefreshTrigger(prev => prev + 1);
@@ -47,6 +49,27 @@ export const EventsProvider = ({ children }) => {
     setSelectedEventIds(new Set());
   };
 
+  // Função para expandir um horário específico
+  const expandHour = (hour) => {
+    setExpandedHour(hour);
+    // Quando um horário é expandido, fechamos a seção "Meus Eventos"
+    setIsSelectedEventsVisible(false);
+  };
+
+  // Função para verificar se um horário está expandido
+  const isHourExpanded = (hour) => {
+    return expandedHour === hour;
+  };
+
+  // Função para alternar a visibilidade da seção "Meus Eventos"
+  const toggleSelectedEventsVisibility = (isVisible) => {
+    setIsSelectedEventsVisible(isVisible);
+    // Se a seção "Meus Eventos" estiver sendo aberta, fechamos qualquer programação aberta
+    if (isVisible) {
+      setExpandedHour(null);
+    }
+  };
+
   return (
     <EventsContext.Provider value={{
       refreshTrigger,
@@ -56,7 +79,12 @@ export const EventsProvider = ({ children }) => {
       selectedEventIds,
       selectEvent,
       unselectEvent,
-      clearSelections
+      clearSelections,
+      expandHour,
+      isHourExpanded,
+      expandedHour,
+      isSelectedEventsVisible,
+      toggleSelectedEventsVisibility
     }}>
       {children}
     </EventsContext.Provider>

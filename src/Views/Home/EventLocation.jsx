@@ -25,14 +25,6 @@ export default function EventLocation() {
     loadImages();
   }, []);
 
-  useEffect(() => {
-    const loadImages = async () => {
-      const images = import.meta.glob("../../assets/location/*", { eager: true });
-      setLocationImages(Object.values(images).map((img) => img.default));
-    };
-    loadImages();
-  }, []);
-
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % locationImages.length);
   };

@@ -11,14 +11,19 @@ export default {
   theme: {
     extend: {
       animation: {
+        fadeIn: "fadeIn 0.3s ease-in-out",
         slide: "slide 30s linear infinite",
         "slide-reverse": "slide-reverse 30s linear infinite",
         gradientBg: "gradientX 0.8s ease forwards",
-        'fade-in-up': 'fade-in-up 0.5s ease-out',
-        'fade-in': 'fade-in 0.5s ease-out',
-        'fade-in-down': 'fade-in-down 0.5s ease-out',
+        "fade-in-up": "fade-in-up 0.5s ease-out",
+        "fade-in": "fade-in 0.5s ease-out",
+        "fade-in-down": "fade-in-down 0.5s ease-out",
       },
       keyframes: {
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
         gradientX: {
           "0%": {
             "background-position": "0% 50%",
@@ -41,39 +46,39 @@ export default {
           "0%": { transform: "translateX(-100%)" },
           "100%": { transform: "translateX(0%)" },
         },
-        'fade-in-up': {
-          '0%': {
-            opacity: '0',
-            transform: 'translateY(20px)'
+        "fade-in-up": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(20px)",
           },
-          '100%': {
-            opacity: '1',
-            transform: 'translateY(0)'
-          }
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
         },
-        'fade-in': {
-          '0%': {
-            opacity: '0'
+        "fade-in": {
+          "0%": {
+            opacity: "0",
           },
-          '100%': {
-            opacity: '1'
-          }
+          "100%": {
+            opacity: "1",
+          },
         },
-        'fade-in-down': {
-          '0%': {
-            opacity: '0',
-            transform: 'translateY(-20px)'
+        "fade-in-down": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(-20px)",
           },
-          '100%': {
-            opacity: '1',
-            transform: 'translateY(0)'
-          }
-        }
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
       },
       fontSize: {
         xxs: "0.65rem",
         xxxs: "0.55rem",
-        mdp: "1rem",
+        mdp: "0.95rem",
       },
       boxShadow: {
         custom: "0px 15px 40px rgba(0, 0, 0, 0.4)", // Sombra personalizada
@@ -141,7 +146,8 @@ export default {
       },
       backgroundImage: {
         "radial-gradient": "radial-gradient(var(--tw-gradient-stops))",
-        "conic-gradient": "conic-gradient(from 225deg, #A5D56C, #76E9A4, #4CAF72, #89C76C, #A5D56C)",
+        "conic-gradient":
+          "conic-gradient(from 225deg, #A5D56C, #76E9A4, #4CAF72, #89C76C, #A5D56C)",
         "benefit-card-1": "url(assets/benefits/card-1.svg)",
         "benefit-card-2": "url(assets/benefits/card-2.svg)",
         "benefit-card-3": "url(assets/benefits/card-3.svg)",
@@ -151,10 +157,10 @@ export default {
       },
       extend: {
         content: {
-          'bg1': 'url("/assets/logos/bg1.svg")',
-          'bg2': 'url("/assets/logos/bg2.svg")',
-        }
-      }
+          bg1: 'url("/assets/logos/bg1.svg")',
+          bg2: 'url("/assets/logos/bg2.svg")',
+        },
+      },
     },
   },
   plugins: [

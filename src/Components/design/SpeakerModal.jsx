@@ -11,6 +11,9 @@ const SpeakerModal = ({
   onNextSlide,
   slides,
   speakerId,
+  // Novas props para flexibilidade
+  titleField = "position", // Campo a ser usado como título secundário (position por padrão, pode ser "title")
+  descriptionField = "descriptionBanner" // Campo a ser usado como descrição (descriptionBanner por padrão, pode ser "descriptionLecture")
 }) => {
   if (!isOpen) return null;
 
@@ -20,11 +23,11 @@ const SpeakerModal = ({
   const currentSlides = speakerId ? [speakerData] : slides;
 
   // Função para converter texto com quebras de linha em parágrafos JSX
-  const formatDescriptionToJsx = (descriptionBanner) => {
-    if (!descriptionBanner) return null;
+  const formatDescriptionToJsx = (description) => {
+    if (!description) return null;
     
     // Divide o texto nas quebras de linha duplas que formatamos anteriormente
-    const paragraphs = descriptionBanner.split('\n\n');
+    const paragraphs = description.split('\n\n');
     
     // Mapeia cada parágrafo para um elemento <p> com margem inferior
     return paragraphs.map((paragraph, index) => (
@@ -143,13 +146,13 @@ const SpeakerModal = ({
             </div>
 
             <h3 className="text-base md:text-lg 2xl:text-xl font-medium text-green-700">
-              {currentSlides[speakerId ? 0 : currentSlide].position}
+              {currentSlides[speakerId ? 0 : currentSlide][titleField]}
             </h3>
           </div>
 
-          {/* Container com scroll para o conteúdo - CORRIGIDO */}
+          {/* Container com scroll para o conteúdo */}
           <div className="overflow-y-auto p-4 md:p-5 xl:p-6 custom-scrollbar flex-1 min-h-0">
-            {formatDescriptionToJsx(currentSlides[speakerId ? 0 : currentSlide].descriptionBanner)}
+            {formatDescriptionToJsx(currentSlides[speakerId ? 0 : currentSlide][descriptionField])}
           </div>
         </div>
       </div>
