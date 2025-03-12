@@ -8,10 +8,10 @@ import { events } from "../../data/speakerData.jsx";
 // Função para processar parágrafos em JSX
 const formatDescriptionToJsx = (descriptionBanner, lineClampClass = "") => {
   if (!descriptionBanner) return null;
-  
+
   // Divide o texto nas quebras de linha duplas
-  const paragraphs = descriptionBanner.split('\n\n');
-  
+  const paragraphs = descriptionBanner.split("\n\n");
+
   // Mapeia cada parágrafo para um elemento <p>
   return paragraphs.map((paragraph, index) => (
     <p
@@ -27,25 +27,26 @@ const formatDescriptionToJsx = (descriptionBanner, lineClampClass = "") => {
 
 const truncateText = (text, screenSize) => {
   if (!text) return { truncatedText: "", isTruncated: false };
-  
+
   // Remover quebras de linha para considerar apenas o texto
   const cleanText = text.replace(/\n\n/g, " ");
   const words = cleanText.split(" ");
-  
+
   // Definir limites específicos para cada tipo de dispositivo
   let limit = 26; // Desktop (padrão)
-  
+
   if (screenSize === "mobile") {
     limit = 20; // Menos palavras para celulares
   } else if (screenSize === "tablet") {
     limit = 17; // Limite específico para tablets
   }
-  
-  if (words.length <= limit) return { 
-    truncatedText: text, 
-    isTruncated: false 
-  };
-  
+
+  if (words.length <= limit)
+    return {
+      truncatedText: text,
+      isTruncated: false,
+    };
+
   // Retornamos o texto truncado sem quebras de linha
   return {
     truncatedText: words.slice(0, limit).join(" ") + "...",
@@ -69,7 +70,7 @@ const ImageSlider = () => {
     const checkScreenSize = () => {
       const width = window.innerWidth;
       setIs2XL(width >= 1536);
-      
+
       if (width <= 768) setScreenSize("mobile");
       else if (width <= 1023) setScreenSize("tablet");
       else setScreenSize("desktop");
@@ -163,9 +164,8 @@ const ImageSlider = () => {
                 </div>
               ))}
             </div>
-
             <div className="relative p-0.5 bg-gradient-to-r from-green-300 to-green-500">
-              <div className="px-6 py-5 lg:pt-0 flex flex-col justify-center bg-white h-full">
+              <div className="px-6 py-5 lg:pt-6 xl:pt-15 2xl:pt-6 flex flex-col bg-white h-full">
                 {slides.map((slide, index) => {
                   const { truncatedText, isTruncated } = truncateText(
                     slide.descriptionBanner,
@@ -202,44 +202,48 @@ const ImageSlider = () => {
 
                       <h3
                         className={`
-                        text-lg sm:text-lg md:text-base lg:text-xl xl:text-lg 
-                        font-medium text-green-700 my-3
-                        tracking-wide
-                        ${
-                          screenSize !== "desktop" && isExpanded
-                            ? "line-clamp-none"
-                            : screenSize === "mobile"
-                            ? "line-clamp-1"
-                            : "line-clamp-none"
-                        }
-                      `}
+                          text-lg sm:text-lg md:text-base lg:text-xl xl:text-lg 
+                          font-medium text-green-700 my-3
+                          tracking-wide
+                          ${
+                            screenSize !== "desktop" && isExpanded
+                              ? "line-clamp-none"
+                              : screenSize === "mobile"
+                              ? "line-clamp-1"
+                              : "line-clamp-none"
+                          }
+                        `}
                       >
                         {slide.position}
                       </h3>
 
                       <div className="relative">
                         {/* Renderiza diferente baseado na tela e estado */}
-                        {(is2XL || (screenSize !== "desktop" && isExpanded)) ? (
+                        {is2XL || (screenSize !== "desktop" && isExpanded) ? (
                           // Para 2XL ou conteúdo expandido - mostra com parágrafos
                           <div className="text-sm sm:text-sm md:text-base text-gray-600 leading-relaxed">
                             {formatDescriptionToJsx(
-                              (screenSize !== "desktop" && isExpanded) 
-                                ? slide.descriptionBanner 
-                                : is2XL 
-                                  ? slide.descriptionBanner
-                                  : truncatedText
+                              screenSize !== "desktop" && isExpanded
+                                ? slide.descriptionBanner
+                                : is2XL
+                                ? slide.descriptionBanner
+                                : truncatedText
                             )}
                           </div>
                         ) : (
                           // Para telas menores com texto truncado - sem quebra de linha
-                          <p className={`
+                          <p
+                            className={`
                             text-sm sm:text-sm md:text-base text-gray-600 leading-relaxed 
-                            ${screenSize === "mobile" 
-                              ? "line-clamp-2" 
-                              : screenSize === "tablet" 
-                                ? "line-clamp-3" 
-                                : "line-clamp-4"} mb-4
-                          `}>
+                            ${
+                              screenSize === "mobile"
+                                ? "line-clamp-2"
+                                : screenSize === "tablet"
+                                ? "line-clamp-3"
+                                : "line-clamp-4"
+                            } mb-4
+                          `}
+                          >
                             {truncatedText}
                           </p>
                         )}
@@ -261,7 +265,7 @@ const ImageSlider = () => {
                   );
                 })}
 
-                <div className="flex items-center gap-6 pt-2 pb-6 lg:pb-0 justify-center lg:absolute lg:bottom-6 lg:left-1/2 lg:-translate-x-1/2 xl:bottom-8 2xl:bottom-6">
+                <div className="flex items-center gap-6 pt-2 pb-6 lg:pb-0 justify-center lg:absolute lg:bottom-15 2xl:bottom-6 lg:left-1/2 lg:-translate-x-1/2  ">
                   <button
                     onClick={prevSlide}
                     className="bg-white w-6 h-6 md:w-6 md:h-6 lg:w-8 lg:h-8 rounded-full shadow-md 
@@ -273,8 +277,8 @@ const ImageSlider = () => {
                   >
                     <div
                       className="bg-gradient-to-r from-green-300 to-green-500 rounded-full p-1
-                      group-hover:from-green-400 group-hover:to-green-600
-                      group-active:from-green-500 group-active:to-green-700"
+                    group-hover:from-green-400 group-hover:to-green-600
+                    group-active:from-green-500 group-active:to-green-700"
                     >
                       <div className="bg-white rounded-full p-1">
                         <ChevronLeft className="w-6 h-6" />
@@ -291,10 +295,10 @@ const ImageSlider = () => {
                   <button
                     onClick={nextSlide}
                     className="bg-white w-6 h-6 md:w-6 md:h-6 lg:w-8 lg:h-8 rounded-full shadow-md 
-                      hover:bg-gray-50 hover:scale-110
-                      active:scale-95 active:bg-gray-100
-                      transition-all duration-200 ease-in-out 
-                      flex items-center justify-center cursor-pointer z-20"
+                    hover:bg-gray-50 hover:scale-110
+                    active:scale-95 active:bg-gray-100
+                    transition-all duration-200 ease-in-out 
+                    flex items-center justify-center cursor-pointer z-20"
                     aria-label="Next slide"
                   >
                     <div

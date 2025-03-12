@@ -79,7 +79,7 @@ export default function EventLocation() {
         id="local"
       >
         <div className="relative">
-          <h2 className="font-bold text-2xl text-center sm:text-4xl md:text-4xl mb-8 md:mb-12">
+          <h2 className="font-bold text-3xl text-center sm:text-4xl md:text-4xl mb-8 md:mb-12">
             Local do Evento - 2025
           </h2>
           <div className=" mx-auto  ">

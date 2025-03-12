@@ -132,7 +132,7 @@ const Previous = () => {
           crosses
           crossesOffset="translate-y"
           customPaddings
-          className="py-12 md:py-16 lg:py-20 md:px-[1.3rem] lg:px-[1.9rem] xl:px-[2.5rem] relative scroll-mt-20"
+          className="py-16 md:py-16 lg:py-20 md:px-[1.3rem] lg:px-[1.9rem] xl:px-[2.5rem] relative scroll-mt-20"
           id="2024"
         >
           <div className="container mx-auto px-4 sm:px-6 relative z-10">

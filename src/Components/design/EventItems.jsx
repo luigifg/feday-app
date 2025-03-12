@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { File, MapPin, User, X } from "lucide-react";
+import { Factory, MapPin, User, X } from "lucide-react";
 import { getRoomColor } from "../../data/speakerData";
 
 const SpeakerPhotoModal = ({ isOpen, onClose, photoUrl }) => {
@@ -174,7 +174,27 @@ const EventItem = ({
               </span>
             </div> */}
 
-            <div className="flex justify-between items-center">
+            {/* Informações de sala e fabricante em formato vertical */}
+            <div className="flex flex-col gap-3">
+              {/* Logo da empresa - sempre em linha separada */}
+              <div className="flex items-center gap-2">
+                <Factory className="w-5 h-5 text-green-600" />
+                <span className="text-gray-600 text-sm">Fabricante:</span>
+                <div className="w-16 h-8">
+                  <a
+                    href={event.companyUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <img
+                      src={event.companyLogo}
+                      alt="Company Logo"
+                      className="w-20 h-30 object-contain cursor-pointer hover:opacity-80 transition-opacity"
+                    />
+                  </a>
+                </div>
+              </div>
+              {/* Informação da sala */}
               <div className="flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-green-600" />
                 <span className="text-gray-600 text-sm">Sala:</span>
@@ -185,15 +205,6 @@ const EventItem = ({
                 >
                   {event.room}
                 </div>
-              </div>
-              <div className="w-16 h-10">
-                <a href={event.companyUrl} target="_blank">
-                  <img
-                    src={event.companyLogo}
-                    alt="Company Logo"
-                    className="w-full h-full object-contain cursor-pointer hover:opacity-80 transition-opacity"
-                  />
-                </a>
               </div>
             </div>
 

@@ -292,7 +292,7 @@ export const events = [
     palestrante: "Gene Volchenko",
     position: "Diretor de Desenvolvimento de Negócios",
     descriptionBanner: formatDescription(
-      "Gene Volchenko possui mais de 24 anos de experiência na indústria eletrônica. Ingressou na Vishay em 2005 como Engenheiro de Aplicação de Campo, passou pela Maxim Integrated Products como especialista em PMIC e retornou à Vishay em 2011, onde atuou como Diretor de Marketing Regional e, em 2023, foi promovido a Diretor de Desenvolvimento de Negócios. Antes disso, trabalhou na Motorola Automotive Group por 6 anos em projetos de controle de motores, no início da carreira, atuou por 7 anos como Chefe do Departamento de Rádio em navios mercantes da Ucrânia, sendo responsável por sistemas de navegação, comunicação e energia. Gene possui um Mestrado em Engenharia Eletrônica pela Odessa Marine Academy – Odessa, Ucrânia, e um Bacharelado em Engenharia Eletrônica pelo Kherson Marine College – Kherson, Ucrânia."
+      "Gene Volchenko possui mais de 24 anos de experiência na indústria eletrônica. Ingressou na Vishay em 2005 como Engenheiro de Aplicação de Campo, passou pela Maxim Integrated Products como especialista em PMIC e retornou à Vishay em 2011, onde atuou como Diretor de Marketing Regional e, em 2023, foi promovido a Diretor de Desenvolvimento de Negócios. Antes disso, trabalhou na Motorola Automotive Group por 6 anos em projetos de controle de motores, no início da carreira, atuou por 7 anos como Chefe do Departamento de Rádio em navios mercantes da Ucrânia, sendo responsável por sistemas de navegação, comunicação e energia. Gene possui um Mestrado em Engenharia Eletrônica pela Odessa Marine Academy, e um Bacharelado em Engenharia Eletrônica pelo Kherson Marine College – Kherson, Ucrânia."
     ),
     imageBanner: gene,
     linkedinUrl: "https://www.linkedin.com/in/genevolchenko/",
@@ -353,8 +353,8 @@ export const events = [
     imageBanner: guarizo,
     linkedinUrl: "https://www.linkedin.com/in/michael-felipe-guarizo-813011143",
     title:
-      "Desvendando a linha de conectividade e inteligência artificial NXP \n \n",
-    descriptionLecture: formatDescription(""),
+      "A Arte do Design Passivo: Eficiência, Confiabilidade e Controle de EMI em Eletrônicos Modernos",
+    descriptionLecture: formatDescription("Uma sessão perspicaz sobre estratégias para otimizar seu circuito. Nesta aula você irá: Aprender dicas práticas e truques para selecionar os componentes passivos certos para funções específicas de circuito. Descobrir técnicas para otimizar o posicionamento e layout de componentes para aumentar a eficiência, confiabilidade e economia de espaço. Obter insights valiosos sobre estratégias de mitigação de EMI usando os componentes de filtragem EMI da YAGEO. Aprender como suprimir efetivamente o ruído e garantir a integridade do sinal em seus projetos. Conhecer os componentes de alta confiabilidade oferecidos pela YAGEO."),
     hour: "4",
     room: "Tingui",
     image: guarizoFace,
@@ -445,7 +445,7 @@ export const events = [
     linkedinUrl: "https://linkedin.com/in/raphaelnsouzaa",
     title: "Lumileds: Soluções em LED Sob Medida para o Mercado Brasileiro \n \n ",
     descriptionLecture: formatDescription(
-      "Você está convidado para uma palestra exclusiva onde apresentaremos as mais recentes inovações da Lumileds em soluções de LED, desenvolvidas especialmente para atender às necessidades do mercado brasileiro. Destaques da Palestra: Novos Produtos: Conheça os LEDs 5050 e 2835, projetados exclusivamente para o Brasil. Inovação e Tecnologia: Descubra como nossas soluções em LED podem transformar seus projetos com eficiência energética e durabilidade. Aplicações Práticas: Veja exemplos reais de como nossos produtos estão sendo utilizados em diversos setores."
+      "A apresentação aborda as inovações tecnológicas da Lumileds em LEDs de média e alta potência, visando competitividade com concorrentes asiáticos e globais. Detalhes incluem melhorias na estrutura do LED, atualizações de fósforo, novas especificações de desempenho (fluxo luminoso e eficiência lm/W). Lançamento das famílias LUXEON C ES e CZ ES de LEDs coloridos, com novo design, nova estrutura de die e dissipação térmica aprimorada."
     ),
     hour: "5",
     room: "São Lourenço",
