@@ -14,6 +14,8 @@ import ramos from "../assets/ramos.png";
 import fe2025 from "./hero/fe2025.svg";
 import curve from "./hero/curve.png";
 import future from "./hero/future.jpg";
+import futureGif from "./hero/futureGif.gif";
+
 
 
 import fbg from "./logos/bg.jpg";
@@ -102,6 +104,7 @@ export {
   fbg,
   future,
   micrologo,
+  futureGif,
   st,
   onlogo,
   nxplogo,

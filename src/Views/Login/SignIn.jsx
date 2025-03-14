@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../constants/Axios";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
-import { future, fbg } from "../../assets";
+import { future, fbg, futureGif } from "../../assets";
 import FieldSignUp from "../../Components/design/FieldSignUp";
 
 const LoginForm = () => {
@@ -66,7 +66,7 @@ const LoginForm = () => {
           <div
             className="w-[80%] max-w-md aspect-[4/3] bg-center bg-no-repeat rounded-lg border-4"
             style={{
-              backgroundImage: `url(${future})`,
+              backgroundImage: `url(${futureGif})`,
               backgroundSize: "cover",
             }}
           ></div>

@@ -51,6 +51,7 @@ import eduardoFace from "../assets/speakers/eduardo.jpeg";
 import barreraFace from "../assets/speakers/barrera.jpeg";
 
 import { companyLogos } from "../constants/index";
+import feLogo  from "../assets/logos/feLogo.svg";
 import { companyLogos2 } from "../constants/index";
 import nxplogo from "../assets/nxplogo.jpg";
 
@@ -77,13 +78,22 @@ const getCompanyInfo = (title) => {
 };
 
 export const horariosEvento = [
-  { id: "1", label: "09:00 às 10:00" },
-  { id: "2", label: "10:10 às 11:10" },
-  { id: "3", label: "11:20 às 12:20" },
-  { id: "4", label: "14:00 às 15:00" },
-  { id: "5", label: "15:10 às 16:10" },
-  { id: "6", label: "17:00 às 18:00" },
+  { id: "0", label: "08:00 às 08:45", type: "event", isKeynote: true },
+  { id: "0-1", label: "08:45 às 09:00", type: "break", description: "TROCA DE SALAS" },
+  { id: "1", label: "09:00 às 10:00", type: "event" },
+  { id: "1-2", label: "10:00 às 10:10", type: "break", description: "Intervalo / Troca de Salas" },
+  { id: "2", label: "10:10 às 11:10", type: "event" },
+  { id: "2-3", label: "11:10 às 11:20", type: "break", description: "Intervalo / Troca de Salas" },
+  { id: "3", label: "11:20 às 12:20", type: "event" },
+  { id: "3-4", label: "12:20 às 14:00", type: "break", description: "Almoço" },
+  { id: "4", label: "14:00 às 15:00", type: "event" },
+  { id: "4-5", label: "15:00 às 15:10", type: "break", description: "Intervalo / Troca de Salas" },
+  { id: "5", label: "15:10 às 16:10", type: "event" },
+  { id: "5-6", label: "16:10 às 17:00", type: "break", description: "Coffee Break + Supplier Fair time" },
+  { id: "6", label: "17:00 às 18:00", type: "event" },
+  { id: "6-end", label: "18:00", type: "break", description: "Encerramento" },
 ];
+
 
 export const events = [
   {
@@ -170,7 +180,7 @@ export const events = [
     imageBanner: pompeu,
     linkedinUrl: "https://linkedin.com/in/cicero-de-almeida-pompeu-57b194214",
     title:
-      "Inovação e Performance com STM32N6: Desvendando o Futuro dos Microcontroladores  \n \n ",
+      "Inovação e Performance com STM32N6: o Futuro dos Microcontroladores  \n \n ",
     descriptionLecture: formatDescription(
       "O STM32N6 oferece alta performance, eficiência energética, segurança avançada, conectividade robusta e suporte a inteligência artificial, ideal para aplicações industriais, IoT e automação"
     ),
@@ -535,12 +545,12 @@ export const events = [
     ),
     imageBanner: barrera,
     linkedinUrl: "https://www.linkedin.com/in/fernandoabarrera/",
-    title: "",
+    title: "Design Smarter, Source Better, Build Faster \n \n \n",
     descriptionLecture: formatDescription(""),
-    hour: "",
+    hour: "0",
     room: "São Lourenço",
     image: barreraFace,
-    companyLogo: nxplogo,
+    companyLogo: feLogo,
   },
 ];
 

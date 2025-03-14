@@ -15,7 +15,7 @@ const ScheduleSection = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSpeaker, setSelectedSpeaker] = useState(null);
   
-  // Referências para os elementos de horário para fazer o scroll
+  // Mantemos a referência para os elementos, mas removemos a rolagem automática
   const hourRefs = useRef({});
   
   const {
@@ -50,20 +50,6 @@ const ScheduleSection = () => {
       fetchUserEvents(userData.id);
     }
   }, [refreshTrigger, userData]);
-
-  // Efeito para rolar até o horário expandido
-  useEffect(() => {
-    if (expandedHour && hourRefs.current[expandedHour]) {
-      const yOffset = -100; // Ajuste para dar um espaço acima do elemento
-      const element = hourRefs.current[expandedHour];
-      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      
-      window.scrollTo({
-        top: y,
-        behavior: 'smooth'
-      });
-    }
-  }, [expandedHour]);
 
   const openEventModal = (event) => {
     setSelectedSpeaker({
@@ -160,6 +146,12 @@ const ScheduleSection = () => {
   };
 
   const toggleDropdown = (hour) => {
+    // Verificamos se é um horário de intervalo/break
+    const isBreak = horariosEvento.find(h => h.id === hour)?.type === "break";
+    
+    // Se for um intervalo, não fazemos nada (não expande)
+    if (isBreak) return;
+    
     // Ao expandir um horário, fechamos a seção "Meus Eventos"
     toggleSelectedEventsVisibility(false);
     
@@ -288,6 +280,37 @@ const ScheduleSection = () => {
     return eventList.filter((event) => event.hour === hour);
   };
 
+  // Renderiza um bloco de intervalo/break com melhor responsividade
+  const renderBreakBlock = (horario) => {
+    return (
+      <div className="relative p-4 rounded-lg bg-gray-500 text-white shadow-md">
+        {/* Layout diferente entre mobile e desktop */}
+        <div className="md:hidden flex flex-col">
+          {/* Versão mobile: texto e horário alinhados à esquerda */}
+          <div className="text-left text-lg font-semibold mb-2">
+            {horario.label}
+          </div>
+          <div className="text-left text-md font-medium">
+            {horario.description}
+          </div>
+        </div>
+        
+        {/* Layout para desktop - mantém o original */}
+        <div className="hidden md:block">
+          {/* Horário à esquerda */}
+          <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-lg font-semibold">
+            {horario.label}
+          </div>
+          
+          {/* Descrição centralizada */}
+          <div className="w-full text-center text-md font-medium">
+            {horario.description}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Section
       className="px-[1rem] md:px-[5rem] xl:px-[6rem] pt-[3rem] pb-[4rem]"
@@ -324,10 +347,93 @@ const ScheduleSection = () => {
       </p>
 
       {horariosEvento.map((horario) => {
+        // Verificar se é um horário de intervalo/break
+        const isBreak = horario.type === "break";
+        
+        // Verificar se é o horário do keynote (id "0")
+        const isKeynote = horario.id === "0";
+        
+        if (isBreak) {
+          // Renderiza um bloco de intervalo (não clicável, não expansível)
+          return (
+            <div key={horario.id} className="mb-6" ref={el => hourRefs.current[horario.id] = el}>
+              {renderBreakBlock(horario)}
+            </div>
+          );
+        }
+        
+        // Para horários normais de eventos, continua com o código original
         const hasSelectedEvent = Boolean(selectedEvents[horario.id]);
         const hasPreSelectedEvent = Boolean(preSelectedEvents[horario.id]);
         const hasPendingChangesInThisHour = pendingChanges.has(horario.id);
         const isExpanded = isHourExpanded(horario.id);
+        
+        // Se for o keynote (horário 08:00), permitimos o toggle mas exibimos apenas o palestrante keynote
+        if (isKeynote) {
+          const keynoteEvent = events.find(event => event.id === 25);
+          
+          return (
+            <div 
+              key={horario.id} 
+              className="mb-6"
+              ref={el => hourRefs.current[horario.id] = el}
+            >
+              <div
+                className={`flex items-center justify-between p-4 rounded-lg cursor-pointer transition-all duration-300 
+                  ${isExpanded 
+                    ? "bg-yellow-700" 
+                    : "bg-yellow-600 hover:bg-yellow-700"
+                  }`}
+                onClick={() => toggleDropdown(horario.id)}
+              >
+                {/* Layout responsivo - apenas para mobile */}
+                <div className="md:flex md:flex-col md:items-start flex-grow md:flex-grow-0">
+                  <div className="hidden md:block text-white text-lg font-semibold">
+                    {horario.label} - Keynote Speaker
+                  </div>
+                  
+                  {/* Versão mobile alinhada à esquerda */}
+                  <div className="md:hidden w-full text-left text-lg font-semibold text-white">
+                    {horario.label} <br /> Keynote Speaker
+                  </div>
+                  
+                  <span className="text-slate-200 text-sm mt-1 font-bold text-left w-full md:w-auto">
+                    Fernando Barrera - Diretor Técnico Regional - Future Electronics
+                  </span>
+                </div>
+                <span className="text-white text-lg font-semibold">
+                  {isExpanded ? "▲" : "▼"}
+                </span>
+              </div>
+
+              {isExpanded && (
+                <div className="mt-4 transition-all duration-300 ease-in-out animate-fadeIn">
+                  <div className="p-6 rounded-2xl bg-slate-20 shadow-custom">
+                    {/* Card do Keynote Speaker centralizado */}
+                    <div className="flex justify-center">
+                      <div className="max-w-md">
+                        {keynoteEvent && (
+                          <EventItem
+                            event={keynoteEvent}
+                            isSelected={true}
+                            onSelect={() => {}}
+                            onRemove={() => {}}
+                            showRemoveButton={false}
+                            isMarkedForDeletion={false}
+                            onOpenModal={() => openEventModal(keynoteEvent)}
+                            isSaved={true}
+                            specialEvent={true}
+                            buttonsState="normal"
+                          />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        }
 
         return (
           <div 
@@ -346,12 +452,19 @@ const ScheduleSection = () => {
                 }`}
               onClick={() => toggleDropdown(horario.id)}
             >
-              <div className="flex flex-col">
-                <span className="text-white text-lg font-semibold">
+              {/* Layout responsivo - apenas para mobile */}
+              <div className="md:flex md:flex-col md:items-start flex-grow md:flex-grow-0">
+                <div className="hidden md:block text-white text-lg font-semibold">
                   {horario.label}
-                </span>
+                </div>
+                
+                {/* Versão mobile alinhada à esquerda */}
+                <div className="md:hidden w-full text-left text-lg font-semibold text-white">
+                  {horario.label}
+                </div>
+                
                 {(hasSelectedEvent || hasPreSelectedEvent) && (
-                  <span className="text-slate-300 text-sm mt-1 font-bold">
+                  <span className="text-slate-300 text-sm mt-1 font-bold text-left w-full md:w-auto">
                     Selecionado:{" "}
                     <span className="font-extrabold">
                       {preSelectedEvents[horario.id]?.palestrante ||

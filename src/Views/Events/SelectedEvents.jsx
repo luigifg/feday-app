@@ -15,6 +15,9 @@ const SelectedEvents = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSpeaker, setSelectedSpeaker] = useState(null);
   
+  // Referência ao keynote speaker (ID 25)
+  const keynoteEvent = events.find(event => event.id === 25);
+  
   const { 
     refreshTrigger, 
     refreshEvents, 
@@ -65,6 +68,26 @@ const SelectedEvents = () => {
           };
         }
       });
+      
+      // Adicionar o keynote speaker (ID 25) aos eventos selecionados
+      if (keynoteEvent) {
+        // Usamos "keynote" como ID de hora para distinguir dos demais
+        currentEvents["keynote"] = {
+          id: "keynote-special",
+          eventId: keynoteEvent.id,
+          hour: "0", // Horário do keynote
+          title: keynoteEvent.title,
+          palestrante: keynoteEvent.palestrante,
+          room: keynoteEvent.room,
+          dbId: "keynote-special-id",
+          position: keynoteEvent.position,
+          image: keynoteEvent.image || "",
+          companyLogo: keynoteEvent.companyLogo || "",
+          companyUrl: keynoteEvent.companyUrl || "",
+          description: keynoteEvent.descriptionLecture || "",
+          linkedinUrl: keynoteEvent.linkedinUrl || "#",
+        };
+      }
 
       setSelectedEvents(currentEvents);
       setStagedEvents(currentEvents);
@@ -259,33 +282,66 @@ const SelectedEvents = () => {
           {/* Lista de eventos com visibilidade controlada */}
           {isSelectedEventsVisible && (
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-6 transition-all duration-300 ease-in-out animate-fadeIn">
-              {Object.entries(stagedEvents).map(([hour, event]) => {
-                if (!event) return null;
+              {(() => {
+                // Organizamos os eventos para que o keynote apareça primeiro
+                const sortedEntries = Object.entries(stagedEvents).sort(([hourA, eventA], [hourB, eventB]) => {
+                  // Se eventA é keynote, deve aparecer primeiro (-1)
+                  if (eventA.eventId === 25) return -1;
+                  // Se eventB é keynote, deve aparecer primeiro (1)
+                  if (eventB.eventId === 25) return 1;
+                  // Caso contrário, mantém a ordem original
+                  return 0;
+                });
+                
+                return sortedEntries.map(([hour, event]) => {
+                  if (!event) return null;
 
-                const hourLabel =
-                  horariosEvento.find((h) => h.id === hour)?.label || hour;
-                const isMarkedForDeletion = pendingDeletions.has(event.dbId);
+                  // Verificar se é o keynote speaker
+                  const isKeynote = event.eventId === 25;
+                  
+                  // Label do horário, para todos os eventos incluindo o keynote
+                  const hourLabel = isKeynote 
+                    ? horariosEvento.find((h) => h.id === "0")?.label || "08:00 às 08:45"
+                    : horariosEvento.find((h) => h.id === hour)?.label || hour;
+                    
+                  const isMarkedForDeletion = pendingDeletions.has(event.dbId);
 
-                return (
-                  <div key={hour} className="relative">
-                    <div className="absolute -top-3 right-2 z-10 bg-green-800 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
-                      {hourLabel}
+                  return (
+                    <div key={hour} className="relative">
+                      {/* Tags configuradas para keynote ou eventos normais */}
+                      {isKeynote ? (
+                        <>
+                          {/* Tag à esquerda - Keynote Speaker */}
+                          <div className="absolute -top-3 left-2 z-10 bg-yellow-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+                            Keynote Speaker
+                          </div>
+                          {/* Tag à direita - Horário */}
+                          <div className="absolute -top-3 right-2 z-10 bg-green-800 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+                            {hourLabel}
+                          </div>
+                        </>
+                      ) : (
+                        <div className="absolute -top-3 right-2 z-10 bg-green-800 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+                          {hourLabel}
+                        </div>
+                      )}
+                      <EventItem
+                        event={event}
+                        isSelected={true}
+                        onSelect={() => {}}
+                        onRemove={() => {}}
+                        showRemoveButton={false}
+                        isMarkedForDeletion={isMarkedForDeletion}
+                        onOpenModal={() => openEventModal(event)}
+                        isSaved={true}
+                        onRemoveConfirm={() => isKeynote ? null : removeEventIndividually(event)}
+                        onRemoveCancel={() => {}}
+                        specialEvent={isKeynote} // Passamos a prop especialEvent quando for o keynote
+                      />
                     </div>
-                    <EventItem
-                      event={event}
-                      isSelected={true}
-                      onSelect={() => {}}
-                      onRemove={() => {}}
-                      showRemoveButton={false}
-                      isMarkedForDeletion={isMarkedForDeletion}
-                      onOpenModal={() => openEventModal(event)}
-                      isSaved={true}
-                      onRemoveConfirm={() => removeEventIndividually(event)}
-                      onRemoveCancel={() => {}}
-                    />
-                  </div>
-                );
-              })}
+                  );
+                });
+              })()}
             </div>
           )}
 
