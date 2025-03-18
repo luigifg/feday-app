@@ -78,8 +78,6 @@ const QRCodeSection = () => {
           />
           <div className="mt-4">
             <h2 className="text-xl font-semibold">{userData.name}</h2>
-            <p className="text-gray-600">{userData.position}</p>
-            <p className="text-gray-600">{userData.company}</p>
           </div>
         </div>
       </div>

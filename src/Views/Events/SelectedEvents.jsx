@@ -14,16 +14,16 @@ const SelectedEvents = () => {
   const [pendingChanges, setPendingChanges] = useState(new Set());
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSpeaker, setSelectedSpeaker] = useState(null);
-  
-  // Referência ao keynote speaker (ID 25)
-  const keynoteEvent = events.find(event => event.id === 25);
-  
-  const { 
-    refreshTrigger, 
-    refreshEvents, 
+
+  // Referência ao keynote speaker (ID 26)
+  const keynoteEvent = events.find((event) => event.id === 26);
+
+  const {
+    refreshTrigger,
+    refreshEvents,
     expandHour,
-    isSelectedEventsVisible, 
-    toggleSelectedEventsVisibility 
+    isSelectedEventsVisible,
+    toggleSelectedEventsVisibility,
   } = useEvents();
 
   useEffect(() => {
@@ -68,7 +68,7 @@ const SelectedEvents = () => {
           };
         }
       });
-      
+
       // Adicionar o keynote speaker (ID 25) aos eventos selecionados
       if (keynoteEvent) {
         // Usamos "keynote" como ID de hora para distinguir dos demais
@@ -238,8 +238,8 @@ const SelectedEvents = () => {
         speakerId={selectedSpeaker?.id}
         titleField="title"
         descriptionField="descriptionLecture"
+        useSpeakerName={false} // Adicionando esta prop para garantir que use sempre palestrante
       />
-
       <h1
         className="text-4xl font-extrabold text-center mb-8 text-gray-800"
         style={{
@@ -271,7 +271,8 @@ const SelectedEvents = () => {
                   : "Eventos Selecionados"}
               </span>
               <span className="text-slate-200 text-sm mt-1">
-                Clique para {isSelectedEventsVisible ? "ocultar" : "mostrar"} seus eventos
+                Clique para {isSelectedEventsVisible ? "ocultar" : "mostrar"}{" "}
+                seus eventos
               </span>
             </div>
             <span className="text-white text-lg font-semibold">
@@ -284,26 +285,29 @@ const SelectedEvents = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-6 transition-all duration-300 ease-in-out animate-fadeIn">
               {(() => {
                 // Organizamos os eventos para que o keynote apareça primeiro
-                const sortedEntries = Object.entries(stagedEvents).sort(([hourA, eventA], [hourB, eventB]) => {
-                  // Se eventA é keynote, deve aparecer primeiro (-1)
-                  if (eventA.eventId === 25) return -1;
-                  // Se eventB é keynote, deve aparecer primeiro (1)
-                  if (eventB.eventId === 25) return 1;
-                  // Caso contrário, mantém a ordem original
-                  return 0;
-                });
-                
+                const sortedEntries = Object.entries(stagedEvents).sort(
+                  ([hourA, eventA], [hourB, eventB]) => {
+                    // Se eventA é keynote, deve aparecer primeiro (-1)
+                    if (eventA.eventId === 26) return -1;
+                    // Se eventB é keynote, deve aparecer primeiro (1)
+                    if (eventB.eventId === 26) return 1;
+                    // Caso contrário, mantém a ordem original
+                    return 0;
+                  }
+                );
+
                 return sortedEntries.map(([hour, event]) => {
                   if (!event) return null;
 
                   // Verificar se é o keynote speaker
-                  const isKeynote = event.eventId === 25;
-                  
+                  const isKeynote = event.eventId === 26;
+
                   // Label do horário, para todos os eventos incluindo o keynote
-                  const hourLabel = isKeynote 
-                    ? horariosEvento.find((h) => h.id === "0")?.label || "08:00 às 08:45"
+                  const hourLabel = isKeynote
+                    ? horariosEvento.find((h) => h.id === "0")?.label ||
+                      "08:00 às 08:45"
                     : horariosEvento.find((h) => h.id === hour)?.label || hour;
-                    
+
                   const isMarkedForDeletion = pendingDeletions.has(event.dbId);
 
                   return (
@@ -334,7 +338,9 @@ const SelectedEvents = () => {
                         isMarkedForDeletion={isMarkedForDeletion}
                         onOpenModal={() => openEventModal(event)}
                         isSaved={true}
-                        onRemoveConfirm={() => isKeynote ? null : removeEventIndividually(event)}
+                        onRemoveConfirm={() =>
+                          isKeynote ? null : removeEventIndividually(event)
+                        }
                         onRemoveCancel={() => {}}
                         specialEvent={isKeynote} // Passamos a prop especialEvent quando for o keynote
                       />

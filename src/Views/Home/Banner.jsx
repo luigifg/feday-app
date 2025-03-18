@@ -5,6 +5,8 @@ import linkedin from "../../assets/socials/linkedin.png";
 import SpeakerModal from "../../Components/design/SpeakerModal.jsx";
 import { events } from "../../data/speakerData.jsx";
 
+const filteredSlides = events.filter(event => !event.hideFromBanner);
+
 // Função para processar parágrafos em JSX
 const formatDescriptionToJsx = (descriptionBanner, lineClampClass = "") => {
   if (!descriptionBanner) return null;
@@ -54,7 +56,7 @@ const truncateText = (text, screenSize) => {
   };
 };
 
-const slides = events;
+const slides = filteredSlides;
 
 const ImageSlider = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -172,6 +174,8 @@ const ImageSlider = () => {
                     screenSize
                   );
                   const isExpanded = fullTextExpanded[slide.id];
+                  // Usar speakerName se disponível, caso contrário usar palestrante
+                  const displayName = slide.speakerName || slide.palestrante;
 
                   return (
                     <div
@@ -196,7 +200,7 @@ const ImageSlider = () => {
                           />
                         </a>
                         <h2 className="text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl font-bold text-gray-800">
-                          {slide.palestrante}
+                          {displayName}
                         </h2>
                       </div>
 
@@ -325,6 +329,7 @@ const ImageSlider = () => {
         onPrevSlide={prevSlide}
         onNextSlide={nextSlide}
         slides={slides}
+        useSpeakerName={true} // Flag para usar speakerName (não vindo da ScheduleSection)
       />
     </div>
   );

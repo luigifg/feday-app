@@ -13,7 +13,8 @@ const SpeakerModal = ({
   speakerId,
   // Novas props para flexibilidade
   titleField = "position", // Campo a ser usado como título secundário (position por padrão, pode ser "title")
-  descriptionField = "descriptionBanner" // Campo a ser usado como descrição (descriptionBanner por padrão, pode ser "descriptionLecture")
+  descriptionField = "descriptionBanner", // Campo a ser usado como descrição (descriptionBanner por padrão, pode ser "descriptionLecture")
+  useSpeakerName = false // Flag para determinar se deve usar speakerName ou palestrante
 }) => {
   if (!isOpen) return null;
 
@@ -38,6 +39,16 @@ const SpeakerModal = ({
         {paragraph}
       </p>
     ));
+  };
+
+  // Função para determinar o nome a ser exibido
+  const getSpeakerName = (slide) => {
+    // Quando vem do ScheduleSection (speakerId está definido), usar sempre palestrante
+    // Caso contrário, usar speakerName se disponível, ou palestrante como fallback
+    if (speakerId || !useSpeakerName) {
+      return slide.palestrante;
+    }
+    return slide.speakerName || slide.palestrante;
   };
 
   return (
@@ -117,7 +128,7 @@ const SpeakerModal = ({
         <div className="col-span-1 xl:col-span-2 h-[220px] md:h-[290px] lg:h-[400px] xl:h-[450px] 2xl:h-[600px]">
           <img
             src={currentSlides[speakerId ? 0 : currentSlide].imageBanner}
-            alt={currentSlides[speakerId ? 0 : currentSlide].palestrante}
+            alt={getSpeakerName(currentSlides[speakerId ? 0 : currentSlide])}
             className="w-full h-full object-cover xl:rounded-l-xl rounded-t-xl xl:rounded-tr-none"
             loading="lazy"
           />
@@ -141,7 +152,7 @@ const SpeakerModal = ({
                 />
               </a>
               <h2 className="text-xl md:text-2xl 2xl:text-3xl font-bold text-gray-800">
-                {currentSlides[speakerId ? 0 : currentSlide].palestrante}
+                {getSpeakerName(currentSlides[speakerId ? 0 : currentSlide])}
               </h2>
             </div>
 

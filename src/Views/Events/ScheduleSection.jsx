@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Section from "../../Components/Section";
 import EventItem from "../../Components/design/EventItems";
-import { horariosEvento, events } from "../../data/speakerData";
+import { horariosEvento, events, ROOM_COLORS } from "../../data/speakerData";
 import api from "../../constants/Axios";
 import { useEvents } from "./EventsContext";
 import SpeakerModal from "../../Components/design/SpeakerModal.jsx";
@@ -14,10 +14,10 @@ const ScheduleSection = () => {
   const [pendingDeletions, setPendingDeletions] = useState(new Set());
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSpeaker, setSelectedSpeaker] = useState(null);
-  
+
   // Mantemos a referência para os elementos, mas removemos a rolagem automática
   const hourRefs = useRef({});
-  
+
   const {
     refreshTrigger,
     refreshEvents,
@@ -26,7 +26,7 @@ const ScheduleSection = () => {
     expandHour,
     isHourExpanded,
     expandedHour,
-    toggleSelectedEventsVisibility
+    toggleSelectedEventsVisibility,
   } = useEvents();
 
   useEffect(() => {
@@ -147,13 +147,16 @@ const ScheduleSection = () => {
 
   const toggleDropdown = (hour) => {
     // Verificamos se é um horário de intervalo/break
-    const isBreak = horariosEvento.find(h => h.id === hour)?.type === "break";
-    
+    const isBreak = horariosEvento.find((h) => h.id === hour)?.type === "break";
+
     // Se for um intervalo, não fazemos nada (não expande)
     if (isBreak) return;
-    
+
     // Ao expandir um horário, fechamos a seção "Meus Eventos"
     toggleSelectedEventsVisibility(false);
+
+    // Antes de alterar o estado, salvamos a posição do elemento para garantir o scroll correto
+    const headerElement = hourRefs.current[hour];
     
     // Se o horário já está expandido, fechamos ele
     if (isHourExpanded(hour)) {
@@ -161,6 +164,21 @@ const ScheduleSection = () => {
     } else {
       // Caso contrário, expandimos este horário
       expandHour(hour);
+      
+      // Adicionamos um delay um pouco maior para garantir que a renderização foi concluída
+      setTimeout(() => {
+        if (headerElement) {
+          // Calculamos um offset para garantir que o cabeçalho fique no topo
+          const headerPosition = headerElement.getBoundingClientRect().top;
+          const scrollPosition = window.pageYOffset + headerPosition - 90; // 20px de margem no topo
+          
+          // Fazemos o scroll para a posição calculada
+          window.scrollTo({
+            top: scrollPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 100); // Aumentamos o delay para dar tempo à renderização
     }
   };
 
@@ -199,14 +217,14 @@ const ScheduleSection = () => {
   const handleSaveChanges = async (event = null) => {
     if (!userData?.id) return;
 
-    console.log("userdata:", userData)
+    console.log("userdata:", userData);
     try {
       if (event) {
         const eventDetails = events.find((e) => e.id === event.id);
 
         await api.post("/participation", {
           userId: userData.id,
-          userName:userData.name,
+          userName: userData.name,
           scheduleId: event.hour,
           eventId: event.id,
           title: event.title,
@@ -277,7 +295,22 @@ const ScheduleSection = () => {
   };
 
   const getEventsByHour = (hour) => {
-    return eventList.filter((event) => event.hour === hour);
+    // Filtra os eventos pelo horário
+    const filteredEvents = eventList.filter((event) => event.hour === hour);
+
+    // Ordena os eventos pelo idRoom da sala
+    return filteredEvents.sort((a, b) => {
+      // Obtem o idRoom da sala para cada evento
+      const roomA = a.room ? a.room.toLowerCase() : "";
+      const roomB = b.room ? b.room.toLowerCase() : "";
+
+      // Obtém os idRoom dos objetos ROOM_COLORS
+      const idRoomA = ROOM_COLORS[roomA]?.idRoom || 999; // Valor alto caso não encontre
+      const idRoomB = ROOM_COLORS[roomB]?.idRoom || 999;
+
+      // Ordena por idRoom (crescente)
+      return idRoomA - idRoomB;
+    });
   };
 
   // Renderiza um bloco de intervalo/break com melhor responsividade
@@ -294,14 +327,14 @@ const ScheduleSection = () => {
             {horario.description}
           </div>
         </div>
-        
+
         {/* Layout para desktop - mantém o original */}
         <div className="hidden md:block">
           {/* Horário à esquerda */}
           <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-lg font-semibold">
             {horario.label}
           </div>
-          
+
           {/* Descrição centralizada */}
           <div className="w-full text-center text-md font-medium">
             {horario.description}
@@ -328,6 +361,7 @@ const ScheduleSection = () => {
         speakerId={selectedSpeaker?.id}
         titleField="title"
         descriptionField="descriptionLecture"
+        useSpeakerName={false} // Adicionando esta prop para garantir que use sempre palestrante
       />
       <h1
         className="text-4xl font-extrabold text-center mb-10 text-gray-800"
@@ -349,40 +383,45 @@ const ScheduleSection = () => {
       {horariosEvento.map((horario) => {
         // Verificar se é um horário de intervalo/break
         const isBreak = horario.type === "break";
-        
+
         // Verificar se é o horário do keynote (id "0")
         const isKeynote = horario.id === "0";
-        
+
         if (isBreak) {
           // Renderiza um bloco de intervalo (não clicável, não expansível)
           return (
-            <div key={horario.id} className="mb-6" ref={el => hourRefs.current[horario.id] = el}>
+            <div
+              key={horario.id}
+              className="mb-6"
+              ref={(el) => (hourRefs.current[horario.id] = el)}
+            >
               {renderBreakBlock(horario)}
             </div>
           );
         }
-        
+
         // Para horários normais de eventos, continua com o código original
         const hasSelectedEvent = Boolean(selectedEvents[horario.id]);
         const hasPreSelectedEvent = Boolean(preSelectedEvents[horario.id]);
         const hasPendingChangesInThisHour = pendingChanges.has(horario.id);
         const isExpanded = isHourExpanded(horario.id);
-        
+
         // Se for o keynote (horário 08:00), permitimos o toggle mas exibimos apenas o palestrante keynote
         if (isKeynote) {
-          const keynoteEvent = events.find(event => event.id === 25);
-          
+          const keynoteEvent = events.find((event) => event.id === 26);
+
           return (
-            <div 
-              key={horario.id} 
+            <div
+              key={horario.id}
               className="mb-6"
-              ref={el => hourRefs.current[horario.id] = el}
+              ref={(el) => (hourRefs.current[horario.id] = el)}
             >
               <div
                 className={`flex items-center justify-between p-4 rounded-lg cursor-pointer transition-all duration-300 
-                  ${isExpanded 
-                    ? "bg-yellow-700" 
-                    : "bg-yellow-600 hover:bg-yellow-700"
+                  ${
+                    isExpanded
+                      ? "bg-yellow-700"
+                      : "bg-yellow-600 hover:bg-yellow-700"
                   }`}
                 onClick={() => toggleDropdown(horario.id)}
               >
@@ -391,14 +430,15 @@ const ScheduleSection = () => {
                   <div className="hidden md:block text-white text-lg font-semibold">
                     {horario.label} - Keynote Speaker
                   </div>
-                  
+
                   {/* Versão mobile alinhada à esquerda */}
                   <div className="md:hidden w-full text-left text-lg font-semibold text-white">
                     {horario.label} <br /> Keynote Speaker
                   </div>
-                  
+
                   <span className="text-slate-200 text-sm mt-1 font-bold text-left w-full md:w-auto">
-                    Fernando Barrera - Diretor Técnico Regional - Future Electronics
+                    Fernando Barrera - Diretor Técnico Regional - Future
+                    Electronics
                   </span>
                 </div>
                 <span className="text-white text-lg font-semibold">
@@ -407,8 +447,8 @@ const ScheduleSection = () => {
               </div>
 
               {isExpanded && (
-                <div className="mt-4 transition-all duration-300 ease-in-out animate-fadeIn">
-                  <div className="p-6 rounded-2xl bg-slate-20 shadow-custom">
+                <div className="mt-4 transition-all flex justify-center duration-300 ease-in-out animate-fadeIn">
+                  <div className=" p-6 rounded-2xl bg-slate-20 shadow-custom max-w-lg">
                     {/* Card do Keynote Speaker centralizado */}
                     <div className="flex justify-center">
                       <div className="max-w-md">
@@ -436,10 +476,10 @@ const ScheduleSection = () => {
         }
 
         return (
-          <div 
-            key={horario.id} 
+          <div
+            key={horario.id}
             className="mb-6"
-            ref={el => hourRefs.current[horario.id] = el}
+            ref={(el) => (hourRefs.current[horario.id] = el)}
           >
             <div
               className={`flex items-center justify-between p-4 rounded-lg cursor-pointer transition-all duration-300 
@@ -457,12 +497,12 @@ const ScheduleSection = () => {
                 <div className="hidden md:block text-white text-lg font-semibold">
                   {horario.label}
                 </div>
-                
+
                 {/* Versão mobile alinhada à esquerda */}
                 <div className="md:hidden w-full text-left text-lg font-semibold text-white">
                   {horario.label}
                 </div>
-                
+
                 {(hasSelectedEvent || hasPreSelectedEvent) && (
                   <span className="text-slate-300 text-sm mt-1 font-bold text-left w-full md:w-auto">
                     Selecionado:{" "}
@@ -518,6 +558,7 @@ const ScheduleSection = () => {
                             onSaveEvent={() => handleSaveChanges(event)}
                             onRemoveConfirm={() => removeEvent(savedEvent)}
                             onRemoveCancel={() => {}}
+                            isOtherSelected={isOtherSelected}
                           />
                         </div>
                       );

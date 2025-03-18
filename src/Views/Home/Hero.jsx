@@ -33,7 +33,7 @@ const slideContent = [
     description:
       "Fernando Barrera é um líder de vendas com vasta experiência na indústria de Semicondutores e atualmente atua como Diretor Técnico Regional na Future Electronics, baseado no Vale do Silício",
     buttonText: "Conheça Fernando Barrera",
-    speakerId: 25, // Adicionando o ID do palestrante para o segundo slide
+    speakerId: 26, // Adicionando o ID do palestrante para o segundo slide
   },
 ];
 
@@ -351,7 +351,7 @@ const Hero = () => {
       <SpeakerModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        speakerId={25} // Definindo fixo como 25, independente do slide
+        speakerId={26} // Definindo fixo como 25, independente do slide
         currentSlide={0} // Não utilizado quando speakerId é fornecido
         onPrevSlide={() => {}} // Não utilizado quando speakerId é fornecido
         onNextSlide={() => {}} // Não utilizado quando speakerId é fornecido
