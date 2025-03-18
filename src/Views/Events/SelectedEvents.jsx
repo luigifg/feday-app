@@ -240,6 +240,7 @@ const SelectedEvents = () => {
         descriptionField="descriptionLecture"
         useSpeakerName={false} // Adicionando esta prop para garantir que use sempre palestrante
       />
+
       <h1
         className="text-4xl font-extrabold text-center mb-8 text-gray-800"
         style={{
@@ -316,7 +317,7 @@ const SelectedEvents = () => {
                       {isKeynote ? (
                         <>
                           {/* Tag à esquerda - Keynote Speaker */}
-                          <div className="absolute -top-3 left-2 z-10 bg-yellow-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+                          <div className="absolute -top-3 left-2 z-10 bg-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
                             Keynote Speaker
                           </div>
                           {/* Tag à direita - Horário */}

@@ -60,6 +60,11 @@ export const navigation = [
     title: "Local",
     url: "#local",
   },
+  {
+    id: "4",
+    title: "Programação",
+    url: "#home-schedule",
+  },
 
   // {
   //   id: "4",

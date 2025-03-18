@@ -12,7 +12,6 @@ const Header = () => {
   const pathname = useLocation();
   const [openNavigation, setOpenNavigation] = useState(false);
   const [user, setUser] = useState(null);
-  const [showAuthButtons, setShowAuthButtons] = useState(true);
   const [buttonText, setButtonText] = useState({
     signup: "Novo Usuário",
     signin: "Entrar",
@@ -83,21 +82,75 @@ const Header = () => {
 
   return (
     <div
-      className={`fixed top-0 left-0 w-full z-50 border-b border-n-6 lg:bg-n-1/90 lg:backdrop-blur-sm ${
+      className={`fixed top-0 left-0 w-full z-50 border-b border-n-6 lg:bg-n-1/90 lg:backdrop-blur-sm py-5 ${
         openNavigation ? "bg-n-1" : "bg-n-1/90 backdrop-blur-sm"
       }`}
     >
-      <div className="flex items-center px-5 lg:px-7.5 xl:px-10 max-lg:py-4">
-        <a className="block w-[12rem] xl:mr-8" href="/">
+      <div className="flex items-center justify-between px-5 lg:px-7.5 xl:px-10 max-lg:py-4">
+        {/* Logo à esquerda */}
+        <a className="block w-[12rem]" href="/">
           <img src={fe} width={140} height={40} alt="FutureDay" />
         </a>
 
+        {/* Navegação centralizada (apenas visível em desktop) */}
+        <nav className="hidden lg:flex items-center justify-center flex-1">
+          <div className="flex items-center justify-center px-4">
+            {filteredNavigation.map((item) => (
+              !item.onlyMobile && (
+                <a
+                  key={item.id}
+                  href={item.url}
+                  className={`font-code text-xs uppercase font-semibold px-6 py-4 transition-colors hover:text-color-4 ${
+                    item.url === pathname.hash ? "text-n-8" : "text-n-8/50"
+                  }`}
+                >
+                  {item.title}
+                </a>
+              )
+            ))}
+          </div>
+        </nav>
+
+        {/* Área de autenticação à direita (desktop) */}
+        <div className="hidden lg:flex items-center gap-6">
+          {user ? (
+            <>
+              <a
+                href="/events"
+                className="font-code text-xs uppercase font-semibold text-n-8/50 hover:text-color-4 transition-colors"
+              >
+                Meus Eventos
+              </a>
+              <button
+                onClick={handleLogout}
+                className="font-code text-xs uppercase font-semibold text-red-500 hover:text-red-600 transition-colors"
+              >
+                Sair
+              </button>
+            </>
+          ) : (
+            <>
+              <a
+                className="font-code text-xs uppercase font-semibold text-n-8/50 transition-colors hover:text-color-4"
+                onClick={() => handleAuthButtonClick("signup")}
+                style={{ cursor: "pointer" }}
+              >
+                {buttonText.signup}
+              </a>
+              <Button onClick={() => handleAuthButtonClick("signin")}>
+                {buttonText.signin}
+              </Button>
+            </>
+          )}
+        </div>
+
+        {/* Menu mobile */}
         <nav
           className={`${
             openNavigation ? "flex" : "hidden"
-          } fixed top-[5rem] left-0 right-0 bottom-0 bg-n-1 lg:static lg:flex lg:bg-transparent lg:flex-1`}
+          } fixed top-[7.59rem] left-0 right-0 bottom-0 bg-n-1 lg:hidden`}
         >
-          <div className="relative z-2 flex flex-col items-center justify-center m-auto lg:flex-row lg:justify-center">
+          <div className="relative z-2 flex flex-col items-center justify-center m-auto">
             {filteredNavigation.map((item) => (
               <a
                 key={item.id}
@@ -105,11 +158,7 @@ const Header = () => {
                 onClick={handleClick}
                 className={`block relative font-code text-2xl uppercase text-n-8 transition-colors hover:text-color-4 ${
                   item.onlyMobile ? "lg:hidden" : ""
-                } px-6 py-6 md:py-8 lg:-mr-0.25 lg:text-xs lg:font-semibold ${
-                  item.url === pathname.hash
-                    ? "z-2 lg:text-n-8"
-                    : "lg:text-n-8/50"
-                } lg:leading-5 lg:hover:text-color-4 xl:px-8`}
+                } px-6 py-6 md:py-8`}
               >
                 {item.title}
               </a>
@@ -120,13 +169,13 @@ const Header = () => {
                 <a
                   href="/events"
                   onClick={handleClick}
-                  className="block relative font-code text-2xl uppercase text-n-8 transition-colors hover:text-color-4 px-6 py-6 md:py-8 lg:hidden"
+                  className="block relative font-code text-2xl uppercase text-n-8 transition-colors hover:text-color-4 px-6 py-6 md:py-8"
                 >
                   Meus Eventos
                 </a>
                 <button
                   onClick={handleLogout}
-                  className="block relative font-code text-2xl uppercase text-red-500 transition-colors hover:text-red-600 px-6 py-6 md:py-8 lg:hidden"
+                  className="block relative font-code text-2xl uppercase text-red-500 transition-colors hover:text-red-600 px-6 py-6 md:py-8"
                 >
                   Sair
                 </button>
@@ -136,44 +185,9 @@ const Header = () => {
           <HamburgerMenu />
         </nav>
 
-        {user ? (
-          <div className="hidden lg:flex items-center ml-auto gap-8">
-            <a
-              href="/events"
-              className="text-n-8/50 hover:text-color-4 transition-colors"
-            >
-              <span className="text-sm font-semibold">Meus Eventos</span>
-            </a>
-            <button
-              onClick={handleLogout}
-              className="text-sm font-semibold text-red-500 hover:text-red-600 transition-colors"
-            >
-              Sair
-            </button>
-          </div>
-        ) : showAuthButtons ? (
-          <>
-            <a
-              className="hidden button mr-8 text-n-8/50 transition-colors hover:text-color-4 lg:block"
-              onClick={() => handleAuthButtonClick("signup")}
-              style={{ cursor: "pointer" }}
-            >
-              {buttonText.signup}
-            </a>
-
-            <Button
-              className="hidden lg:flex"
-              onClick={() => handleAuthButtonClick("signin")}
-            >
-              {buttonText.signin}
-            </Button>
-          </>
-        ) : (
-          <div className="hidden lg:flex ml-auto w-[150px]" />
-        )}
-
+        {/* Botão de menu mobile */}
         <Button
-          className="ml-auto lg:hidden"
+          className="lg:hidden"
           px="px-3"
           onClick={toggleNavigation}
         >

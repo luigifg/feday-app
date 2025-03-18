@@ -101,11 +101,12 @@ const EventItem = ({
   const isEventSelected = isSelected || isPreSelected;
 
   // Define a cor base do gradiente com base no tipo de evento (versão mais sutil)
+
   const getGradientColors = () => {
     if (specialEvent) {
       return isHovered
-        ? ["#FFD700", "#FFA700", "#FF8C00"] // Amarelo para laranja (mais sutil)
-        : ["#FFD700", "#FFA500", "#FF8C00"]; // Dourado para laranja
+        ? ["#22c55e", "#16a34a", "#15803d"] // Verde mais forte para hover
+        : ["#4ade80", "#22c55e", "#16a34a"]; // Verde brilhante para normal
     } else if (isSelected || isPreSelected) {
       return isHovered
         ? ["#2E8B57", "#1D8348", "#00A550"] // Verde selecionado (mais sutil)
@@ -135,8 +136,11 @@ const EventItem = ({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         style={{
-          transform: isHovered ? "scale(1.03)" : 
-                   (isSelected || isPreSelected) ? "scale(1.01)" : "scale(1)",
+          transform: isHovered
+            ? "scale(1.03)"
+            : isSelected || isPreSelected
+            ? "scale(1.01)"
+            : "scale(1)",
           transition: "all 0.3s ease-out",
           position: "relative",
         }}
@@ -149,11 +153,11 @@ const EventItem = ({
               ? `linear-gradient(120deg, ${color1}, ${color2}, ${color3})`
               : `linear-gradient(to top left, ${color1}, ${color2}, ${color3})`,
             boxShadow: isHovered
-              ? (specialEvent 
-                 ? "0 6px 12px -3px rgba(255, 193, 7, 0.15), 0 3px 5px -3px rgba(255, 193, 7, 0.2)"
-                 : (isSelected || isPreSelected)
-                 ? "0 6px 12px -3px rgba(0, 128, 0, 0.15), 0 3px 5px -3px rgba(0, 128, 0, 0.2)"
-                 : "0 6px 12px -3px rgba(0, 128, 0, 0.1), 0 3px 5px -3px rgba(0, 128, 0, 0.15)")
+              ? specialEvent
+                ? "0 6px 12px -3px rgba(34, 197, 94, 0.15), 0 3px 5px -3px rgba(34, 197, 94, 0.2)"
+                : isSelected || isPreSelected
+                ? "0 6px 12px -3px rgba(0, 128, 0, 0.15), 0 3px 5px -3px rgba(0, 128, 0, 0.2)"
+                : "0 6px 12px -3px rgba(0, 128, 0, 0.1), 0 3px 5px -3px rgba(0, 128, 0, 0.15)"
               : "",
             transition: "all 0.3s ease-out",
           }}
@@ -175,23 +179,23 @@ const EventItem = ({
             style={{
               background: isHovered
                 ? specialEvent
-                  ? "#FFFDF5" // Amarelo muito suave
+                  ? "#F0FFF4" // Verde muito suave para hover
                   : isSelected || isPreSelected
                   ? "#F4FBF6" // Verde muito suave para selecionado
                   : "#F8FBF8" // Verde mais suave ainda
                 : specialEvent
-                ? "#FFFDF0" // Amarelo suave
+                ? "#ECFDF5" // Verde suave
                 : isSelected || isPreSelected
                 ? "#F0F9F2" // Verde suave
                 : "white",
-              border: isHovered 
+              border: isHovered
                 ? specialEvent
-                  ? "2px solid #FFBE0B" // Amarelo um pouco mais forte
+                  ? "2px solid #22c55e" // Verde médio
                   : isSelected || isPreSelected
                   ? "2px solid #1D8348" // Verde médio
                   : "2px solid #3CB371" // Verde médio
                 : specialEvent
-                ? "2px solid #FFD700" // Dourado
+                ? "2px solid #4ade80" // Verde brilhante
                 : isSelected || isPreSelected
                 ? "2px solid #00AF3F" // Verde selecionado
                 : "2px solid transparent", // Sem borda
@@ -203,14 +207,15 @@ const EventItem = ({
           >
             {/* Efeito de brilho no canto (mais sutil) */}
             {isHovered && (
-              <div 
+              <div
                 className="absolute"
                 style={{
                   top: "-50%",
                   left: "-50%",
                   width: "200%",
                   height: "200%",
-                  background: "radial-gradient(circle, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 70%)",
+                  background:
+                    "radial-gradient(circle, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 70%)",
                   transform: "rotate(30deg)",
                   opacity: 0.3,
                   pointerEvents: "none",
@@ -222,11 +227,13 @@ const EventItem = ({
             {/* Conteúdo do card com imagem clicável */}
             <div className="flex justify-between items-start">
               <div className="flex-grow">
-                <h2 
+                <h2
                   className="text-sm sm:text-md lg:text-mdp font-bold max-w-[12rem] md:max-w-[22rem] mb-6 whitespace-pre-line h-[5rem] line-clamp-5 overflow-hidden transition-all duration-300"
                   style={{
                     color: isHovered ? "#1D8348" : "#333333",
-                    textShadow: isHovered ? "0 1px 1px rgba(0,0,0,0.03)" : "none"
+                    textShadow: isHovered
+                      ? "0 1px 1px rgba(0,0,0,0.03)"
+                      : "none",
                   }}
                 >
                   {event.title}
@@ -241,12 +248,16 @@ const EventItem = ({
                 } rounded-full overflow-hidden ml-2 w-[75px] h-[75px] transition-all duration-300`}
                 style={{
                   border: isHovered
-                    ? `2px solid ${specialEvent ? "#FFBE0B" : "#1D8348"}`
-                    : `2px solid ${specialEvent ? "#FFD700" : "#3CB371"}`,
+                    ? `2px solid ${specialEvent ? "#22c55e" : "#1D8348"}`
+                    : `2px solid ${specialEvent ? "#4ade80" : "#3CB371"}`,
                   transform: isHovered ? "scale(1.05)" : "scale(1)",
                   boxShadow: isHovered
-                    ? `0 3px 8px ${specialEvent ? "rgba(255, 193, 7, 0.2)" : "rgba(0, 128, 0, 0.15)"}`
-                    : "none"
+                    ? `0 3px 8px ${
+                        specialEvent
+                          ? "rgba(34, 197, 94, 0.2)"
+                          : "rgba(0, 128, 0, 0.15)"
+                      }`
+                    : "none",
                 }}
                 onClick={openPhotoModal}
               >
@@ -255,10 +266,12 @@ const EventItem = ({
                     src={event.image}
                     alt={event.palestrante}
                     className="absolute inset-0 w-full h-full object-cover"
-                    style={{ 
+                    style={{
                       objectPosition: "center",
-                      filter: isHovered ? "brightness(1.05) contrast(1.03)" : "none"
-                    }} 
+                      filter: isHovered
+                        ? "brightness(1.05) contrast(1.03)"
+                        : "none",
+                    }}
                   />
                 </div>
               </div>
@@ -280,7 +293,7 @@ const EventItem = ({
                         className="max-w-20 max-h-10 object-contain cursor-pointer transition-all duration-300"
                         style={{
                           opacity: isHovered ? 1 : 0.95,
-                          transform: isHovered ? "scale(1.03)" : "scale(1)"
+                          transform: isHovered ? "scale(1.03)" : "scale(1)",
                         }}
                       />
                     </a>
@@ -293,21 +306,25 @@ const EventItem = ({
               </div>
 
               <div className="flex items-center gap-2 text-sm md:text-mdp">
-                <User 
-                  className="w-5 h-5 transition-all duration-300" 
+                <User
+                  className="w-5 h-5 transition-all duration-300"
                   style={{
                     color: isHovered ? "#1D8348" : "#43A047",
                     transform: isHovered ? "scale(1.1)" : "scale(1)",
-                    filter: isHovered ? "drop-shadow(0 1px 1px rgba(0,100,0,0.2))" : "none"
+                    filter: isHovered
+                      ? "drop-shadow(0 1px 1px rgba(0,100,0,0.2))"
+                      : "none",
                   }}
                 />
                 <span className="text-gray-600">
                   Palestrante:{" "}
-                  <span 
+                  <span
                     className="font-semibold transition-all duration-300"
                     style={{
                       color: isHovered ? "#1D8348" : "inherit",
-                      textShadow: isHovered ? "0 1px 1px rgba(0,0,0,0.03)" : "none",
+                      textShadow: isHovered
+                        ? "0 1px 1px rgba(0,0,0,0.03)"
+                        : "none",
                     }}
                   >
                     {event.palestrante}
@@ -317,12 +334,14 @@ const EventItem = ({
 
               {/* Informação da sala */}
               <div className="flex items-center gap-2">
-                <MapPin 
+                <MapPin
                   className="w-5 h-5 transition-all duration-300"
                   style={{
                     color: isHovered ? "#1D8348" : "#43A047",
                     transform: isHovered ? "scale(1.1)" : "scale(1)",
-                    filter: isHovered ? "drop-shadow(0 1px 1px rgba(0,100,0,0.2))" : "none"
+                    filter: isHovered
+                      ? "drop-shadow(0 1px 1px rgba(0,100,0,0.2))"
+                      : "none",
                   }}
                 />
                 <span className="text-gray-600 text-sm">Sala:</span>
@@ -333,7 +352,7 @@ const EventItem = ({
                   style={{
                     transform: isHovered ? "scale(1.03)" : "scale(1)",
                     boxShadow: isHovered ? "0 2px 4px rgba(0,0,0,0.1)" : "none",
-                    fontWeight: isHovered ? "600" : "600"
+                    fontWeight: isHovered ? "600" : "600",
                   }}
                 >
                   {event.room}
@@ -353,7 +372,9 @@ const EventItem = ({
                     className="bg-red-500 text-white px-3 py-2 rounded-lg text-sm font-medium flex-1 border-2 border-red-600 transition-colors duration-300 h-10"
                     style={{
                       backgroundColor: isHovered ? "#E53935" : "#EF5350",
-                      boxShadow: isHovered ? "0 2px 4px rgba(211, 47, 47, 0.2)" : "none"
+                      boxShadow: isHovered
+                        ? "0 2px 4px rgba(211, 47, 47, 0.2)"
+                        : "none",
                     }}
                   >
                     Cancelar
@@ -366,7 +387,9 @@ const EventItem = ({
                     className="bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium flex-1 border-2 border-green-700 transition-colors duration-300 h-10"
                     style={{
                       backgroundColor: isHovered ? "#2E7D32" : "#43A047",
-                      boxShadow: isHovered ? "0 2px 4px rgba(46, 125, 50, 0.2)" : "none"
+                      boxShadow: isHovered
+                        ? "0 2px 4px rgba(46, 125, 50, 0.2)"
+                        : "none",
                     }}
                   >
                     Salvar
@@ -386,7 +409,9 @@ const EventItem = ({
                       className="bg-blue-500 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-medium flex-1 border-2 border-blue-600 transition-colors duration-300 h-10"
                       style={{
                         backgroundColor: isHovered ? "#1976D2" : "#2196F3",
-                        boxShadow: isHovered ? "0 2px 4px rgba(21, 101, 192, 0.2)" : "none"
+                        boxShadow: isHovered
+                          ? "0 2px 4px rgba(21, 101, 192, 0.2)"
+                          : "none",
                       }}
                     >
                       Cancelar
@@ -400,7 +425,9 @@ const EventItem = ({
                       className="bg-red-600 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-medium flex-1 border-2 border-red-700 transition-colors duration-300 h-10"
                       style={{
                         backgroundColor: isHovered ? "#D32F2F" : "#E53935",
-                        boxShadow: isHovered ? "0 2px 4px rgba(198, 40, 40, 0.2)" : "none"
+                        boxShadow: isHovered
+                          ? "0 2px 4px rgba(198, 40, 40, 0.2)"
+                          : "none",
                       }}
                     >
                       Confirmar
@@ -417,7 +444,9 @@ const EventItem = ({
                       className="bg-green-600 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-medium flex-1 border-2 border-green-700 transition-colors duration-300 h-10 flex items-center justify-center"
                       style={{
                         backgroundColor: isHovered ? "#2E7D32" : "#43A047",
-                        boxShadow: isHovered ? "0 2px 4px rgba(46, 125, 50, 0.2)" : "none"
+                        boxShadow: isHovered
+                          ? "0 2px 4px rgba(46, 125, 50, 0.2)"
+                          : "none",
                       }}
                     >
                       Descrição
@@ -431,7 +460,9 @@ const EventItem = ({
                         className="bg-red-600 text-white px-1 py-2 rounded-lg text-xs sm:text-sm font-medium flex-1 border-2 border-red-700 transition-colors duration-300 h-10 flex items-center justify-center whitespace-nowrap"
                         style={{
                           backgroundColor: isHovered ? "#D32F2F" : "#E53935",
-                          boxShadow: isHovered ? "0 2px 4px rgba(198, 40, 40, 0.2)" : "none"
+                          boxShadow: isHovered
+                            ? "0 2px 4px rgba(198, 40, 40, 0.2)"
+                            : "none",
                         }}
                       >
                         Remover Evento
@@ -450,7 +481,9 @@ const EventItem = ({
                     className="bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium flex-1 border-2 border-green-700 transition-colors duration-300 h-10"
                     style={{
                       backgroundColor: isHovered ? "#2E7D32" : "#43A047",
-                      boxShadow: isHovered ? "0 2px 4px rgba(46, 125, 50, 0.2)" : "none"
+                      boxShadow: isHovered
+                        ? "0 2px 4px rgba(46, 125, 50, 0.2)"
+                        : "none",
                     }}
                   >
                     Descrição
@@ -465,7 +498,9 @@ const EventItem = ({
                       className="bg-blue-500 text-white px-3 py-2 rounded-lg text-sm font-medium flex-1 border-2 border-blue-600 transition-colors duration-300 h-10"
                       style={{
                         backgroundColor: isHovered ? "#1976D2" : "#2196F3",
-                        boxShadow: isHovered ? "0 2px 4px rgba(21, 101, 192, 0.2)" : "none"
+                        boxShadow: isHovered
+                          ? "0 2px 4px rgba(21, 101, 192, 0.2)"
+                          : "none",
                       }}
                     >
                       Selecionar

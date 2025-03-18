@@ -79,7 +79,8 @@ export default function EventLocation() {
         id="local"
       >
         <div className="relative">
-          <h2 className="font-bold text-3xl text-center sm:text-4xl md:text-4xl mb-8 md:mb-12">
+          <h2 className="font-bold text-3xl sm:text-4xl md:text-4xl lg:text-5xl text-center mb-8 md:mb-12"
+          >
             Local do Evento - 2025
           </h2>
           <div className=" mx-auto  ">
@@ -88,7 +89,7 @@ export default function EventLocation() {
                 <h3 className="text-xl md:text-2xl font-bold mb-2">
                   Qoya Hotel Curitiba
                 </h3>
-                <p className="text-sm md:text-lg text-gray-600 mb-6 mx-[2rem]">
+                <p className="text-base font-medium sm:text-lg lg:text-xl text-gray-600 mb-6 mx-[3rem]">
                   Um espaço moderno e acolhedor, perfeitamente equipado para
                   proporcionar uma experiência única aos participantes.
                 </p>

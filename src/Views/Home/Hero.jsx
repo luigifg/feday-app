@@ -247,7 +247,8 @@ const Hero = () => {
 
                 <div className="flex flex-col items-center mt-[2.5rem] w-full space-y-15">
                   <div className="mt-5 md:mt-10 text-center">
-                    <span className="h2 md:h1 font-bold block">
+                    <span className="h2 md:h1 font-bold block"
+                    >
                       {slideContent[currentSlide].welcome}
                     </span>
                     <span className="h2 md:h1 font-bold inline-block relative">

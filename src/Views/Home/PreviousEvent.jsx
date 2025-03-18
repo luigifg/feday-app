@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import Section from "../../Components/Section";
-import bg3 from "../../assets/logos/bg3.svg";
+import bg3 from "../../assets/logos/bg4.svg";
 
 const Previous = () => {
   const [activeYear, setActiveYear] = useState("2023");
@@ -164,10 +164,11 @@ const Previous = () => {
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6 sm:mb-12">
                 {eventContent[activeYear].title}
               </h2>
-              <p className="text-base sm:text-lg lg:text-xl max-w-4xl mx-auto text-n-8 leading-relaxed">
+
+              <p className="text-base sm:text-lg lg:text-xl font- mx-auto text-gray-600 leading-relaxed">
                 {eventContent[activeYear].description}
               </p>
-              <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto text-n-8 leading-relaxed mt-10">
+              <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto font-medium text-gray-600 leading-relaxed mt-10">
                 {"Confira as fotos das edições anteriores: "}
               </p>
             </div>
