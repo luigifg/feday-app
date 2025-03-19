@@ -22,7 +22,7 @@ const slideContent = [
     title: "Future Day 2025",
     description:
       "Acompanhe todas as novidades do nosso evento e fique por dentro das palestras, horários, convidados e inovações do mundo eletrônico que o Future Day 2025 tem para apresentar",
-    buttonText: "Ver Eventos - EM BREVE",
+    buttonText: "Inscrições - EM BREVE",
   },
   {
     id: 2,

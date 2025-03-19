@@ -12,7 +12,7 @@ const Admin = () => {
     <div className="pt-[4.75rem] lg:pt-[5.25rem] ">
       <Header navigation={navigationAdmin} />
       <Hero />
-      <Table />
+      {/* <Table /> */}
       <ButtonGradient />
       <Footer />
     </div>

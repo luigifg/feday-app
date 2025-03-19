@@ -103,6 +103,7 @@ export const horariosEvento = [
 export const events = [
   {
     id: 1,
+    hideFromBanner: true,
     palestrante: "Aline Setti",
     position: "Empresária, Consultora e Educadora Financeira ",
     descriptionBanner: formatDescription(
@@ -310,6 +311,7 @@ export const events = [
   },
   {
     id: 9,
+    hideFromBanner: true,
     palestrante: "Eline Sato",
     position: "Psicanalista Clínica",
     descriptionBanner: formatDescription(
@@ -641,6 +643,7 @@ export const events = [
   },
   {
     id: 26,
+    hideFromBanner: true,
     palestrante: "Fernando Barrera",
     position: "Diretor Técnico Regional",
     descriptionBanner: formatDescription(
@@ -648,7 +651,7 @@ export const events = [
     ),
     imageBanner: barrera,
     linkedinUrl: "https://www.linkedin.com/in/fernandoabarrera/",
-    title: "Design Smarter, Source Better, Build Faster  ",
+    title: "Projete com mais inteligência, adquira com mais eficiência, construa mais rápido.",
     descriptionLecture: formatDescription("Bem-vindos à nossa sessão principal. Hoje, nosso objetivo é demonstrar como a Future Electronics pode ser sua parceira confiável para Projetar de Forma Mais Inteligente, Comprar Melhor e Construir Mais Rápido. O processo de desenvolvimento de produtos eletrônicos é repleto de desafios. Engenheiros e profissionais da cadeia de suprimentos enfrentam diversos obstáculos, incluindo escassez de componentes, complexidade no design e pressão para reduzir o tempo de lançamento no mercado. Esses desafios podem impactar significativamente o sucesso de colocar um produto no mercado. Ao integrar a Future Electronics no seu fluxo de design desde o início, podemos colaborar com suas equipes de engenharia e cadeia de suprimentos para mitigar riscos e garantir o lançamento bem-sucedido de seus produtos. Nossa expertise ajuda você a Projetar de Forma Mais Inteligente com soluções otimizadas, Comprar Melhor com disponibilidade confiável de componentes e Construir Mais Rápido para acelerar o tempo de lançamento no mercado. Estamos ansiosos para colaborar com você e ajudá-lo a alcançar o sucesso. "),
     hour: "0",
     room: "São Lourenço",

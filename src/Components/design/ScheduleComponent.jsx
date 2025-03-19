@@ -604,7 +604,7 @@ const ScheduleSectionComponent = ({
                   }}
                 >
                   <div className="absolute inset-0 bg-white bg-opacity-85"></div>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
                     {getEventsByHour(horario.id).map((event) => {
                       const savedEvent = !isViewOnly
                         ? selectedEvents[horario.id]
