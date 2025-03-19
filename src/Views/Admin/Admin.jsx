@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Html5QrcodeScanner } from "html5-qrcode";
-import { Check, QrCode, Wifi, X } from "lucide-react";
+import { Check, QrCode, Wifi, X, Layers } from "lucide-react";
 
 import api from "../../constants/Axios";
-
 import Section from "../../Components/Section";
 import { horariosEvento, events } from "../../data/speakerData";
+import NFCWriterAdmin from "./NfcWriter";
 
 const AdminList = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -22,6 +22,7 @@ const AdminList = () => {
   const [scannedUser, setScannedUser] = useState(null);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [activeTab, setActiveTab] = useState("checkin"); // 'checkin' ou 'write'
   const [favorites, setFavorites] = useState({
     hour: "",
     event: "",
@@ -32,10 +33,7 @@ const AdminList = () => {
 
   // Verificar suporte a NFC no navegador
   useEffect(() => {
-    setNfcSupported(
-      typeof window !== "undefined" && 
-      "NDEFReader" in window
-    );
+    setNfcSupported(typeof window !== "undefined" && "NDEFReader" in window);
   }, []);
 
   // Reset messages after 3 seconds
@@ -86,7 +84,12 @@ const AdminList = () => {
   useEffect(() => {
     let html5QrcodeScanner;
 
-    if (showScanner && selectedHour && selectedEvent && scanMethod === "qrcode") {
+    if (
+      showScanner &&
+      selectedHour &&
+      selectedEvent &&
+      scanMethod === "qrcode"
+    ) {
       html5QrcodeScanner = new Html5QrcodeScanner(
         "qr-reader",
         { fps: 10, qrbox: { width: 250, height: 250 } },
@@ -144,8 +147,8 @@ const AdminList = () => {
         qrData = JSON.parse(decodedText);
       } catch (e) {
         // Se não for JSON, verifica se é uma string com ID e nome
-        if (typeof decodedText === 'string' && decodedText.includes('|')) {
-          const [id, name] = decodedText.split('|');
+        if (typeof decodedText === "string" && decodedText.includes("|")) {
+          const [id, name] = decodedText.split("|");
           qrData = { id, name };
         } else {
           throw new Error("Formato de dados inválido");
@@ -168,7 +171,7 @@ const AdminList = () => {
 
           const userDataQr = {
             id: qrData.id,
-            name: userResponse.data.name || qrData.name
+            name: userResponse.data.name || qrData.name,
           };
 
           // Verificar se já existe check-in
@@ -176,8 +179,8 @@ const AdminList = () => {
             params: {
               user_id: qrData.id,
               event_id: selectedEvent,
-              hour: selectedHour
-            }
+              hour: selectedHour,
+            },
           });
 
           if (checkExistingResponse.data.exists) {
@@ -208,7 +211,10 @@ const AdminList = () => {
           }
         } catch (error) {
           console.error("Erro na API:", error);
-          setError("Erro ao salvar o check-in: " + (error.message || "Erro desconhecido"));
+          setError(
+            "Erro ao salvar o check-in: " +
+              (error.message || "Erro desconhecido")
+          );
           setLastScannedQR(null);
         }
       } else {
@@ -221,7 +227,6 @@ const AdminList = () => {
     }
   };
 
-  // Função para iniciar leitura de NFC
   const startNfcReading = async () => {
     if (!nfcSupported) {
       setError("NFC não é suportado neste dispositivo ou navegador");
@@ -234,7 +239,7 @@ const AdminList = () => {
 
       const ndef = new NDEFReader();
       await ndef.scan({ signal: abortController.signal });
-      
+
       setSuccessMessage("Leitura NFC iniciada. Aproxime o cartão.");
       setError("");
 
@@ -243,43 +248,73 @@ const AdminList = () => {
           // Extrair dados do cartão NFC
           let userIdFromNFC = "";
           let userNameFromNFC = "";
+          let foundIdData = false;
 
+          // Percorre cada record procurando o record de ID para check-in
           for (const record of message.records) {
             if (record.recordType === "text") {
               const textDecoder = new TextDecoder();
               const text = textDecoder.decode(record.data);
-              
-              // Assumindo que o formato é "ID|Nome" ou um JSON
-              if (text.includes('|')) {
-                [userIdFromNFC, userNameFromNFC] = text.split('|');
-              } else if (text.startsWith('{')) {
-                try {
+
+              // Primeiro tentamos verificar se é JSON
+              try {
+                // Se o record tiver mediaType application/json ou o conteúdo parecer JSON
+                if (
+                  record.mediaType === "application/json" ||
+                  text.startsWith("{")
+                ) {
                   const jsonData = JSON.parse(text);
-                  userIdFromNFC = jsonData.id;
-                  userNameFromNFC = jsonData.name;
-                } catch (e) {
-                  // Se não conseguir parsear como JSON, usa o serialNumber
-                  userIdFromNFC = serialNumber;
-                  userNameFromNFC = text;
+                  if (jsonData.id) {
+                    userIdFromNFC = jsonData.id;
+                    userNameFromNFC = jsonData.name || "";
+                    foundIdData = true;
+                    break; // Encontramos os dados de ID, não precisamos mais procurar
+                  }
                 }
-              } else {
-                // Se não tiver formato específico, usa o serialNumber como ID
-                userIdFromNFC = serialNumber;
-                userNameFromNFC = text;
+              } catch (e) {
+                // Se não for JSON, continuamos procurando
+                console.log("Record não é JSON válido:", e);
               }
             }
           }
 
-          // Se não encontrou dados nos records, usa o serialNumber
-          if (!userIdFromNFC) {
-            userIdFromNFC = serialNumber;
-            userNameFromNFC = "Usuário " + serialNumber;
+          // Se não encontramos dados de ID mas temos vCard, tentamos extrair dali
+          if (!foundIdData) {
+            for (const record of message.records) {
+              if (record.recordType === "text") {
+                const textDecoder = new TextDecoder();
+                const text = textDecoder.decode(record.data);
+
+                // Verifica se é um vCard
+                if (
+                  record.mediaType === "text/vcard" ||
+                  text.startsWith("BEGIN:VCARD")
+                ) {
+                  // Tentar extrair nome do vCard
+                  const nameMatch = text.match(/FN:(.*?)(?:\r?\n|$)/);
+                  if (nameMatch && nameMatch[1]) {
+                    userNameFromNFC = nameMatch[1].trim();
+                    // Como não temos ID, usamos o serialNumber do cartão
+                    userIdFromNFC = serialNumber;
+                    break;
+                  }
+                }
+              }
+            }
           }
 
-          // Processa os dados obtidos
+          // Se ainda não encontramos dados suficientes, usamos o serialNumber como fallback
+          if (!userIdFromNFC) {
+            userIdFromNFC = serialNumber;
+            if (!userNameFromNFC) {
+              userNameFromNFC = "Usuário " + serialNumber;
+            }
+          }
+
+          // Processa os dados obtidos para check-in
           const nfcData = JSON.stringify({
             id: userIdFromNFC,
-            name: userNameFromNFC
+            name: userNameFromNFC,
           });
 
           await processScannedData(nfcData);
@@ -293,7 +328,6 @@ const AdminList = () => {
         console.error("Erro na leitura NFC:", error);
         setError("Erro na leitura NFC: " + error.message);
       });
-
     } catch (error) {
       console.error("Falha ao iniciar leitura NFC:", error);
       setError("Falha ao iniciar leitura NFC: " + error.message);
@@ -363,7 +397,7 @@ const AdminList = () => {
     setIsNfcReading(false);
     setScannedUser(null);
     if (qrScannerRef.current) {
-      qrScannerRef.current.clear().catch(error => {
+      qrScannerRef.current.clear().catch((error) => {
         console.error("Erro ao limpar scanner QR:", error);
       });
     }
@@ -378,188 +412,250 @@ const AdminList = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-
       <Section
         className="flex-grow px-4 md:px-8 lg:px-16 pt-20 pb-16"
         crosses
         customPaddings
       >
         <div className="max-w-4xl mx-auto">
-          <div className="mb-12">
+          <div className="mb-8">
             <h1 className="text-4xl font-bold mt-10 mb-4 bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
               Área do Administrador
             </h1>
             <p className="text-lg">
-              Realize check-in de participantes via QR Code ou NFC
-            </p>
-
-            <p className="text-lg mt-8 border-l-4 border-emerald-400 pl-4">
-              Selecione o horário e o evento para realizar o check-in
+              Realize operações de check-in e gerenciamento de cartões NFC
             </p>
           </div>
 
-          <div className="flex gap-4 md:gap-6 flex-col items-center mt-12 max-w-md mx-auto">
-            {successMessage && (
-              <div className="w-full p-4 bg-emerald-500 text-white rounded-lg flex items-center gap-2">
-                <Check size={24} />
-                {successMessage}
-              </div>
-            )}
+          {/* Tabs para alternar entre modos */}
+          <div className="flex border-b border-gray-700 mb-8">
+            <button
+              onClick={() => setActiveTab("checkin")}
+              className={`flex items-center gap-2 py-3 px-5 font-medium transition-colors ${
+                activeTab === "checkin"
+                  ? "border-b-2 border-emerald-500 text-emerald-400"
+                  : "text-gray-400 hover:text-gray-200"
+              }`}
+            >
+              <QrCode size={18} />
+              Check-in de Participantes
+            </button>
+            <button
+              onClick={() => setActiveTab("write")}
+              className={`flex items-center gap-2 py-3 px-5 font-medium transition-colors ${
+                activeTab === "write"
+                  ? "border-b-2 border-blue-500 text-blue-400"
+                  : "text-gray-400 hover:text-gray-200"
+              }`}
+            >
+              <Layers size={18} />
+              Gravação de Cartões NFC
+            </button>
+          </div>
 
-            <div className="relative w-full">
-              <select
-                value={selectedHour}
-                onChange={handleHourChange}
-                className="w-full p-4 rounded-lg bg-gray-800 text-white border-2 border-gray-700 
-                         hover:border-emerald-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 
-                         transition-all duration-300 outline-none appearance-none 
-                         cursor-pointer shadow-lg backdrop-blur-sm"
-              >
-                <option value="" className="bg-gray-800">
-                  Selecione um horário
-                </option>
-                {horariosEvento.map((horario) => (
-                  <option
-                    key={horario.id}
-                    value={horario.id}
-                    className="bg-gray-800"
-                  >
-                    {horario.label}
-                  </option>
-                ))}
-              </select>
-              {favorites.hour && selectedHour === favorites.hour && (
-                <Check
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-400"
-                  size={24}
-                />
+          {activeTab === "checkin" ? (
+            <div className="flex gap-4 md:gap-6 flex-col items-center mt-6 max-w-md mx-auto">
+              <p className="text-lg border-l-4 border-emerald-400 pl-4 self-start">
+                Selecione o horário e o evento para realizar o check-in
+              </p>
+
+              {successMessage && (
+                <div className="w-full p-4 bg-emerald-500 text-white rounded-lg flex items-center gap-2">
+                  <Check size={24} />
+                  {successMessage}
+                </div>
               )}
-            </div>
 
-            <div className="relative w-full">
-              <select
-                value={selectedEvent}
-                onChange={handleEventChange}
-                className={`w-full p-4 rounded-lg bg-gray-800 text-white border-2 
-                         hover:border-emerald-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 
-                         transition-all duration-300 outline-none appearance-none 
-                         cursor-pointer shadow-lg backdrop-blur-sm
-                         ${
-                           !selectedHour
-                             ? "border-gray-700 opacity-50"
-                             : "border-gray-700"
-                         }`}
-                disabled={!selectedHour}
-              >
-                <option value="" className="bg-gray-800">
-                  {!selectedHour
-                    ? "Primeiro selecione um horário"
-                    : "Selecione um evento"}
-                </option>
-                {filteredEvents.map((event) => (
-                  <option key={event.id} value={event.id} className="bg-gray-800">
-                    {event.title} - Sala: {event.room}
+              <div className="relative w-full">
+                <select
+                  value={selectedHour}
+                  onChange={handleHourChange}
+                  className="w-full p-4 rounded-lg bg-gray-800 text-white border-2 border-gray-700 
+                           hover:border-emerald-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 
+                           transition-all duration-300 outline-none appearance-none 
+                           cursor-pointer shadow-lg backdrop-blur-sm"
+                >
+                  <option value="" className="bg-gray-800">
+                    Selecione um horário
                   </option>
-                ))}
-              </select>
-              {favorites.event && selectedEvent === favorites.event && (
-                <Check
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-400"
-                  size={24}
-                />
-              )}
-            </div>
-
-            {/* Seleção do método de escaneamento */}
-            {!showScanner && selectedHour && selectedEvent && (
-              <div className="w-full grid grid-cols-2 gap-4">
-                <button
-                  onClick={() => setScanMethod("qrcode")}
-                  className={`p-4 rounded-lg text-white font-semibold flex items-center justify-center gap-2
-                          transition-colors duration-300 ${
-                            scanMethod === "qrcode"
-                              ? "bg-emerald-600 hover:bg-emerald-500"
-                              : "bg-gray-600 hover:bg-gray-500"
-                          }`}
-                >
-                  <QrCode size={20} />
-                  QR Code
-                </button>
-                <button
-                  onClick={() => setScanMethod("nfc")}
-                  className={`p-4 rounded-lg text-white font-semibold flex items-center justify-center gap-2
-                          transition-colors duration-300 ${
-                            scanMethod === "nfc"
-                              ? "bg-emerald-600 hover:bg-emerald-500"
-                              : "bg-gray-600 hover:bg-gray-500"
-                          } ${!nfcSupported ? "opacity-50 cursor-not-allowed" : ""}`}
-                  disabled={!nfcSupported}
-                >
-                  <Wifi size={20} />
-                  NFC
-                  {nfcSupported === false && <X size={16} className="text-red-400 absolute top-1 right-1" />}
-                </button>
-              </div>
-            )}
-
-            {!showScanner ? (
-              <button
-                onClick={handleStartScanning}
-                className="w-full p-4 rounded-lg bg-emerald-600 text-white font-semibold
-                         hover:bg-emerald-500 transition-colors duration-300
-                         disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={!selectedHour || !selectedEvent || (scanMethod === "nfc" && !nfcSupported)}
-              >
-                {scanMethod === "qrcode" ? "Escanear QR Code" : "Iniciar Leitura NFC"}
-              </button>
-            ) : (
-              <div className="w-full relative">
-                {scanMethod === "qrcode" ? (
-                  <div
-                    id="qr-reader"
-                    className="w-full bg-gray-800 text-white [&_button]:bg-emerald-500 [&_button]:hover:bg-emerald-600 [&_button]:transition-colors [&_button]:duration-300 [&_button]:px-2 [&_button]:py-2 [&_button]:rounded-lg [&_button]:cursor-pointer [&_img]:invert-[1] rounded-lg overflow-hidden"
+                  {horariosEvento.map((horario) => (
+                    <option
+                      key={horario.id}
+                      value={horario.id}
+                      className="bg-gray-800"
+                    >
+                      {horario.label}
+                    </option>
+                  ))}
+                </select>
+                {favorites.hour && selectedHour === favorites.hour && (
+                  <Check
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-400"
+                    size={24}
                   />
-                ) : (
-                  <div className="w-full p-8 bg-gray-800 text-white rounded-lg text-center">
-                    <div className="animate-pulse mb-4">
-                      <Wifi size={64} className="mx-auto text-emerald-400" />
-                    </div>
-                    <p className="text-lg font-medium mb-2">Leitura NFC ativa</p>
-                    <p className="text-sm text-gray-300">Aproxime o cartão NFC do dispositivo para fazer o check-in</p>
-                  </div>
                 )}
-                <button
-                  onClick={handleStopScanning}
-                  className="absolute top-2 right-8 bg-red-500 text-white px-3 py-1 rounded-full
-                           hover:bg-red-600 transition-colors duration-300"
+              </div>
+
+              <div className="relative w-full">
+                <select
+                  value={selectedEvent}
+                  onChange={handleEventChange}
+                  className={`w-full p-4 rounded-lg bg-gray-800 text-white border-2 
+                           hover:border-emerald-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 
+                           transition-all duration-300 outline-none appearance-none 
+                           cursor-pointer shadow-lg backdrop-blur-sm
+                           ${
+                             !selectedHour
+                               ? "border-gray-700 opacity-50"
+                               : "border-gray-700"
+                           }`}
+                  disabled={!selectedHour}
                 >
-                  ✕
+                  <option value="" className="bg-gray-800">
+                    {!selectedHour
+                      ? "Primeiro selecione um horário"
+                      : "Selecione um evento"}
+                  </option>
+                  {filteredEvents.map((event) => (
+                    <option
+                      key={event.id}
+                      value={event.id}
+                      className="bg-gray-800"
+                    >
+                      {event.title} - Sala: {event.room}
+                    </option>
+                  ))}
+                </select>
+                {favorites.event && selectedEvent === favorites.event && (
+                  <Check
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-400"
+                    size={24}
+                  />
+                )}
+              </div>
+
+              {/* Seleção do método de escaneamento */}
+              {!showScanner && selectedHour && selectedEvent && (
+                <div className="w-full grid grid-cols-2 gap-4">
+                  <button
+                    onClick={() => setScanMethod("qrcode")}
+                    className={`p-4 rounded-lg text-white font-semibold flex items-center justify-center gap-2
+                            transition-colors duration-300 ${
+                              scanMethod === "qrcode"
+                                ? "bg-emerald-600 hover:bg-emerald-500"
+                                : "bg-gray-600 hover:bg-gray-500"
+                            }`}
+                  >
+                    <QrCode size={20} />
+                    QR Code
+                  </button>
+                  <button
+                    onClick={() => setScanMethod("nfc")}
+                    className={`p-4 rounded-lg text-white font-semibold flex items-center justify-center gap-2
+                            transition-colors duration-300 ${
+                              scanMethod === "nfc"
+                                ? "bg-emerald-600 hover:bg-emerald-500"
+                                : "bg-gray-600 hover:bg-gray-500"
+                            } ${
+                      !nfcSupported ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                    disabled={!nfcSupported}
+                  >
+                    <Wifi size={20} />
+                    NFC
+                    {nfcSupported === false && (
+                      <X
+                        size={16}
+                        className="text-red-400 absolute top-1 right-1"
+                      />
+                    )}
+                  </button>
+                </div>
+              )}
+
+              {!showScanner ? (
+                <button
+                  onClick={handleStartScanning}
+                  className="w-full p-4 rounded-lg bg-emerald-600 text-white font-semibold
+                           hover:bg-emerald-500 transition-colors duration-300
+                           disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={
+                    !selectedHour ||
+                    !selectedEvent ||
+                    (scanMethod === "nfc" && !nfcSupported)
+                  }
+                >
+                  {scanMethod === "qrcode"
+                    ? "Escanear QR Code"
+                    : "Iniciar Leitura NFC"}
                 </button>
-              </div>
-            )}
+              ) : (
+                <div className="w-full relative">
+                  {scanMethod === "qrcode" ? (
+                    <div
+                      id="qr-reader"
+                      className="w-full bg-gray-800 text-white [&_button]:bg-emerald-500 [&_button]:hover:bg-emerald-600 [&_button]:transition-colors [&_button]:duration-300 [&_button]:px-2 [&_button]:py-2 [&_button]:rounded-lg [&_button]:cursor-pointer [&_img]:invert-[1] rounded-lg overflow-hidden"
+                    />
+                  ) : (
+                    <div className="w-full p-8 bg-gray-800 text-white rounded-lg text-center">
+                      <div className="animate-pulse mb-4">
+                        <Wifi size={64} className="mx-auto text-emerald-400" />
+                      </div>
+                      <p className="text-lg font-medium mb-2">
+                        Leitura NFC ativa
+                      </p>
+                      <p className="text-sm text-gray-300">
+                        Aproxime o cartão NFC do dispositivo para fazer o
+                        check-in
+                      </p>
+                    </div>
+                  )}
+                  <button
+                    onClick={handleStopScanning}
+                    className="absolute top-2 right-8 bg-red-500 text-white px-3 py-1 rounded-full
+                             hover:bg-red-600 transition-colors duration-300"
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
 
-            {scannedUser && (
-              <div className="w-full p-4 bg-green-800 rounded-lg text-white">
-                <p>Check-In do usuário: <span className="font-bold text-yellow-400">{scannedUser.name}</span>, realizado!</p>
-              </div>
-            )}
+              {scannedUser && (
+                <div className="w-full p-4 bg-green-800 rounded-lg text-white">
+                  <p>
+                    Check-In do usuário:{" "}
+                    <span className="font-bold text-yellow-400">
+                      {scannedUser.name}
+                    </span>
+                    , realizado!
+                  </p>
+                </div>
+              )}
 
-            {error && (
-              <div className="w-full p-4 bg-red-500 text-white rounded-lg">
-                {error}
-              </div>
-            )}
-            
-            {nfcSupported === false && !showScanner && (
-              <div className="w-full p-4 bg-yellow-600 text-white rounded-lg text-sm">
-                <p className="font-medium">NFC não suportado neste dispositivo ou navegador</p>
-                <p className="mt-1">NFC funciona apenas em Chrome/Edge em dispositivos Android com NFC. Não funciona em iOS.</p>
-              </div>
-            )}
-          </div>
+              {error && (
+                <div className="w-full p-4 bg-red-500 text-white rounded-lg">
+                  {error}
+                </div>
+              )}
+
+              {nfcSupported === false && !showScanner && (
+                <div className="w-full p-4 bg-yellow-600 text-white rounded-lg text-sm">
+                  <p className="font-medium">
+                    NFC não suportado neste dispositivo ou navegador
+                  </p>
+                  <p className="mt-1">
+                    NFC funciona apenas em Chrome/Edge em dispositivos Android
+                    com NFC. Não funciona em iOS.
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : (
+            // Aba de gravação de cartões NFC
+            <NFCWriterAdmin />
+          )}
         </div>
       </Section>
-
     </div>
   );
 };
