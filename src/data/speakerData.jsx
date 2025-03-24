@@ -25,6 +25,7 @@ import oliveira from "../assets/speakersBanner/oliveira.png";
 import sparhawk from "../assets/speakersBanner/sparhawk.png";
 import eduardo from "../assets/speakersBanner/eduardo.png";
 import barrera from "../assets/speakersBanner/barrera.png";
+import vinicius from "../assets/speakersBanner/vinicius.png";
 
 import alvaroFace from "../assets/speakers/alvaro.png";
 import alineFace from "../assets/speakers/aline.png";
@@ -51,6 +52,7 @@ import gabrielFace from "../assets/speakers/gabriel.png";
 import sparhawkFace from "../assets/speakers/sparhawk.png";
 import eduardoFace from "../assets/speakers/eduardo.png";
 import barreraFace from "../assets/speakers/barrera.png";
+import viniciusFace from "../assets/speakers/vinicius.png";
 
 import { companyLogos } from "../constants/index";
 import feLogo  from "../assets/logos/feLogo.svg";
@@ -118,6 +120,7 @@ export const events = [
     hour: "3",
     room: "São Lourenço",
     image: alineFace,
+    femaleOnly: true,
   },
   {
     id: 2,
@@ -319,13 +322,14 @@ export const events = [
     ),
     imageBanner: eline,
     linkedinUrl: "https://www.linkedin.com/in/eline-catarina-solera-sato-a0a06a38/",
-    title: "Empoderamento e Valor Próprio: Transformando Desafios em Oportunidades",
+    title: "Empoderamento e Valor Próprio: Transformando Desafio em Oportunidade",
     descriptionLecture: formatDescription(
       "Nesta palestra inspiradora, Eline Sato abordará temas essenciais como autoconhecimento, limites saudáveis, superação de desafios, espiritualidade e a importância de se reconectar com o propósito profissional e pessoal. Com base em suaa trajetória de transição de carreira, Eline compartilhará como migrou de uma consolidada atuação como Analista de Sistemas, pós-graduada em Logística e Administração, para uma carreira como Psicanalista e Escritora. Hoje, após 16 anos trabalhando com empoderamento feminino, Aline auxilia mulheres a reconhecerem seu valor, enfrentarem desafios e desenvolverem confiança para alcançar seu potencial. Além disso, a palestra traz reflexões inspiradas no livro Segredos do Passado – um romance de autoria de Eline que aborda temas como relacionamentos tóxicos, autodescoberta, terapia e resiliência emocional. Essas reflexões são conectadas ao universo corporativo, mostrando como as mulheres podem superar barreiras e prosperar, especialmente em setores desafiadores como o de tecnologia. Não perca esta oportunidade de se inspirar e transformar sua vida profissional e pessoal!"
     ),
     hour: "2",
     room: "São Lourenço",
     image: elineFace,
+    femaleOnly: true,
 
   },
   {
@@ -657,6 +661,22 @@ export const events = [
     room: "São Lourenço",
     image: barreraFace,
     companyLogo: feLogo,
+  },
+  {
+    id: 31,
+    palestrante: "Vinicius Cardoso",
+    position: "Gerente Técnico de Vendas",
+    descriptionBanner: formatDescription(
+      "Vinicius é graduado e mestre em Engenharia Elétrica pela Universidade Federal de Uberlândia, com cerca de 10 anos de experiência no setor de semicondutores. Ao longo de sua carreira, atuou como Engenheiro de Aplicações por seis anos, com foco em sensores de posição e corrente. Além disso, possui sólida experiência em marketing de produtos e desenvolvimento de negócios. Atualmente, atua como Gerente Técnico de Vendas na Allegro na região do Vale do Silício."
+    ),
+    imageBanner: vinicius,
+    linkedinUrl: "https://www.linkedin.com/in/fernandoabarrera/",
+    title: "Aumente a Eficiência, o Desempenho e a Sustentabilidade com as Soluções Inovadoras da Allegro",
+    descriptionLecture: formatDescription("Inovação em Sensoriamento, Regulação e Controle. A Allegro Microsystems lidera o desenvolvimento de tecnologias de ponta para um futuro mais eficiente e sustentável. De XtremeSense™ TMR a sensores de corrente magnéticos e soluções de micropotência, nossos produtos oferecem a precisão, o desempenho e a confiabilidade que você exige. Explore as possibilidades com a Allegro."),
+    hour: "4",
+    room: "Bacacheri",
+    image: viniciusFace,
+    ...getCompanyInfo("Allegro"),
   },
 ];
 

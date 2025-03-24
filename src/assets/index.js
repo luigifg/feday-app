@@ -51,6 +51,7 @@ import nic from "./manufactures/nic.png";
 import osram from "./manufactures/osram.png";
 import power from "./manufactures/power.png";
 import aishi from "./manufactures/aishi.png";
+import allegro from "./manufactures/allegro.png";
 import hirose from "./manufactures/hirose.png";
 import infineon from "./manufactures/infineon.png";
 import littelfuse from "./manufactures/littelfuse.png";
@@ -91,6 +92,7 @@ export {
   power,
   nic,
   aishi,
+  allegro,
   hirose,
   infineon,
   littelfuse,

@@ -13,7 +13,7 @@ const ScheduleSectionComponent = ({
   customDescription = null, // Descrição personalizada (opcional)
   sectionId = "schedule", // ID da seção (para navegação)
 }) => {
-  const [eventList] = useState(events);
+  const [eventList, setEventList] = useState([]); // Alterado para começar vazio
   const [userData, setUserData] = useState(null);
   const [selectedEvents, setSelectedEvents] = useState({});
   const [pendingChanges, setPendingChanges] = useState(new Set());
@@ -113,9 +113,30 @@ const ScheduleSectionComponent = ({
     }
   };
 
+  const filterEventsByUserGender = (gender) => {
+    // Se estiver no modo de visualização (isViewOnly), mostra todos os eventos para todos os usuários
+    if (isViewOnly) {
+      setEventList(events);
+      return;
+    }
+
+    // Se não estiver no modo de visualização e o usuário for feminino (F), mostra todos os eventos
+    if (gender === "F") {
+      setEventList(events);
+    } else {
+      // Para outros gêneros, filtra apenas eventos que não são exclusivos para mulheres
+      const filteredEvents = events.filter((event) => !event.femaleOnly);
+      setEventList(filteredEvents);
+    }
+  };
+
+  // No useEffect inicial, onde carregamos os dados, também ajustamos a condição:
   useEffect(() => {
-    // Não fazemos chamadas à API no modo somente visualização
-    if (isViewOnly) return;
+    // Se estiver no modo somente visualização, carregamos todos os eventos
+    if (isViewOnly) {
+      filterEventsByUserGender(null); // Passa null para mostrar todos
+      return;
+    }
 
     const fetchUserData = async () => {
       try {
@@ -123,9 +144,15 @@ const ScheduleSectionComponent = ({
         if (response.status === 200) {
           setUserData(response.data);
           fetchUserEvents(response.data.id);
+
+          // Filtra os eventos baseado no gênero do usuário
+          filterEventsByUserGender(response.data.gender);
         }
       } catch (error) {
         console.error("Erro ao carregar dados do usuário:", error);
+
+        // Caso de erro, mostra todos os eventos não exclusivos
+        filterEventsByUserGender(null);
       }
     };
 
@@ -350,7 +377,7 @@ const ScheduleSectionComponent = ({
   };
 
   const getEventsByHour = (hour) => {
-    // Filtra os eventos pelo horário
+    // Filtra os eventos pelo horário do eventList (já filtrado por gênero)
     const filteredEvents = eventList.filter((event) => event.hour === hour);
 
     // Ordena os eventos pelo idRoom da sala
@@ -366,6 +393,11 @@ const ScheduleSectionComponent = ({
       // Ordena por idRoom (crescente)
       return idRoomA - idRoomB;
     });
+  };
+
+  // Verifica se há eventos para um determinado horário
+  const hasEventsForHour = (hour) => {
+    return getEventsByHour(hour).length > 0;
   };
 
   // Renderiza um bloco de intervalo/break com melhor responsividade
@@ -418,15 +450,7 @@ const ScheduleSectionComponent = ({
         descriptionField="descriptionLecture"
         useSpeakerName={false}
       />
-      {/* <div
-        style={{
-          background: "linear-gradient(to right, #A8E6CF, #56B87B, #8FC93A)",
-          WebkitBackgroundClip: "text",
-          backgroundClip: "text",
-          color: "transparent",
-          padding: "0.1em",
-        }}
-      ></div> */}
+
       <h2 className="font-bold text-3xl sm:text-4xl md:text-4xl lg:text-5xl text-center mb-10 md:mb-12">
         Programação do Evento
       </h2>
@@ -444,6 +468,11 @@ const ScheduleSectionComponent = ({
 
         // Verificar se é o horário do keynote (id "0")
         const isKeynote = horario.id === "0";
+
+        // Se não houver eventos para este horário e não for break ou keynote, não renderiza nada
+        if (!hasEventsForHour(horario.id) && !isBreak && !isKeynote) {
+          return null;
+        }
 
         if (isBreak) {
           // Renderiza um bloco de intervalo (não clicável, não expansível)
@@ -470,6 +499,11 @@ const ScheduleSectionComponent = ({
         // Se for o keynote (horário 08:00), permitimos o toggle mas exibimos apenas o palestrante keynote
         if (isKeynote) {
           const keynoteEvent = events.find((event) => event.id === 26);
+
+          // Se o keynote não estiver disponível ou for filtrado por gênero, não mostra
+          if (!keynoteEvent || !eventList.some((e) => e.id === 26)) {
+            return null;
+          }
 
           return (
             <div
@@ -548,6 +582,12 @@ const ScheduleSectionComponent = ({
               )}
             </div>
           );
+        }
+
+        // Se não houver eventos para este horário após filtragem, não mostra
+        const eventsForThisHour = getEventsByHour(horario.id);
+        if (eventsForThisHour.length === 0) {
+          return null;
         }
 
         return (
@@ -651,6 +691,7 @@ const ScheduleSectionComponent = ({
                             onRemoveConfirm={() => removeEvent(savedEvent)}
                             onRemoveCancel={() => {}}
                             isOtherSelected={isOtherSelected}
+                            isViewOnly={isViewOnly}
                             // Oculta o botão "Selecionar" no modo somente visualização
                             showRemoveButton={isViewOnly}
                           />

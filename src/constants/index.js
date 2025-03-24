@@ -24,6 +24,7 @@ import {
   power,
   nic,
   aishi,
+  allegro,
   hirose,
   infineon,
   littelfuse,
@@ -159,6 +160,8 @@ export const companyLogos2 = [
     title: "VLA Solutions",
   },
   { logo: allrep, url: "https://allrepbr.com.br/", title: "AllRep" },
+  { logo: allegro, url: "https://www.allegromicro.com/en/", title: "Allegro" },
+  
 ];
 
 export const socials = [

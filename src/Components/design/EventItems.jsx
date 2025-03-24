@@ -69,12 +69,16 @@ const EventItem = ({
   onSaveEvent,
   onRemoveConfirm,
   onRemoveCancel,
-  specialEvent = false, // Nova prop para identificar eventos especiais
+  specialEvent = false,
   isOtherSelected = false,
+  isViewOnly = false,
 }) => {
   const [removeMode, setRemoveMode] = useState(false);
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+
+  // Verifica se o evento é exclusivo para mulheres
+  const isFemaleOnlyEvent = event.femaleOnly;
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -101,12 +105,15 @@ const EventItem = ({
   const isEventSelected = isSelected || isPreSelected;
 
   // Define a cor base do gradiente com base no tipo de evento (versão mais sutil)
-
   const getGradientColors = () => {
     if (specialEvent) {
       return isHovered
         ? ["#22c55e", "#16a34a", "#15803d"] // Verde mais forte para hover
         : ["#4ade80", "#22c55e", "#16a34a"]; // Verde brilhante para normal
+    } else if (isFemaleOnlyEvent) {
+      return isHovered
+        ? ["#ec4899", "#db2777", "#be185d"] // Rosa mais forte para hover
+        : ["#f472b6", "#ec4899", "#db2777"]; // Rosa para eventos femininos
     } else if (isSelected || isPreSelected) {
       return isHovered
         ? ["#2E8B57", "#1D8348", "#00A550"] // Verde selecionado (mais sutil)
@@ -155,6 +162,8 @@ const EventItem = ({
             boxShadow: isHovered
               ? specialEvent
                 ? "0 6px 12px -3px rgba(34, 197, 94, 0.15), 0 3px 5px -3px rgba(34, 197, 94, 0.2)"
+                : isFemaleOnlyEvent
+                ? "0 6px 12px -3px rgba(236, 72, 153, 0.15), 0 3px 5px -3px rgba(236, 72, 153, 0.2)"
                 : isSelected || isPreSelected
                 ? "0 6px 12px -3px rgba(0, 128, 0, 0.15), 0 3px 5px -3px rgba(0, 128, 0, 0.2)"
                 : "0 6px 12px -3px rgba(0, 128, 0, 0.1), 0 3px 5px -3px rgba(0, 128, 0, 0.15)"
@@ -162,6 +171,13 @@ const EventItem = ({
             transition: "all 0.3s ease-out",
           }}
         >
+          {/* Tag para eventos exclusivos para mulheres */}
+          {isFemaleOnlyEvent && (
+            <div className="absolute -top-3 left-2 z-10 bg-pink-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
+              {isViewOnly ? "Conteúdo Feminino" : "Exclusivo para Mulheres"}
+            </div>
+          )}
+
           {isSelected && showRemoveButton && !specialEvent && (
             <button
               onClick={(e) => {
@@ -180,22 +196,30 @@ const EventItem = ({
               background: isHovered
                 ? specialEvent
                   ? "#F0FFF4" // Verde muito suave para hover
+                  : isFemaleOnlyEvent
+                  ? "#FDF2F8" // Rosa muito suave para hover
                   : isSelected || isPreSelected
                   ? "#F4FBF6" // Verde muito suave para selecionado
                   : "#F8FBF8" // Verde mais suave ainda
                 : specialEvent
                 ? "#ECFDF5" // Verde suave
+                : isFemaleOnlyEvent
+                ? "#FCE7F3" // Rosa suave
                 : isSelected || isPreSelected
                 ? "#F0F9F2" // Verde suave
                 : "white",
               border: isHovered
                 ? specialEvent
                   ? "2px solid #22c55e" // Verde médio
+                  : isFemaleOnlyEvent
+                  ? "2px solid #ec4899" // Rosa médio
                   : isSelected || isPreSelected
                   ? "2px solid #1D8348" // Verde médio
                   : "2px solid #3CB371" // Verde médio
                 : specialEvent
                 ? "2px solid #4ade80" // Verde brilhante
+                : isFemaleOnlyEvent
+                ? "2px solid #f472b6" // Rosa
                 : isSelected || isPreSelected
                 ? "2px solid #00AF3F" // Verde selecionado
                 : "2px solid transparent", // Sem borda
@@ -230,7 +254,11 @@ const EventItem = ({
                 <h2
                   className="text-sm sm:text-md lg:text-mdp font-bold max-w-[12rem] md:max-w-[22rem] mb-6 whitespace-pre-line h-[5rem] line-clamp-5 overflow-hidden transition-all duration-300"
                   style={{
-                    color: isHovered ? "#1D8348" : "#333333",
+                    color: isHovered
+                      ? isFemaleOnlyEvent
+                        ? "#be185d" // Rosa escuro
+                        : "#1D8348" // Verde escuro
+                      : "#333333",
                     textShadow: isHovered
                       ? "0 1px 1px rgba(0,0,0,0.03)"
                       : "none",
@@ -248,12 +276,26 @@ const EventItem = ({
                 } rounded-full overflow-hidden ml-2 w-[75px] h-[75px] transition-all duration-300`}
                 style={{
                   border: isHovered
-                    ? `2px solid ${specialEvent ? "#22c55e" : "#1D8348"}`
-                    : `2px solid ${specialEvent ? "#4ade80" : "#3CB371"}`,
+                    ? `2px solid ${
+                        isFemaleOnlyEvent
+                          ? "#ec4899" // Rosa
+                          : specialEvent
+                          ? "#22c55e" // Verde
+                          : "#1D8348"
+                      }`
+                    : `2px solid ${
+                        isFemaleOnlyEvent
+                          ? "#f472b6" // Rosa
+                          : specialEvent
+                          ? "#4ade80" // Verde
+                          : "#3CB371"
+                      }`,
                   transform: isHovered ? "scale(1.05)" : "scale(1)",
                   boxShadow: isHovered
                     ? `0 3px 8px ${
-                        specialEvent
+                        isFemaleOnlyEvent
+                          ? "rgba(236, 72, 153, 0.2)"
+                          : specialEvent
                           ? "rgba(34, 197, 94, 0.2)"
                           : "rgba(0, 128, 0, 0.15)"
                       }`
@@ -309,7 +351,13 @@ const EventItem = ({
                 <User
                   className="w-5 h-5 transition-all duration-300"
                   style={{
-                    color: isHovered ? "#1D8348" : "#43A047",
+                    color: isHovered
+                      ? isFemaleOnlyEvent
+                        ? "#db2777" // Rosa
+                        : "#1D8348" // Verde
+                      : isFemaleOnlyEvent
+                      ? "#ec4899" // Rosa
+                      : "#43A047", // Verde
                     transform: isHovered ? "scale(1.1)" : "scale(1)",
                     filter: isHovered
                       ? "drop-shadow(0 1px 1px rgba(0,100,0,0.2))"
@@ -321,7 +369,11 @@ const EventItem = ({
                   <span
                     className="font-semibold transition-all duration-300"
                     style={{
-                      color: isHovered ? "#1D8348" : "inherit",
+                      color: isHovered
+                        ? isFemaleOnlyEvent
+                          ? "#be185d" // Rosa escuro
+                          : "#1D8348" // Verde
+                        : "inherit",
                       textShadow: isHovered
                         ? "0 1px 1px rgba(0,0,0,0.03)"
                         : "none",
@@ -337,7 +389,13 @@ const EventItem = ({
                 <MapPin
                   className="w-5 h-5 transition-all duration-300"
                   style={{
-                    color: isHovered ? "#1D8348" : "#43A047",
+                    color: isHovered
+                      ? isFemaleOnlyEvent
+                        ? "#db2777" // Rosa
+                        : "#1D8348" // Verde
+                      : isFemaleOnlyEvent
+                      ? "#ec4899" // Rosa
+                      : "#43A047", // Verde
                     transform: isHovered ? "scale(1.1)" : "scale(1)",
                     filter: isHovered
                       ? "drop-shadow(0 1px 1px rgba(0,100,0,0.2))"

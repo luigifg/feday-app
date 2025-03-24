@@ -5,14 +5,34 @@ import { future, fbg, futureGif } from "../../assets";
 import FieldSignUp from "../../Components/design/FieldSignUp";
 import { useNavigate } from "react-router-dom";
 
+// Componente para o campo de gênero
+const GenderFieldSignUp = ({ value, onChange }) => {
+  return (
+    <div className="w-full bg-gray-50 rounded-lg p-3 border border-transparent focus-within:border-green-500 transition-all">
+      <select
+        name="gender"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full bg-transparent outline-none text-xs text-gray-600"
+        required
+      >
+        <option value="">Selecione seu gênero</option>
+        <option value="M">Masculino</option>
+        <option value="F">Feminino</option>
+      </select>
+    </div>
+  );
+};
+
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     email: "",
-    confirmEmail: "", // Novo campo para confirmar email
+    confirmEmail: "",
     company: "",
     position: "",
+    gender: "", // Agora armazenará "M" ou "F"
     password: "",
     confirmPassword: "",
   });
@@ -22,7 +42,8 @@ const RegistrationForm = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
-  const [emailError, setEmailError] = useState(""); // Estado para erros específicos de email
+  const [emailError, setEmailError] = useState("");
+  const [genderError, setGenderError] = useState("");
 
   const navigate = useNavigate();
 
@@ -51,6 +72,16 @@ const RegistrationForm = () => {
     if (name === "email" || name === "confirmEmail") {
       setEmailError("");
     }
+    if (name === "gender") {
+      setGenderError("");
+    }
+  };
+
+  // Função para lidar com a mudança do campo de gênero
+  // Já configurado para receber diretamente "M" ou "F" do select
+  const handleGenderChange = (value) => {
+    setFormData({ ...formData, gender: value });
+    setGenderError("");
   };
 
   const handleSubmit = async (e) => {
@@ -68,6 +99,12 @@ const RegistrationForm = () => {
       return;
     }
 
+    // Validar campo de gênero
+    if (!formData.gender) {
+      setGenderError("Por favor, selecione seu gênero.");
+      return;
+    }
+
     if (!validatePassword(formData.password)) {
       setErrorMessage(
         "A senha deve conter pelo menos 8 caracteres, incluindo números, letras maiúsculas e minúsculas e caracteres especiais."
@@ -82,6 +119,7 @@ const RegistrationForm = () => {
 
     try {
       // Remover confirmEmail antes de enviar ao servidor
+      // Nota: O gênero já está no formato correto "M" ou "F"
       const { confirmEmail, ...dataToSubmit } = formData;
       
       const response = await api.post("/user", dataToSubmit);
@@ -104,6 +142,7 @@ const RegistrationForm = () => {
         confirmEmail: "",
         company: "",
         position: "",
+        gender: "",
         password: "",
         confirmPassword: "",
       });
@@ -111,6 +150,7 @@ const RegistrationForm = () => {
       setSuccessMessage("Cadastro realizado com sucesso!");
       setErrorMessage("");
       setEmailError("");
+      setGenderError("");
     } catch (error) {
       setErrorMessage(
         error.response?.data?.errors?.[0] ||
@@ -230,6 +270,18 @@ const RegistrationForm = () => {
                   onChange={handleChange}
                 />
               </div>
+              
+              {/* Campo de gênero com valores "M" e "F" */}
+              <GenderFieldSignUp
+                value={formData.gender}
+                onChange={handleGenderChange}
+              />
+              {genderError && (
+                <div className="text-red-500 text-xs ml-1 -mt-2">
+                  {genderError}
+                </div>
+              )}
+              
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <div className="flex-1 relative">
