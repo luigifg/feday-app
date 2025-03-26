@@ -47,6 +47,7 @@ import savastanoFace from "../assets/speakers/savastano.png";
 import geneFace from "../assets/speakers/gene.png";
 import fabioFace from "../assets/speakers/fabio.png";
 import guarizoFace from "../assets/speakers/guarizo.png";
+import guarizoFace2 from "../assets/speakers/guarizo.png";
 import oliveiraFace from "../assets/speakers/oliveira.png";
 import gabrielFace from "../assets/speakers/gabriel.png";
 import sparhawkFace from "../assets/speakers/sparhawk.png";
@@ -150,7 +151,7 @@ export const events = [
     ),
     imageBanner: alvaro,
     linkedinUrl: "https://linkedin.com/in/alvaro-pinho-branco-16b2041b",
-    title: "Novas famílias de micros dedicados para IA e Controle de Motor",
+    title: "Novas famílias de Micros Dedicados para IA e Controle de Motor",
     descriptionLecture: formatDescription(
       "Com as novas familias de microcontroladores da Infineon, você vai levar a sua aplicação de IA e Controle de motor para um novo patamar"
     ),
@@ -169,7 +170,7 @@ export const events = [
     imageBanner: americo,
     linkedinUrl: "https://linkedin.com/in/américo-paulicchi-filho-b118ab1",
     title:
-      "Soluções Multi tecnologia em SiC e encapsulamentos isolados avançados   ",
+      "Soluções Multi Tecnologia em SiC e Encapsulamentos Isolados Avançados   ",
     descriptionLecture: formatDescription(
       "Participe da nossa palestra sobre a nova linha de produtos de Silicon Carbide (SiC) da Littelfuse. Descubra como essa tecnologia revolucionária permite aumentar as frequências de chaveamento com menores perdas por condução e chaveamento. Saiba como isso resulta na redução do tamanho dos dissipadores de alumínio, das placas de circuito impresso e dos indutores em projetos de conversores DC/DC, AC/DC e DC/AC, utilizando diversas topologias de conversão."
     ),
@@ -189,7 +190,7 @@ export const events = [
     imageBanner: americo,
     linkedinUrl: "https://linkedin.com/in/américo-paulicchi-filho-b118ab1",
     title:
-      "A proteção que ninguém vê, que protege tudo o que todos usam: O fenômeno Iceberg e suas implicações.",
+      "A proteção que Ninguém Vê, que Protege tudo o que todos usam: O fenômeno Iceberg e suas implicações.",
     descriptionLecture: formatDescription(
       "Venha descobrir como a proteção invisível impacta diversas áreas do nosso cotidiano. Nesta palestra, abordaremos o fenômeno Iceberg e suas implicações nos setores automotivo (veículos a combustão e elétricos), eletrodomésticos e pequenos eletrodomésticos, industrial, iluminação, acionamentos de motores e soft starters. Também discutiremos proteções para packs de baterias, proteção contra ESD, SPDs tipos 1 e 2, SPDs externos para iluminação pública, proteção para comunicação e controle (portas USB, USB-C, RS485, RS232, hot connection, etc.), proteção geral e proteção de portas, e medição inteligente."
     ),
@@ -432,6 +433,7 @@ export const events = [
     hour: "5",
     room: "Bacacheri",
     image: horacioFace,
+    isHandsOn: true,
     ...getCompanyInfo("NXP Semiconductors"),
   },
   {
@@ -470,7 +472,7 @@ export const events = [
     ...getCompanyInfo("Yageo"),
   },
   {
-    id: 30,
+    id: 32,
     hideFromBanner: true,
     palestrante: "Michael Guarizo",
     position: "Engenheiro de Aplicação de Campo",
@@ -484,7 +486,7 @@ export const events = [
     descriptionLecture: formatDescription("Junte-se à nossa apresentação de Integração de Potência para uma exploração aprofundada da tecnologia PowiGaN e seu impacto transformador em seus projetos. Nesta sessão, você irá: Desmistificaremos os princípios fundamentais do Nitreto de Gálio e como ele difere do silício tradicional. Explorar as principais vantagens do GaN. Aprender como a tecnologia PowiGaN permite a criação de fontes de alimentação menores, mais leves e mais eficientes. Entender técnicas para maximizar a densidade de potência e minimizar as perdas de energia em seus projetos."),
     hour: "2",
     room: "Barigui",
-    image: guarizoFace,
+    image: guarizoFace2,
     ...getCompanyInfo("Power Integrations"),
   },
   {
@@ -693,7 +695,8 @@ export const ROOM_COLORS = {
   },
   "são lourenço": {
     name: "São Lourenço",
-    color: "bg-orange-500",
+
+    color: "bg-red-500",
     idRoom: 3
   },
   barigui: {
@@ -703,10 +706,11 @@ export const ROOM_COLORS = {
   },
   bacacheri: {
     name: "Bacacheri",
-    color: "bg-pink-500",
+    color: "bg-orange-500",
     idRoom: 5
   },
 };
+
 // Função para obter a cor da sala
 export const getRoomColor = (room) => {
   const roomData = ROOM_COLORS[room.toLowerCase()];

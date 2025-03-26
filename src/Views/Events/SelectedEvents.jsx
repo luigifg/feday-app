@@ -59,17 +59,18 @@ const SelectedEvents = () => {
             palestrante: participation.speaker,
             room: participation.room,
             dbId: participation.id,
-            position: eventDetails.position,
+            description: eventDetails.descriptionLecture,
             image: eventDetails.image || "",
             companyLogo: eventDetails.companyLogo || "",
-            companyUrl: eventDetails.companyUrl || "",
-            description: eventDetails.descriptionLecture || "",
+            position: eventDetails.position || "",
             linkedinUrl: eventDetails.linkedinUrl || "#",
+            femaleOnly: eventDetails.femaleOnly || false, // Adiciona a informação de evento feminino
+            isHandsOn: eventDetails.isHandsOn || false, // Adiciona a informação de evento hands-on
           };
         }
       });
 
-      // Adicionar o keynote speaker (ID 25) aos eventos selecionados
+      // Adicionar o keynote speaker (ID 26) aos eventos selecionados
       if (keynoteEvent) {
         // Usamos "keynote" como ID de hora para distinguir dos demais
         currentEvents["keynote"] = {
@@ -86,6 +87,8 @@ const SelectedEvents = () => {
           companyUrl: keynoteEvent.companyUrl || "",
           description: keynoteEvent.descriptionLecture || "",
           linkedinUrl: keynoteEvent.linkedinUrl || "#",
+          femaleOnly: keynoteEvent.femaleOnly || false, // Adiciona a informação de evento feminino
+          isHandsOn: keynoteEvent.isHandsOn || false, // Adiciona a informação de evento hands-on
         };
       }
 
@@ -344,6 +347,8 @@ const SelectedEvents = () => {
                         }
                         onRemoveCancel={() => {}}
                         specialEvent={isKeynote} // Passamos a prop especialEvent quando for o keynote
+                        isHandsOn={event.isHandsOn || false} // Passamos a informação de hands-on
+                        restrictSelection={false} // Não restringimos a seleção na tela de eventos selecionados
                       />
                     </div>
                   );

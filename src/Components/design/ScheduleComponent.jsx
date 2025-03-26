@@ -11,7 +11,8 @@ const ScheduleSectionComponent = ({
   // Props para controlar o comportamento do componente
   isViewOnly = false, // Se true, apenas visualização sem interação
   customDescription = null, // Descrição personalizada (opcional)
-  sectionId = "schedule", // ID da seção (para navegação)
+  sectionId = "schedule",
+  restrictHandsOnOnly = true, //Nova prop para controlar a restrição
 }) => {
   const [eventList, setEventList] = useState([]); // Alterado para começar vazio
   const [userData, setUserData] = useState(null);
@@ -265,6 +266,9 @@ const ScheduleSectionComponent = ({
 
   const toggleEventSelection = (event) => {
     if (isViewOnly || selectedEvents[event.hour]) return;
+
+    // Verifica se a restrição está ativa e se o evento não é hands-on
+    if (restrictHandsOnOnly && !event.isHandsOn) return;
 
     const eventDetails = events.find((e) => e.id === event.id);
     const isCurrentlySelected =
@@ -644,6 +648,43 @@ const ScheduleSectionComponent = ({
                   }}
                 >
                   <div className="absolute inset-0 bg-white bg-opacity-85"></div>
+
+                  {!isViewOnly && restrictHandsOnOnly && (
+                    <div
+                      className="relative z-20 w-full bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 rounded shadow-md"
+                      style={{ backgroundColor: "rgba(254, 226, 226, 0.95)" }}
+                    >
+                      <div className="flex">
+                        <div className="py-1 mr-2">
+                          <svg
+                            className="w-6 h-6 text-red-500 animate-pulse"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            ></path>
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="font-bold text-red-800">
+                            Atenção: Inscrições limitadas
+                          </p>
+                          <p className="text-sm text-red-700 font-medium">
+                            No momento, apenas eventos sinalizados como
+                            "Hands-on" estão disponíveis para inscrição. Os
+                            demais eventos serão liberados em breve.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
                     {getEventsByHour(horario.id).map((event) => {
                       const savedEvent = !isViewOnly
@@ -694,6 +735,10 @@ const ScheduleSectionComponent = ({
                             isViewOnly={isViewOnly}
                             // Oculta o botão "Selecionar" no modo somente visualização
                             showRemoveButton={isViewOnly}
+                            // Mantém a informação visual de que é um hands-on
+                            isHandsOn={event.isHandsOn || false}
+                            // Passa a restrição para o componente EventItem
+                            restrictSelection={restrictHandsOnOnly}
                           />
                         </div>
                       );
@@ -705,20 +750,20 @@ const ScheduleSectionComponent = ({
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleSaveChanges();
-                        }}
-                        className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md border-2 border-green-600"
-                      >
-                        Salvar Alterações
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
                           handleCancelChanges();
                         }}
                         className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md border-2 border-red-600"
                       >
                         Cancelar
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSaveChanges();
+                        }}
+                        className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md border-2 border-green-600"
+                      >
+                        Salvar Alterações
                       </button>
                     </div>
                   )}

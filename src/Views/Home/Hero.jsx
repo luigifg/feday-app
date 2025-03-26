@@ -5,6 +5,10 @@ import { curve } from "../../assets";
 import bg1 from "../../assets/logos/bg1.svg";
 import bg2 from "../../assets/logos/bg2.jpg";
 import fe2025 from "../../assets/logos/fedayDateR2.png";
+import aline from "../../assets/logos/aline.png";
+import alineM from "../../assets/logos/alineM.png";
+import eline from "../../assets/logos/eline.png";
+import elineM from "../../assets/logos/elineM.png";
 import fe2025M from "../../assets/logos/feday2025M.png";
 import keynote1 from "../../assets/speakersBanner/barrera4.png";
 import keynote1M from "../../assets/speakersBanner/barreraM.png";
@@ -18,7 +22,7 @@ const slideContent = [
     id: 1,
     logo: fe2025,
     mobileImage: fe2025M,
-    welcome: "Bem-vindo ao evento",
+    welcome: "Bem-vindo ao Evento",
     title: "Future Day 2025",
     description:
       "Acompanhe todas as novidades do nosso evento e fique por dentro das palestras, horários, convidados e inovações do mundo eletrônico que o Future Day 2025 tem para apresentar",
@@ -28,12 +32,34 @@ const slideContent = [
     id: 2,
     logo: keynote1,
     mobileImage: keynote1M,
-    welcome: "Conheça nosso",
+    welcome: "Conheça Nosso",
     title: "Palestrante Especial",
     description:
       "Fernando Barrera é um líder de vendas com vasta experiência na indústria de Semicondutores e atualmente atua como Diretor Técnico Regional na Future Electronics, baseado no Vale do Silício",
     buttonText: "Conheça Fernando Barrera",
     speakerId: 26, // Adicionando o ID do palestrante para o segundo slide
+  },
+  {
+    id: 3,
+    logo: aline,
+    mobileImage: alineM,
+    welcome: "Conheça Nossa",
+    title: "Convidada Especial",
+    description:
+      "Aline Setti é especialista em Finanças Corporativas com 25 anos de experiência em empresas globais. Desde 2019, auxilia mulheres a alcançarem liberdade e segurança financeira.",
+    buttonText: "Conheça Aline Setti",
+    speakerId: 1, // Adicionando o ID do palestrante para o segundo slide
+  },
+  {
+    id: 4,
+    logo: eline,
+    mobileImage: elineM,
+    welcome: "Conheça Nossa",
+    title: "Convidada Especial",
+    description:
+      "Eline Sato aborda os desafios das mulheres em tecnologia com uma perspectiva humana, fruto de 16 anos como Psicanalista e Escritora, gerando insights poderosos e transformadores.",
+    buttonText: "Conheça Eline Sato",
+    speakerId: 9, // Adicionando o ID do palestrante para o segundo slide
   },
 ];
 
@@ -352,7 +378,7 @@ const Hero = () => {
       <SpeakerModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        speakerId={26} // Definindo fixo como 25, independente do slide
+        speakerId={slideContent[currentSlide].speakerId} // Definindo fixo como 25, independente do slide
         currentSlide={0} // Não utilizado quando speakerId é fornecido
         onPrevSlide={() => {}} // Não utilizado quando speakerId é fornecido
         onNextSlide={() => {}} // Não utilizado quando speakerId é fornecido

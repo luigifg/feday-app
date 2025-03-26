@@ -72,6 +72,8 @@ const EventItem = ({
   specialEvent = false,
   isOtherSelected = false,
   isViewOnly = false,
+  isHandsOn = false, // Indica se o evento é hands-on
+  restrictSelection = false, // Nova prop que controla se a seleção deve ser restrita
 }) => {
   const [removeMode, setRemoveMode] = useState(false);
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
@@ -80,9 +82,13 @@ const EventItem = ({
   // Verifica se o evento é exclusivo para mulheres
   const isFemaleOnlyEvent = event.femaleOnly;
 
+  // Determina se o evento é selecionável
+  const isSelectable = !restrictSelection || isHandsOn;
+
   const handleClick = (e) => {
     e.preventDefault();
-    if (!isSaved && !showRemoveButton) {
+    // Permite seleção se não houver restrição ou se for hands-on quando há restrição
+    if (!isSaved && !showRemoveButton && isSelectable) {
       onSelect();
     }
   };
@@ -110,6 +116,10 @@ const EventItem = ({
       return isHovered
         ? ["#22c55e", "#16a34a", "#15803d"] // Verde mais forte para hover
         : ["#4ade80", "#22c55e", "#16a34a"]; // Verde brilhante para normal
+    } else if (isHandsOn) {
+      return isHovered
+        ? ["#b91c1c", "#991b1b", "#7f1d1d"] // Vermelho mais forte para hover
+        : ["#dc2626", "#b91c1c", "#991b1b"]; // Vermelho para eventos hands-on
     } else if (isFemaleOnlyEvent) {
       return isHovered
         ? ["#ec4899", "#db2777", "#be185d"] // Rosa mais forte para hover
@@ -174,7 +184,18 @@ const EventItem = ({
           {/* Tag para eventos exclusivos para mulheres */}
           {isFemaleOnlyEvent && (
             <div className="absolute -top-3 left-2 z-10 bg-pink-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
-              {isViewOnly ? "Conteúdo Feminino" : "Exclusivo para Mulheres"}
+              {isViewOnly ? "Exclusivo para Mulheres" : "Exclusivo para Mulheres"}
+            </div>
+          )}
+
+          {/* Tag para eventos hands-on */}
+          {isHandsOn && (
+            <div
+              className={`absolute -top-3 ${
+                isFemaleOnlyEvent ? "left-32 sm:left-44" : "left-2"
+              } z-10 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md `}
+            >
+              Hands-on
             </div>
           )}
 
@@ -196,6 +217,8 @@ const EventItem = ({
               background: isHovered
                 ? specialEvent
                   ? "#F0FFF4" // Verde muito suave para hover
+                  : isHandsOn
+                  ? "#FEF2F2" // Vermelho muito suave para hover
                   : isFemaleOnlyEvent
                   ? "#FDF2F8" // Rosa muito suave para hover
                   : isSelected || isPreSelected
@@ -203,6 +226,8 @@ const EventItem = ({
                   : "#F8FBF8" // Verde mais suave ainda
                 : specialEvent
                 ? "#ECFDF5" // Verde suave
+                : isHandsOn
+                ? "#FEF2F2" // Vermelho suave
                 : isFemaleOnlyEvent
                 ? "#FCE7F3" // Rosa suave
                 : isSelected || isPreSelected
@@ -211,6 +236,8 @@ const EventItem = ({
               border: isHovered
                 ? specialEvent
                   ? "2px solid #22c55e" // Verde médio
+                  : isHandsOn
+                  ? "2px solid #dc2626" // Vermelho médio
                   : isFemaleOnlyEvent
                   ? "2px solid #ec4899" // Rosa médio
                   : isSelected || isPreSelected
@@ -218,6 +245,8 @@ const EventItem = ({
                   : "2px solid #3CB371" // Verde médio
                 : specialEvent
                 ? "2px solid #4ade80" // Verde brilhante
+                : isHandsOn
+                ? "2px solid #ef4444" // Vermelho
                 : isFemaleOnlyEvent
                 ? "2px solid #f472b6" // Rosa
                 : isSelected || isPreSelected
@@ -257,6 +286,8 @@ const EventItem = ({
                     color: isHovered
                       ? isFemaleOnlyEvent
                         ? "#be185d" // Rosa escuro
+                        : isHandsOn
+                        ? "#b91c1c" // Vermelho escuro
                         : "#1D8348" // Verde escuro
                       : "#333333",
                     textShadow: isHovered
@@ -279,6 +310,8 @@ const EventItem = ({
                     ? `2px solid ${
                         isFemaleOnlyEvent
                           ? "#ec4899" // Rosa
+                          : isHandsOn
+                          ? "#dc2626" // Vermelho
                           : specialEvent
                           ? "#22c55e" // Verde
                           : "#1D8348"
@@ -286,6 +319,8 @@ const EventItem = ({
                     : `2px solid ${
                         isFemaleOnlyEvent
                           ? "#f472b6" // Rosa
+                          : isHandsOn
+                          ? "#ef4444" // Vermelho
                           : specialEvent
                           ? "#4ade80" // Verde
                           : "#3CB371"
@@ -295,6 +330,8 @@ const EventItem = ({
                     ? `0 3px 8px ${
                         isFemaleOnlyEvent
                           ? "rgba(236, 72, 153, 0.2)"
+                          : isHandsOn
+                          ? "rgba(220, 38, 38, 0.2)"
                           : specialEvent
                           ? "rgba(34, 197, 94, 0.2)"
                           : "rgba(0, 128, 0, 0.15)"
@@ -332,7 +369,7 @@ const EventItem = ({
                       <img
                         src={event.companyLogo}
                         alt="Company Logo"
-                        className="max-w-20 max-h-10 object-contain cursor-pointer transition-all duration-300"
+                        className="max-w-25 max-h-15 object-contain cursor-pointer transition-all duration-300"
                         style={{
                           opacity: isHovered ? 1 : 0.95,
                           transform: isHovered ? "scale(1.03)" : "scale(1)",
@@ -354,9 +391,13 @@ const EventItem = ({
                     color: isHovered
                       ? isFemaleOnlyEvent
                         ? "#db2777" // Rosa
+                        : isHandsOn
+                        ? "#b91c1c" // Vermelho
                         : "#1D8348" // Verde
                       : isFemaleOnlyEvent
                       ? "#ec4899" // Rosa
+                      : isHandsOn
+                      ? "#dc2626" // Vermelho
                       : "#43A047", // Verde
                     transform: isHovered ? "scale(1.1)" : "scale(1)",
                     filter: isHovered
@@ -372,6 +413,8 @@ const EventItem = ({
                       color: isHovered
                         ? isFemaleOnlyEvent
                           ? "#be185d" // Rosa escuro
+                          : isHandsOn
+                          ? "#b91c1c" // Vermelho escuro
                           : "#1D8348" // Verde
                         : "inherit",
                       textShadow: isHovered
@@ -392,9 +435,13 @@ const EventItem = ({
                     color: isHovered
                       ? isFemaleOnlyEvent
                         ? "#db2777" // Rosa
+                        : isHandsOn
+                        ? "#b91c1c" // Vermelho
                         : "#1D8348" // Verde
                       : isFemaleOnlyEvent
                       ? "#ec4899" // Rosa
+                      : isHandsOn
+                      ? "#dc2626" // Vermelho
                       : "#43A047", // Verde
                     transform: isHovered ? "scale(1.1)" : "scale(1)",
                     filter: isHovered
@@ -466,9 +513,9 @@ const EventItem = ({
                       }}
                       className="bg-blue-500 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-medium flex-1 border-2 border-blue-600 transition-colors duration-300 h-10"
                       style={{
-                        backgroundColor: isHovered ? "#1976D2" : "#2196F3",
+                        backgroundColor: isHovered ? "#2563EB" : "#3B82F6", // azul brilhante
                         boxShadow: isHovered
-                          ? "0 2px 4px rgba(21, 101, 192, 0.2)"
+                          ? "0 2px 4px rgba(37, 99, 235, 0.3)"
                           : "none",
                       }}
                     >
@@ -551,17 +598,33 @@ const EventItem = ({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        onSelect();
+                        if (isSelectable) {
+                          onSelect();
+                        }
                       }}
-                      className="bg-blue-500 text-white px-3 py-2 rounded-lg text-sm font-medium flex-1 border-2 border-blue-600 transition-colors duration-300 h-10"
+                      className={`${
+                        isSelectable ? "bg-blue-500" : "bg-gray-400"
+                      } text-white px-3 py-2 rounded-lg text-sm font-medium flex-1 border-2 ${
+                        isSelectable ? "border-blue-600" : "border-gray-500"
+                      } transition-colors duration-300 h-10`}
                       style={{
-                        backgroundColor: isHovered ? "#1976D2" : "#2196F3",
+                        backgroundColor: isSelectable
+                          ? isHovered
+                            ? "#2563EB" // Azul mais escuro no hover (blue-600)
+                            : "#3B82F6" // Azul vibrante normal (blue-500)
+                          : isHovered
+                          ? "#757575"
+                          : "#9E9E9E",
                         boxShadow: isHovered
-                          ? "0 2px 4px rgba(21, 101, 192, 0.2)"
+                          ? `0 2px 4px rgba(${
+                              isSelectable ? "37, 99, 235" : "0, 0, 0"
+                            }, 0.2)`
                           : "none",
+                        cursor: isSelectable ? "pointer" : "not-allowed",
                       }}
+                      disabled={!isSelectable}
                     >
-                      Selecionar
+                      {isSelectable ? "Selecionar" : "Indisponível"}
                     </button>
                   )}
                 </>

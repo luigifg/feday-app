@@ -7,6 +7,7 @@ const ScheduleSection = () => {
     <ScheduleComponent 
       isViewOnly={false} 
       sectionId="schedule"
+      restrictHandsOnOnly={false} //controla se esta disponivel ou indisponivel para seelcionar
     />
   );
 };

@@ -24,11 +24,13 @@ const CompanyLogos = () => {
     }
   }, [isPopupOpen]);
 
-  // Desabilitar scroll quando o popup estiver aberto
+  // Desabilitar scroll quando o popup estiver aberto - abordagem simplificada
   useEffect(() => {
     if (isPopupOpen) {
+      // Apenas desabilitar o scroll sem mudar a posição
       document.body.style.overflow = 'hidden';
     } else {
+      // Restaurar o scroll normalmente
       document.body.style.overflow = '';
     }
     
@@ -46,28 +48,12 @@ const CompanyLogos = () => {
     )
     .sort((a, b) => a.title.localeCompare(b.title));
 
-  // Portal para renderizar o popup fora da hierarquia DOM normal
+  // Portal simplificado
   const PopupPortal = ({ children }) => {
-    // Cria um elemento portal se não existir
-    const [portalElement] = useState(() => {
-      const el = document.createElement('div');
-      el.style.position = 'fixed';
-      el.style.top = '0';
-      el.style.left = '0';
-      el.style.width = '100%';
-      el.style.height = '100%';
-      el.style.zIndex = '100000'; // z-index extremamente alto
-      return el;
-    });
-
-    useEffect(() => {
-      document.body.appendChild(portalElement);
-      return () => {
-        document.body.removeChild(portalElement);
-      };
-    }, [portalElement]);
-
-    return ReactDOM.createPortal(children, portalElement);
+    return ReactDOM.createPortal(
+      children,
+      document.body
+    );
   };
 
   return (
@@ -80,9 +66,8 @@ const CompanyLogos = () => {
         </div>
 
         <div className="py-6">
-          {/* Primeiro carrossel */}
+          {/* Primeiro carrossel - com animações isoladas para não afetar o scroll */}
           <div className="relative flex overflow-hidden w-full">
-            {/* Primeira cópia */}
             <div className="flex shrink-0 animate-slide">
               {companyLogos.map((item, index) => (
                 <div
@@ -102,7 +87,6 @@ const CompanyLogos = () => {
               ))}
             </div>
 
-            {/* Segunda cópia */}
             <div className="flex shrink-0 animate-slide">
               {companyLogos.map((item, index) => (
                 <div
@@ -128,7 +112,6 @@ const CompanyLogos = () => {
 
           {/* Segundo carrossel */}
           <div className="relative flex overflow-hidden w-full">
-            {/* Primeira cópia */}
             <div className="flex shrink-0 animate-slide-reverse">
               {companyLogos2.map((item, index) => (
                 <div
@@ -148,7 +131,6 @@ const CompanyLogos = () => {
               ))}
             </div>
 
-            {/* Segunda cópia */}
             <div className="flex shrink-0 animate-slide-reverse">
               {companyLogos2.map((item, index) => (
                 <div
@@ -176,10 +158,10 @@ const CompanyLogos = () => {
         </div>
       </div>
 
-      {/* Pop-up com lista de títulos usando Portal */}
+      {/* Pop-up com lista de títulos */}
       {isPopupOpen && (
         <PopupPortal>
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" style={{ backdropFilter: 'blur(2px)' }}>
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style={{ backdropFilter: 'blur(2px)' }}>
             <div
               ref={popupRef}
               className="bg-white p-8 w-[90%] sm:w-96 max-h-[80vh] overflow-y-auto shadow-2xl rounded-2xl font-sans custom-scrollbar mx-4"
