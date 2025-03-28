@@ -5,25 +5,6 @@ import { future, fbg, futureGif } from "../../assets";
 import FieldSignUp from "../../Components/design/FieldSignUp";
 import { useNavigate } from "react-router-dom";
 
-// Componente para o campo de gênero
-const GenderFieldSignUp = ({ value, onChange }) => {
-  return (
-    <div className="w-full bg-gray-50 rounded-lg p-3 border border-transparent focus-within:border-green-500 transition-all">
-      <select
-        name="gender"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-transparent outline-none text-xs text-gray-600"
-        required
-      >
-        <option value="">Selecione seu gênero</option>
-        <option value="M">Masculino</option>
-        <option value="F">Feminino</option>
-      </select>
-    </div>
-  );
-};
-
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
     name: "",
@@ -32,7 +13,7 @@ const RegistrationForm = () => {
     confirmEmail: "",
     company: "",
     position: "",
-    gender: "", // Agora armazenará "M" ou "F"
+    gender: "",
     password: "",
     confirmPassword: "",
   });
@@ -46,6 +27,13 @@ const RegistrationForm = () => {
   const [genderError, setGenderError] = useState("");
 
   const navigate = useNavigate();
+
+  // Opções para o campo de gênero
+  const genderOptions = [
+    { value: "", label: "Selecione seu gênero" },
+    { value: "M", label: "Masculino" },
+    { value: "F", label: "Feminino" },
+  ];
 
   const passwordRequirements = [
     { test: (p) => p.length >= 8, text: "8+ caracteres" },
@@ -67,7 +55,7 @@ const RegistrationForm = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    
+
     // Limpar mensagens de erro ao digitar
     if (name === "email" || name === "confirmEmail") {
       setEmailError("");
@@ -77,22 +65,15 @@ const RegistrationForm = () => {
     }
   };
 
-  // Função para lidar com a mudança do campo de gênero
-  // Já configurado para receber diretamente "M" ou "F" do select
-  const handleGenderChange = (value) => {
-    setFormData({ ...formData, gender: value });
-    setGenderError("");
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validar formato do email
     if (!validateEmail(formData.email)) {
       setEmailError("Formato de e-mail inválido.");
       return;
     }
-    
+
     // Validar confirmação de email
     if (formData.email !== formData.confirmEmail) {
       setEmailError("Os emails não coincidem!");
@@ -119,9 +100,8 @@ const RegistrationForm = () => {
 
     try {
       // Remover confirmEmail antes de enviar ao servidor
-      // Nota: O gênero já está no formato correto "M" ou "F"
       const { confirmEmail, ...dataToSubmit } = formData;
-      
+
       const response = await api.post("/user", dataToSubmit);
       const loginResponse = await api.post("/login", {
         email: formData.email,
@@ -162,14 +142,14 @@ const RegistrationForm = () => {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-5 lg:px-0"
+      className="min-h-screen flex items-center justify-center px-5 py-5 lg:px-0"
       style={{
         backgroundImage: `url(${fbg})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      <div className="relative shadow-custom 2xl:max-w-screen-xl lg:max-w-screen-lg max-h-[120vh] 2xl:max-h-[120vh] bg-white rounded-3xl flex flex-1 mx-auto">
+      <div className="relative shadow-custom 2xl:max-w-screen-xl lg:max-w-screen-lg max-h-[130vh] 2xl:max-h-[125vh] bg-white rounded-3xl flex flex-1 mx-auto">
         <a
           href="/"
           className="absolute left-6 md:left-8 p-2 hover:bg-gray-100 rounded-full transition-colors flex items-center gap-2 text-n-14"
@@ -228,7 +208,7 @@ const RegistrationForm = () => {
                   required
                 />
               </div>
-              
+
               {/* Campo de email e confirmação de email */}
               <div className="space-y-4">
                 <FieldSignUp
@@ -253,7 +233,7 @@ const RegistrationForm = () => {
                   </div>
                 )}
               </div>
-              
+
               <div className="flex gap-4">
                 <FieldSignUp
                   placeholder="Digite sua empresa"
@@ -270,18 +250,26 @@ const RegistrationForm = () => {
                   onChange={handleChange}
                 />
               </div>
-              
-              {/* Campo de gênero com valores "M" e "F" */}
-              <GenderFieldSignUp
+
+              <FieldSignUp
+                isSelect={true}
+                options={genderOptions}
+                name="gender"
                 value={formData.gender}
-                onChange={handleGenderChange}
+                onChange={handleChange}
+                required
               />
               {genderError && (
                 <div className="text-red-500 text-xs ml-1 -mt-2">
                   {genderError}
                 </div>
               )}
-              
+              {genderError && (
+                <div className="text-red-500 text-xs ml-1 -mt-2">
+                  {genderError}
+                </div>
+              )}
+
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <div className="flex-1 relative">

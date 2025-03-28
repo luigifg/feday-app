@@ -102,6 +102,11 @@ export const navigationEvents = [
     title: "Admin",
     url: "/admin",
   },
+  {
+    id: "4",
+    title: "Página Inicial",
+    url: "/",
+  },
 ];
 
 export const navigationAdmin = [
@@ -145,7 +150,7 @@ export const companyLogos2 = [
   { logo: smc, url: "https://www.smcworld.com", title: "SMC" },
   { logo: ublox, url: "https://www.ublox.com", title: "u-blox" },
   { logo: vermont, url: "https://www.vermont.com", title: "Vermont" },
-  { logo: viking, url: "https://www.viking.com", title: "Viking" },
+  { logo: viking, url: "https://www.viking.com.tw", title: "Viking" },
   { logo: yageo, url: "https://www.yageo.com", title: "Yageo" },
   { logo: osram, url: "https://ams-osram.com", title: "Osram" },
   { logo: nxp, url: "https://www.nxp.com", title: "NXP Semiconductors" },

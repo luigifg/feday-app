@@ -413,7 +413,7 @@ const AdminList = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Section
-        className="flex-grow px-4 md:px-8 lg:px-16 pt-20 pb-16"
+        className="flex-grow px-4 md:px-8 lg:px-16  pb-16"
         crosses
         customPaddings
       >

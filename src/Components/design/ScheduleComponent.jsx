@@ -24,6 +24,7 @@ const ScheduleSectionComponent = ({
 
   // Mantemos a referência para os elementos, mas removemos a rolagem automática
   const hourRefs = useRef({});
+  const handsOnRefs = useRef({});
 
   // Usar o contexto de eventos apenas se NÃO estiver no modo somente visualização
   const {
@@ -59,6 +60,8 @@ const ScheduleSectionComponent = ({
       return isHourExpanded(hour);
     }
   };
+
+  const targetHandsOnEventRef = useRef(null);
 
   // Função para expandir/recolher um horário, conforme o modo
   const handleToggleDropdown = (hour) => {
@@ -165,6 +168,66 @@ const ScheduleSectionComponent = ({
       fetchUserEvents(userData.id);
     }
   }, [refreshTrigger, userData, isViewOnly]);
+
+  // Efeito para o scroll automático quando o componente montar
+  useEffect(() => {
+    if (restrictHandsOnOnly && !isViewOnly) {
+      const scrollToTarget = async () => {
+        try {
+          // Primeiro: scroll até a seção de programação
+          const scheduleSection = document.getElementById(sectionId);
+          if (scheduleSection) {
+            scheduleSection.scrollIntoView({ behavior: 'smooth' });
+            
+            // Aguarda 1500ms para a primeira rolagem completar
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Segundo: encontra e expande o horário correto
+            // Os IDs dos horários são baseados no array horariosEvento
+            // ID "5" corresponde ao horário que precisamos focar
+            const targetHour = "5"; 
+            const targetHourElement = hourRefs.current[targetHour];
+            
+            if (targetHourElement) {
+              // Rola até o horário alvo
+              targetHourElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              
+              // Aguarda 1200ms antes de expandir
+              await new Promise(resolve => setTimeout(resolve, 1200));
+              
+              // Expande o horário (simula clique no dropdown)
+              if (!isHourExpanded(targetHour)) {
+                expandHour(targetHour);
+                
+                // Aguarda 1000ms para a expansão do conteúdo
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Procura o evento hands-on com ID 14
+                const targetEvent = events.find(e => e.id === 14 && e.isHandsOn);
+                
+                if (targetEvent && targetHandsOnEventRef.current) {
+                  // Rola até o evento específico
+                  targetHandsOnEventRef.current.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                  });
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Erro durante o scroll automático:", error);
+        }
+      };
+      
+      // Inicia o scroll automático após um delay maior para garantir que todos os elementos estão renderizados
+      const timer = setTimeout(() => {
+        scrollToTarget();
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [restrictHandsOnOnly, isViewOnly, userData]);
 
   const openEventModal = (event) => {
     setSelectedSpeaker({
@@ -714,6 +777,11 @@ const ScheduleSectionComponent = ({
                       return (
                         <div
                           key={event.id}
+                          ref={
+                            event.id === 14 && event.isHandsOn
+                              ? targetHandsOnEventRef
+                              : null
+                          }
                           className={`transition-all duration-300 ${
                             isOtherSelected ? "opacity-50" : ""
                           }`}

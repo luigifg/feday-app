@@ -54,7 +54,7 @@ const QRCodeSection = () => {
             <img src={qrBg} alt="QR Background" className="h-16" />
           </div>
           
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-2">
             <h1 className="text-3xl font-bold ">
               Bem-vindo, {userData?.name || "Participante"}!
             </h1>
