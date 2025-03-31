@@ -230,7 +230,7 @@ export const events = [
     title:
       "Como a Renesas Pode Acelerar Projetos de AIoT: Visão, Voz e Análises em Tempo Real  ",
     descriptionLecture: formatDescription(
-      "Apresentação das principais novidades de produtos para o mercado de iluminação externa, explorando soluções e tendências do mercado, bem como introduzir uma visão geral das aplicações dos produtos desde chicotes especiais até o fornecimento de sistemas completos. Alguns dos principais produtos de nosso portifólio contemplam soluções técnicas como a família LUMiNAWISE, conectores CPC, soluções para iluminação de agricultura e cidades inteligentes."
+      "Se você estiver trabalhando em aplicações na nuvem ou em endpoints e edge, os MCUs, MPUs e software de IA da Renesas são ideais para designs baseados em IA e ML. Com nosso ecossistema em expansão de parceiros e uma biblioteca crescente de soluções, como exemplos de aplicações, toolboxes, suítes de soluções e muito mais, a Renesas oferece um portfólio feito sob medida para suas aplicações de visão, voz e análises em tempo real."
     ),
     hour: "2",
     room: "Tanguá",
@@ -250,7 +250,7 @@ export const events = [
     title:
       "Como a Renesas Pode Acelerar Projetos de AIoT: Visão, Voz e Análises em Tempo Real  ",
     descriptionLecture: formatDescription(
-      "Apresentação das principais novidades de produtos para o mercado de iluminação externa, explorando soluções e tendências do mercado, bem como introduzir uma visão geral das aplicações dos produtos desde chicotes especiais até o fornecimento de sistemas completos. Alguns dos principais produtos de nosso portifólio contemplam soluções técnicas como a família LUMiNAWISE, conectores CPC, soluções para iluminação de agricultura e cidades inteligentes."
+      "Se você estiver trabalhando em aplicações na nuvem ou em endpoints e edge, os MCUs, MPUs e software de IA da Renesas são ideais para designs baseados em IA e ML. Com nosso ecossistema em expansão de parceiros e uma biblioteca crescente de soluções, como exemplos de aplicações, toolboxes, suítes de soluções e muito mais, a Renesas oferece um portfólio feito sob medida para suas aplicações de visão, voz e análises em tempo real."
     ),
     hour: "5",
     room: "Tanguá",
