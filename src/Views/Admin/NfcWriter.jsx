@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Check, Wifi, Database, X, AlertCircle, Search } from "lucide-react";
 import api from "../../constants/Axios";
-import { horariosEvento, events } from "../../data/speakerData";
 
 const NFCWriterAdmin = () => {
+  // Estados principais
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState("");
-  const [selectedHour, setSelectedHour] = useState("");
-  const [selectedEvent, setSelectedEvent] = useState("");
   const [isWriting, setIsWriting] = useState(false);
   const [nfcSupported, setNfcSupported] = useState(null);
   const [error, setError] = useState("");
@@ -15,34 +13,10 @@ const NFCWriterAdmin = () => {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [showOnlyPending, setShowOnlyPending] = useState(true);
+  const [nfcStatus, setNfcStatus] = useState("idle"); // idle, detecting, reading, writing, success, error
+  const [statusMessage, setStatusMessage] = useState("");
+  
   const nfcAbortController = useRef(null);
-
-  // Função auxiliar para verificar se o NFC está ativado
-  // Lida com diferentes formatos: booleano ou número (0/1)
-  const isNfcActivated = (user) => {
-    if (!user) return false;
-    
-    // Verificar no campo correto: nfcActivated em vez de nfc_activated
-    
-    // Se for booleano, verificamos diretamente
-    if (typeof user.nfcActivated === 'boolean') {
-      return user.nfcActivated;
-    }
-    
-    // Se for número, consideramos 1 como ativado
-    if (typeof user.nfcActivated === 'number') {
-      return user.nfcActivated === 1;
-    }
-    
-    // Se for string, verificamos se é '1', 'true', etc.
-    if (typeof user.nfcActivated === 'string') {
-      return user.nfcActivated === '1' || 
-             user.nfcActivated.toLowerCase() === 'true';
-    }
-    
-    // Por padrão, consideramos não ativado
-    return false;
-  };
 
   // Verificar suporte a NFC no navegador
   useEffect(() => {
@@ -54,43 +28,6 @@ const NFCWriterAdmin = () => {
 
   // Buscar todos os usuários
   useEffect(() => {
-    const fetchUsers = async () => {
-      setLoading(true);
-      try {
-        const response = await api.get("/user");
-        
-        if (response.status === 200) {
-          // Garantir que temos um array, mesmo se vier em outro formato
-          let usersData = response.data;
-          
-          // Verificar formato e converter para array se necessário
-          if (!Array.isArray(usersData)) {
-            // Se vier como objeto com propriedade data (comum em algumas APIs)
-            if (usersData.data && Array.isArray(usersData.data)) {
-              usersData = usersData.data;
-            } 
-            // Se vier como objeto com propriedades numéricas (como um objeto JSON que parece array)
-            else if (typeof usersData === 'object' && usersData !== null) {
-              usersData = Object.values(usersData);
-            } 
-            // Último recurso: forçar array vazio
-            else {
-              console.error("Formato de dados de usuários não reconhecido:", usersData);
-              usersData = [];
-            }
-          }
-          
-          setUsers(usersData);
-        }
-      } catch (error) {
-        console.error("Erro ao carregar usuários:", error);
-        setError("Erro ao carregar usuários. Tente novamente.");
-        setUsers([]); // Garantir que sempre temos array mesmo em caso de erro
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchUsers();
   }, []);
 
@@ -112,167 +49,38 @@ const NFCWriterAdmin = () => {
     };
   }, []);
 
-  const handleUserChange = (e) => {
-    setSelectedUser(e.target.value);
-  };
-
-  const handleHourChange = (e) => {
-    setSelectedHour(e.target.value);
-    setSelectedEvent(""); // Resetar evento ao mudar horário
-  };
-
-  const handleEventChange = (e) => {
-    setSelectedEvent(e.target.value);
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  // Função para gerar vCard para o usuário selecionado
-  const generateVCardData = (user) => {
-    if (!user) return "";
-
-    const vCard = [
-      "BEGIN:VCARD",
-      "VERSION:3.0",
-      `N:;${user.name};;;`,
-      `FN:${user.name}`,
-      `TEL;TYPE=CELL:${user.phone || ""}`,
-      `EMAIL;TYPE=INTERNET:${user.email}`,
-      `ORG:${user.company || ""}`,
-      "END:VCARD",
-    ].join("\n");
-
-    return vCard;
-  };
-
-  const startNfcWriting = async () => {
-    if (!nfcSupported) {
-      setError("NFC não é suportado neste dispositivo ou navegador");
-      return;
+  // Função auxiliar para verificar se o NFC está ativado
+  const isNfcActivated = (user) => {
+    if (!user) return false;
+    
+    // Se for booleano, verificamos diretamente
+    if (typeof user.nfcActivated === 'boolean') {
+      return user.nfcActivated;
     }
-
-    if (!selectedUser || !selectedHour || !selectedEvent) {
-      setError("Selecione usuário, horário e evento antes de gravar");
-      return;
+    
+    // Se for número, consideramos 1 como ativado
+    if (typeof user.nfcActivated === 'number') {
+      return user.nfcActivated === 1;
     }
-
-    try {
-      setIsWriting(true);
-      
-      // Obter dados do usuário selecionado
-      const user = users.find(u => u.id === selectedUser || u.id === parseInt(selectedUser));
-      if (!user) {
-        throw new Error("Usuário não encontrado");
-      }
-
-      // Preparar dados de identificação para o check-in
-      const idData = JSON.stringify({
-        id: user.id,
-        name: user.name
-      });
-
-      // Gerar o vCard para compartilhamento de contato
-      const vCardData = generateVCardData(user);
-
-      const abortController = new AbortController();
-      nfcAbortController.current = abortController;
-
-      const ndef = new NDEFReader();
-      setSuccessMessage("Aproxime o cartão NFC para gravar os dados do usuário");
-      
-      // Gravar múltiplos records no cartão NFC
-      await ndef.write(
-        {
-          records: [
-            // Record 1: Dados de identificação para check-in (JSON)
-            {
-              recordType: "mime",  // Alterado de 'text' para 'mime'
-              mediaType: "application/json",
-              data: idData
-            },
-            // Record 2: vCard para compartilhamento de contato
-            {
-              recordType: "mime",  // Alterado de 'text' para 'mime'
-              mediaType: "text/vcard",
-              data: vCardData
-            }
-          ]
-        },
-        { signal: abortController.signal }
-      );
-
-      // Atualizar o status do NFC no banco de dados para 1 (ativado)
-      // Usando o nome correto do campo: nfcActivated
-      try {
-        await api.patch(`/user/${user.id}`, {
-          nfcActivated: 1  // Nome do campo correto
-        });
-        
-        // Atualizar a lista de usuários localmente
-        setUsers(users.map(u => 
-          (u.id === user.id || u.id === parseInt(user.id)) ? {...u, nfcActivated: 1} : u
-        ));
-        
-        setSelectedUser("");
-        setSuccessMessage(`Cartão NFC gravado com sucesso para ${user.name}!`);
-        refreshUsers(); // Atualizar a lista após gravar
-      } catch (apiError) {
-        console.error("Erro ao atualizar status do usuário:", apiError);
-        setError("Cartão gravado, mas houve erro ao atualizar banco de dados");
-      }
-      
-    } catch (error) {
-      console.error("Erro ao gravar NFC:", error);
-      if (error.name === "AbortError") {
-        setError("Gravação NFC cancelada");
-      } else if (error.name === "NotSupportedError") {
-        setError("Dispositivo não suporta a operação NFC solicitada");
-      } else if (error.name === "NotReadableError") {
-        setError("Cartão NFC não pode ser lido ou está danificado");
-      } else if (error.name === "NetworkError") {
-        setError("Problema de rede ao gravar NFC");
-      } else {
-        setError("Erro ao gravar NFC: " + error.message);
-      }
-    } finally {
-      setIsWriting(false);
-      stopNfcWriting();
+    
+    // Se for string, verificamos se é '1', 'true', etc.
+    if (typeof user.nfcActivated === 'string') {
+      return user.nfcActivated === '1' || 
+             user.nfcActivated.toLowerCase() === 'true';
     }
+    
+    // Por padrão, consideramos não ativado
+    return false;
   };
 
-  const stopNfcWriting = () => {
-    if (nfcAbortController.current) {
-      nfcAbortController.current.abort();
-      nfcAbortController.current = null;
-    }
-  };
-
-  // Filtra eventos pelo horário selecionado
-  const filteredEvents = selectedHour
-    ? events.filter(event => event.hour === selectedHour)
-    : [];
-
-  // Filtra usuários com base na busca e status NFC
-  // Garantimos que users é sempre um array antes de chamar .filter
-  const filteredUsers = Array.isArray(users) 
-    ? users.filter(user => {
-        if (!user) return false;
-        const nameMatch = user.name?.toLowerCase().includes((searchTerm || "").toLowerCase());
-        // Usamos a função auxiliar para verificar o status do NFC
-        const statusMatch = !showOnlyPending || !isNfcActivated(user);
-        return nameMatch && statusMatch;
-      })
-    : [];
-
-  // Função para forçar recarregamento dos dados
-  const refreshUsers = async () => {
+  // Buscar usuários
+  const fetchUsers = async () => {
     setLoading(true);
     try {
       const response = await api.get("/user");
       
       if (response.status === 200) {
+        // Garantir que temos um array
         let usersData = response.data;
         
         if (!Array.isArray(usersData)) {
@@ -286,8 +94,292 @@ const NFCWriterAdmin = () => {
         }
         
         setUsers(usersData);
-        setSuccessMessage("Lista de usuários atualizada!");
       }
+    } catch (error) {
+      console.error("Erro ao carregar usuários:", error);
+      setError("Erro ao carregar usuários. Tente novamente.");
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Parar gravação NFC
+  const stopNfcWriting = () => {
+    console.log("Parando processo de NFC...");
+    if (nfcAbortController.current) {
+      nfcAbortController.current.abort();
+      nfcAbortController.current = null;
+      console.log("Processo de NFC interrompido");
+    }
+  };
+
+  // Indicador de status do NFC
+  const NfcStatusIndicator = () => {
+    // Configurações de cor e ícone com base no status
+    const statusConfig = {
+      idle: { bgColor: "bg-gray-500", textColor: "text-white", icon: <Wifi size={24} /> },
+      detecting: { bgColor: "bg-blue-500", textColor: "text-white", icon: <Wifi className="animate-pulse" size={24} /> },
+      reading: { bgColor: "bg-yellow-500", textColor: "text-white", icon: <Wifi className="animate-ping" size={24} /> },
+      writing: { bgColor: "bg-purple-500", textColor: "text-white", icon: <Wifi className="animate-bounce" size={24} /> },
+      success: { bgColor: "bg-green-500", textColor: "text-white", icon: <Check size={24} /> },
+      error: { bgColor: "bg-red-500", textColor: "text-white", icon: <AlertCircle size={24} /> }
+    };
+    
+    const config = statusConfig[nfcStatus] || statusConfig.idle;
+    
+    // Mensagens para cada status
+    const statusMessages = {
+      idle: "NFC pronto para uso",
+      detecting: "Procurando cartão NFC...",
+      reading: "Cartão NFC detectado! Lendo...",
+      writing: "Gravando dados no cartão...",
+      success: "Operação concluída com sucesso!",
+      error: statusMessage || "Erro na operação NFC"
+    };
+    
+    return (
+      <div className={`w-full p-4 ${config.bgColor} ${config.textColor} rounded-lg mb-4 flex items-center`}>
+        <div className="mr-3">
+          {config.icon}
+        </div>
+        <div className="flex-1">
+          <div className="font-bold">{nfcStatus === "idle" ? "Status NFC" : statusMessages[nfcStatus]}</div>
+          {statusMessage && nfcStatus !== "error" && (
+            <div className="text-sm opacity-90">{statusMessage}</div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // Função para gravar em cartão já formatado
+  const writeToPreFormattedCard = async () => {
+    setNfcStatus("detecting");
+    setStatusMessage("Iniciando gravação em cartão pré-formatado...");
+    setError("");
+    setSuccessMessage("");
+    
+    // Verificar se um usuário foi selecionado
+    if (!selectedUser) {
+      setNfcStatus("error");
+      setError("Selecione um usuário antes de gravar o cartão");
+      return;
+    }
+    
+    try {
+      // Obter dados do usuário
+      const user = users.find(u => u.id === selectedUser || u.id === parseInt(selectedUser));
+      if (!user) {
+        throw new Error("Usuário não encontrado");
+      }
+      
+      console.log("Preparando para gravar dados do usuário:", user.name);
+      
+      // Criar string simples com ID e nome (formato que o leitor no Admin.jsx espera)
+      const userData = JSON.stringify({
+        id: user.id,
+        name: user.name
+      });
+      
+      console.log("Dados a serem gravados:", userData);
+      setStatusMessage(`Preparando dados para ${user.name}. Aproxime o cartão pré-formatado...`);
+      
+      // Iniciar NDEFReader
+      const ndef = new NDEFReader();
+      
+      // Adicionar event listeners
+      ndef.addEventListener("reading", (event) => {
+        console.log("Cartão detectado! Serial:", event.serialNumber);
+        setStatusMessage(`Cartão detectado: ${event.serialNumber}`);
+        
+        // Verificar se o cartão já contém dados
+        const { message } = event;
+        if (message && message.records && message.records.length > 0) {
+          console.log("Cartão já formatado com", message.records.length, "registros");
+          setStatusMessage("Cartão já formatado. Preparando para sobrescrever...");
+        } else {
+          console.log("Aviso: Cartão parece estar vazio. Pode não funcionar no A15.");
+          setStatusMessage("Aviso: Cartão parece estar vazio. Pode ser necessário formatá-lo primeiro no iPhone.");
+        }
+      });
+      
+      // Iniciar escaneamento
+      await ndef.scan();
+      console.log("Escaneamento iniciado. Aguardando cartão...");
+      
+      // Quando o cartão for detectado
+      ndef.onreading = async () => {
+        try {
+          setNfcStatus("writing");
+          setStatusMessage("Gravando dados do usuário...");
+          
+          // Tentar gravação usando o formato TEXT para compatibilidade máxima
+          try {
+            console.log("Tentando gravar como texto...");
+            
+            await ndef.write({
+              records: [{ 
+                recordType: "text", 
+                data: userData 
+              }]
+            });
+            
+            console.log("Gravação como texto bem-sucedida!");
+            setNfcStatus("success");
+            setSuccessMessage(`Cartão gravado com sucesso para ${user.name}!`);
+            
+            // Atualizar status do usuário no banco
+            try {
+              await api.patch(`/user/${user.id}`, { nfcActivated: 1 });
+              console.log("Status do NFC atualizado no banco de dados");
+              
+              // Atualizar a lista de usuários localmente
+              setUsers(users.map(u => 
+                (u.id === user.id || u.id === parseInt(user.id)) ? {...u, nfcActivated: 1} : u
+              ));
+              
+              setSelectedUser("");
+            } catch (apiError) {
+              console.error("Erro ao atualizar status do usuário:", apiError);
+              setError("Cartão gravado, mas houve erro ao atualizar banco de dados");
+            }
+            
+          } catch (textError) {
+            console.error("Erro na gravação como texto:", textError);
+            setStatusMessage("Erro na gravação como texto. Tentando formato alternativo...");
+            
+            // Se falhar como texto, tente com formato MIME
+            try {
+              console.log("Tentando gravar como MIME type...");
+              
+              await ndef.write({
+                records: [{
+                  recordType: "mime",
+                  mediaType: "application/json",
+                  data: new TextEncoder().encode(userData)
+                }]
+              });
+              
+              console.log("Gravação como MIME type bem-sucedida!");
+              setNfcStatus("success");
+              setSuccessMessage(`Cartão gravado com sucesso para ${user.name}!`);
+              
+              // Atualizar status do usuário no banco
+              try {
+                await api.patch(`/user/${user.id}`, { nfcActivated: 1 });
+                console.log("Status do NFC atualizado no banco de dados");
+                
+                // Atualizar a lista de usuários localmente
+                setUsers(users.map(u => 
+                  (u.id === user.id || u.id === parseInt(user.id)) ? {...u, nfcActivated: 1} : u
+                ));
+                
+                setSelectedUser("");
+              } catch (apiError) {
+                console.error("Erro ao atualizar status do usuário:", apiError);
+                setError("Cartão gravado, mas houve erro ao atualizar banco de dados");
+              }
+              
+            } catch (mimeError) {
+              console.error("Erro na gravação como MIME:", mimeError);
+              setNfcStatus("error");
+              setError("Falha em todas as tentativas de gravação. O cartão pode precisar ser formatado primeiro no iPhone.");
+            }
+          }
+          
+        } catch (writeError) {
+          console.error("Erro durante processo de gravação:", writeError);
+          setNfcStatus("error");
+          setError("Erro durante gravação: " + (writeError.message || "indefinido"));
+        }
+      };
+      
+    } catch (error) {
+      console.error("Erro geral:", error);
+      setNfcStatus("error");
+      setError("Erro: " + (error.message || "indefinido"));
+    }
+  };
+
+  // Função para ler o conteúdo do cartão
+  const readNfcContent = async () => {
+    setNfcStatus("detecting");
+    setStatusMessage("Modo de leitura. Aproxime o cartão...");
+    
+    try {
+      const ndef = new NDEFReader();
+      
+      ndef.addEventListener("reading", ({ message, serialNumber }) => {
+        console.log("Cartão lido! Serial:", serialNumber);
+        console.log("Conteúdo completo:", message);
+        
+        if (!message || message.records.length === 0) {
+          setStatusMessage("Cartão vazio - nenhum registro encontrado");
+          return;
+        }
+        
+        let readContent = "";
+        message.records.forEach((record, index) => {
+          console.log(`Registro ${index + 1}:`, record);
+          
+          try {
+            if (record.recordType === "text") {
+              readContent += `Texto: "${record.data}"\n`;
+            } else if (record.recordType === "url") {
+              readContent += `URL: ${record.data}\n`;
+            } else if (record.data) {
+              // Tenta ler dados binários como texto
+              const textDecoder = new TextDecoder();
+              const text = textDecoder.decode(record.data);
+              readContent += `Dados (${record.recordType}): "${text}"\n`;
+            } else {
+              readContent += `Tipo ${record.recordType}: dados não legíveis\n`;
+            }
+          } catch (e) {
+            readContent += `Tipo ${record.recordType}: erro ao ler dados\n`;
+          }
+        });
+        
+        setNfcStatus("success");
+        setSuccessMessage("Leitura concluída!");
+        setStatusMessage(`Conteúdo lido:\n${readContent}`);
+      });
+      
+      await ndef.scan();
+      console.log("Escaneamento para leitura iniciado...");
+    } catch (error) {
+      console.error("Erro ao iniciar leitura:", error);
+      setNfcStatus("error");
+      setError(`Erro ao iniciar leitura: ${error.message || "indefinido"}`);
+    }
+  };
+
+  // Handlers para os inputs
+  const handleUserChange = (e) => {
+    setSelectedUser(e.target.value);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  // Filtra usuários com base na busca e status NFC
+  const filteredUsers = Array.isArray(users) 
+    ? users.filter(user => {
+        if (!user) return false;
+        const nameMatch = user.name?.toLowerCase().includes((searchTerm || "").toLowerCase());
+        const statusMatch = !showOnlyPending || !isNfcActivated(user);
+        return nameMatch && statusMatch;
+      })
+    : [];
+
+  // Função para forçar recarregamento dos dados
+  const refreshUsers = async () => {
+    setLoading(true);
+    try {
+      await fetchUsers();
+      setSuccessMessage("Lista de usuários atualizada!");
     } catch (error) {
       console.error("Erro ao recarregar usuários:", error);
       setError("Erro ao recarregar dados. Tente novamente.");
@@ -302,20 +394,10 @@ const NFCWriterAdmin = () => {
         Grave cartões NFC para os participantes
       </p>
       
-      {successMessage && (
-        <div className="w-full p-4 mb-4 bg-emerald-500 text-white rounded-lg flex items-center gap-2">
-          <Check size={24} />
-          {successMessage}
-        </div>
-      )}
-
-      {error && (
-        <div className="w-full p-4 mb-4 bg-red-500 text-white rounded-lg flex items-center gap-2">
-          <AlertCircle size={24} />
-          {error}
-        </div>
-      )}
-
+      {/* Indicador de status NFC */}
+      <NfcStatusIndicator />
+      
+      {/* Informações sobre NFC no A15 */}
       {nfcSupported === false && (
         <div className="w-full p-4 mb-4 bg-yellow-600 text-white rounded-lg text-sm">
           <p className="font-medium">NFC não suportado neste dispositivo ou navegador</p>
@@ -323,14 +405,35 @@ const NFCWriterAdmin = () => {
         </div>
       )}
 
-      {/* Botão de recarregar */}
-      <button
-        onClick={refreshUsers}
-        className="w-full mb-4 px-4 py-2 bg-blue-700 hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center justify-center"
-      >
-        <Database className="mr-2" size={18} />
-        Recarregar lista de usuários
-      </button>
+      {/* Instruções para formatação de cartões */}
+      <div className="w-full p-4 mb-4 bg-gray-700 rounded-lg">
+        <h3 className="text-lg font-bold text-white mb-2">Instruções para cartões novos:</h3>
+        <ol className="text-white text-sm list-decimal pl-5 space-y-1">
+          <li>Formate o cartão primeiro usando o NFC Tools no iPhone</li>
+          <li>Grave qualquer texto pequeno no cartão (pode ser apagado depois)</li>
+          <li>Depois de formatado, o cartão pode ser gravado pelo A15</li>
+        </ol>
+      </div>
+
+      {/* Botões de ação */}
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <button
+          onClick={refreshUsers}
+          className="px-4 py-2 bg-blue-700 hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center justify-center"
+        >
+          <Database className="mr-2" size={18} />
+          Recarregar lista
+        </button>
+        
+        <button
+          onClick={readNfcContent}
+          className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors flex items-center justify-center"
+          disabled={isWriting}
+        >
+          <Search className="mr-2" size={18} />
+          Ler cartão
+        </button>
+      </div>
 
       {/* Filtro de busca */}
       <div className="relative w-full mb-4">
@@ -362,100 +465,52 @@ const NFCWriterAdmin = () => {
         </label>
       </div>
 
-      <div className="flex flex-col gap-4">
-        {/* Seleção de usuário */}
-        <div className="relative w-full">
-          <select
-            value={selectedUser}
-            onChange={handleUserChange}
-            disabled={loading || isWriting}
-            className="w-full p-4 rounded-lg bg-gray-800 text-white border-2 border-gray-700 
-                    hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 
-                    transition-all duration-300 outline-none appearance-none 
-                    cursor-pointer shadow-lg backdrop-blur-sm disabled:opacity-60"
-          >
-            <option value="" className="bg-gray-800">
-              {loading ? "Carregando usuários..." : "Selecione um participante"}
+      {/* Seleção de usuário */}
+      <div className="relative w-full mb-4">
+        <select
+          value={selectedUser}
+          onChange={handleUserChange}
+          disabled={loading || isWriting}
+          className="w-full p-4 rounded-lg bg-gray-800 text-white border-2 border-gray-700 
+                  hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 
+                  transition-all duration-300 outline-none appearance-none 
+                  cursor-pointer shadow-lg backdrop-blur-sm disabled:opacity-60"
+        >
+          <option value="" className="bg-gray-800">
+            {loading ? "Carregando usuários..." : "Selecione um participante"}
+          </option>
+          {filteredUsers.map((user) => (
+            <option key={user.id} value={user.id} className="bg-gray-800">
+              {user.name} {isNfcActivated(user) ? '(Cartão já gravado)' : ''}
             </option>
-            {filteredUsers.map((user) => (
-              <option key={user.id} value={user.id} className="bg-gray-800">
-                {user.name} {isNfcActivated(user) ? '(Cartão já gravado)' : ''}
-              </option>
-            ))}
-          </select>
-          <Database className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-        </div>
-
-        {/* Seleção de evento */}
-
-
-        {/* Pré-visualização do vCard */}
-        {selectedUser && (
-          <div className="p-4 bg-gray-700 rounded-lg text-sm text-gray-300 my-2">
-            <h3 className="font-semibold mb-2 text-white">Dados que serão gravados no cartão:</h3>
-            <div className="overflow-x-auto whitespace-pre-wrap font-mono text-xs mt-1">
-              <p className="mb-2 font-semibold text-blue-300">1. Dados para Check-in:</p>
-              {users.find(u => u.id === selectedUser || u.id === parseInt(selectedUser)) ? (
-                <pre className="pl-4 text-xs">
-                  {JSON.stringify({
-                    id: users.find(u => u.id === selectedUser || u.id === parseInt(selectedUser)).id,
-                    name: users.find(u => u.id === selectedUser || u.id === parseInt(selectedUser)).name
-                  }, null, 2)}
-                </pre>
-              ) : null}
-              
-              <p className="mt-3 mb-2 font-semibold text-blue-300">2. vCard para Networking:</p>
-              {users.find(u => u.id === selectedUser || u.id === parseInt(selectedUser)) ? (
-                <pre className="pl-4 text-xs">
-                  {generateVCardData(users.find(u => u.id === selectedUser || u.id === parseInt(selectedUser)))
-                    .split('\n')
-                    .map((line, index) => (
-                      <div key={index}>{line}</div>
-                    ))}
-                </pre>
-              ) : null}
-            </div>
-          </div>
-        )}
-
-        {isWriting ? (
-          <div className="w-full p-8 bg-gray-800 text-white rounded-lg text-center">
-            <div className="animate-pulse mb-4">
-              <Wifi size={64} className="mx-auto text-blue-400" />
-            </div>
-            <p className="text-lg font-medium mb-2">Aguardando cartão NFC</p>
-            <p className="text-sm text-gray-300">Aproxime o cartão NFC do dispositivo para gravação</p>
-            <button
-              onClick={stopNfcWriting}
-              className="mt-4 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors"
-            >
-              Cancelar
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={startNfcWriting}
-            disabled={!selectedUser || !selectedHour || !selectedEvent || !nfcSupported}
-            className="w-full p-4 rounded-lg bg-blue-600 text-white font-semibold
-                     hover:bg-blue-500 transition-colors duration-300
-                     disabled:opacity-50 disabled:cursor-not-allowed
-                     flex items-center justify-center gap-2"
-          >
-            <Wifi size={20} />
-            Gravar Cartão NFC
-          </button>
-        )}
-
-        {filteredUsers.length === 0 && !loading && (
-          <div className="text-center p-4 bg-gray-700 rounded-lg">
-            <p className="text-white">
-              {searchTerm 
-                ? "Nenhum participante encontrado com este critério de busca" 
-                : "Não há participantes pendentes para gravação de cartão NFC"}
-            </p>
-          </div>
-        )}
+          ))}
+        </select>
+        <Database className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
       </div>
+
+      {/* Botão de Gravação */}
+      <button
+        onClick={writeToPreFormattedCard}
+        disabled={!selectedUser || !nfcSupported || isWriting}
+        className="w-full p-4 rounded-lg bg-green-600 text-white font-semibold
+                hover:bg-green-500 transition-colors duration-300
+                disabled:opacity-50 disabled:cursor-not-allowed
+                flex items-center justify-center gap-2"
+      >
+        <Wifi size={20} />
+        Gravar Cartão NFC
+      </button>
+
+      {/* Mensagem para lista vazia */}
+      {filteredUsers.length === 0 && !loading && (
+        <div className="text-center p-4 mt-4 bg-gray-700 rounded-lg">
+          <p className="text-white">
+            {searchTerm 
+              ? "Nenhum participante encontrado com este critério de busca" 
+              : "Não há participantes pendentes para gravação de cartão NFC"}
+          </p>
+        </div>
+      )}
     </div>
   );
 };
