@@ -25,6 +25,7 @@ const RegistrationForm = () => {
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [genderError, setGenderError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
 
   const navigate = useNavigate();
 
@@ -52,9 +53,62 @@ const RegistrationForm = () => {
     return emailRegex.test(email);
   };
 
+  // Função para formatar telefone com suporte para números internacionais
+  const formatPhoneNumber = (value) => {
+    if (!value) return value;
+    
+    // Remove todos os caracteres não numéricos, exceto "+"
+    const cleanPhone = value.replace(/[^\d+]/g, '');
+    
+    // Se já for um número internacional (começando com +), mantenha o formato
+    if (cleanPhone.startsWith('+')) {
+      return cleanPhone;
+    }
+    
+    // Se o número for maior que 11 dígitos, converta para formato internacional
+    if (cleanPhone.length > 11) {
+      return `+${cleanPhone}`;
+    }
+    
+    // Para números brasileiros (até 11 dígitos), aplique a formatação brasileira
+    if (cleanPhone.length <= 2) {
+      return `(${cleanPhone}`;
+    }
+    if (cleanPhone.length <= 7) {
+      return `(${cleanPhone.substring(0, 2)}) ${cleanPhone.substring(2)}`;
+    }
+    return `(${cleanPhone.substring(0, 2)}) ${cleanPhone.substring(
+      2,
+      7
+    )}-${cleanPhone.substring(7, 11)}`;
+  };
+
+  // Função para validar telefone (brasileiro ou internacional)
+  const validatePhoneNumber = (phone) => {
+    if (!phone) return false;
+    
+    // Remove todos os caracteres não numéricos, exceto "+"
+    const cleanPhone = phone.replace(/[^\d+]/g, '');
+    
+    // Telefone internacional (deve começar com + e ter no mínimo 8 dígitos)
+    if (cleanPhone.startsWith('+')) {
+      return cleanPhone.length >= 9; // + e pelo menos 8 dígitos
+    }
+    
+    // Telefone brasileiro (deve ter 10 ou 11 dígitos - com ou sem o 9)
+    return cleanPhone.length >= 10 && cleanPhone.length <= 11;
+  };
+
+  // Modifique o handleChange para incluir a formatação de telefone
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    
+    if (name === 'phone') {
+      // Aplica a formatação ao telefone
+      setFormData({ ...formData, [name]: formatPhoneNumber(value) });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
 
     // Limpar mensagens de erro ao digitar
     if (name === "email" || name === "confirmEmail") {
@@ -63,10 +117,42 @@ const RegistrationForm = () => {
     if (name === "gender") {
       setGenderError("");
     }
+    if (name === "phone") {
+      setPhoneError("");
+    }
+    if (errorMessage) {
+      setErrorMessage("");
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Limpar mensagens anteriores
+    setErrorMessage("");
+    setSuccessMessage("");
+    setEmailError("");
+    setGenderError("");
+    setPhoneError("");
+    
+    // Verificar campos obrigatórios básicos
+    const requiredFields = {
+      name: "Nome",
+      email: "E-mail",
+      phone: "Telefone",
+      company: "Empresa",
+      position: "Cargo",
+      gender: "Gênero",
+      password: "Senha",
+      confirmPassword: "Confirmação de senha"
+    };
+    
+    for (const [field, label] of Object.entries(requiredFields)) {
+      if (!formData[field]) {
+        setErrorMessage(`O campo ${label} é obrigatório.`);
+        return;
+      }
+    }
 
     // Validar formato do email
     if (!validateEmail(formData.email)) {
@@ -80,12 +166,13 @@ const RegistrationForm = () => {
       return;
     }
 
-    // Validar campo de gênero
-    if (!formData.gender) {
-      setGenderError("Por favor, selecione seu gênero.");
+    // Validar telefone
+    if (!validatePhoneNumber(formData.phone)) {
+      setPhoneError("Formato de telefone inválido.");
       return;
     }
 
+    // Validar senha
     if (!validatePassword(formData.password)) {
       setErrorMessage(
         "A senha deve conter pelo menos 8 caracteres, incluindo números, letras maiúsculas e minúsculas e caracteres especiais."
@@ -101,20 +188,18 @@ const RegistrationForm = () => {
     try {
       // Remover confirmEmail antes de enviar ao servidor
       const { confirmEmail, ...dataToSubmit } = formData;
-
-      const response = await api.post("/user", dataToSubmit);
-      const loginResponse = await api.post("/login", {
-        email: formData.email,
-        password: formData.password,
-      });
-
-      if (loginResponse.status === 200) {
-        const rawUser = await api.get("/me");
-        navigate("/events");
-      } else {
-        setErrorMessage("Erro ao fazer login após cadastro. Tente novamente.");
+      
+      // Limpar formatação do telefone antes de enviar
+      if (dataToSubmit.phone) {
+        dataToSubmit.phone = dataToSubmit.phone.replace(/\D/g, '');
       }
 
+      const response = await api.post("/user", dataToSubmit);
+      
+      // Simplificar o fluxo pós-cadastro
+      setSuccessMessage("Cadastro realizado com sucesso! Redirecionando para login...");
+      
+      // Limpar formulário após cadastro bem-sucedido
       setFormData({
         name: "",
         phone: "",
@@ -127,16 +212,43 @@ const RegistrationForm = () => {
         confirmPassword: "",
       });
 
-      setSuccessMessage("Cadastro realizado com sucesso!");
-      setErrorMessage("");
-      setEmailError("");
-      setGenderError("");
+      // Redirecionar para login após um pequeno delay
+      setTimeout(() => {
+        navigate("/signin");
+      }, 2000);
     } catch (error) {
-      setErrorMessage(
-        error.response?.data?.errors?.[0] ||
-          "Erro ao criar sua conta. Tente novamente."
-      );
-      setSuccessMessage("");
+      // Tratamento de erro simplificado
+      if (error.response?.data?.errors) {
+        const errorData = error.response.data.errors;
+        
+        if (Array.isArray(errorData) && errorData.length > 0) {
+          const errorMsg = errorData[0];
+          if (errorMsg.toLowerCase().includes('email')) {
+            setEmailError(errorMsg);
+          } else if (errorMsg.toLowerCase().includes('telefone')) {
+            setPhoneError(errorMsg);
+          } else if (errorMsg.toLowerCase().includes('gênero')) {
+            setGenderError(errorMsg);
+          } else {
+            setErrorMessage(errorMsg);
+          }
+        } else if (typeof errorData === 'string') {
+          if (errorData.toLowerCase().includes('email')) {
+            setEmailError(errorData);
+          } else if (errorData.toLowerCase().includes('telefone')) {
+            setPhoneError(errorData);
+          } else if (errorData.toLowerCase().includes('gênero')) {
+            setGenderError(errorData);
+          } else {
+            setErrorMessage(errorData);
+          }
+        }
+      } else if (error.response?.status === 400 && Array.isArray(error.response?.data)) {
+        const errorMessage = error.response.data[0];
+        setErrorMessage(errorMessage);
+      } else {
+        setErrorMessage("Erro ao criar sua conta. Tente novamente.");
+      }
     }
   };
 
@@ -177,17 +289,6 @@ const RegistrationForm = () => {
             </p>
           </div>
 
-          {errorMessage && (
-            <div className="text-red-500 text-center mb-4 text-sm">
-              {errorMessage}
-            </div>
-          )}
-          {successMessage && (
-            <div className="text-green-500 text-center mb-4 text-sm">
-              {successMessage}
-            </div>
-          )}
-
           <form className="w-full flex-1 mt-8" onSubmit={handleSubmit}>
             <div className="mx-auto max-w-xs flex flex-col gap-4">
               <div className="flex gap-4">
@@ -208,6 +309,11 @@ const RegistrationForm = () => {
                   required
                 />
               </div>
+              {phoneError && (
+                <div className="text-red-500 text-xs text-center">
+                  {phoneError}
+                </div>
+              )}
 
               {/* Campo de email e confirmação de email */}
               <div className="space-y-4">
@@ -236,11 +342,12 @@ const RegistrationForm = () => {
 
               <div className="flex gap-4">
                 <FieldSignUp
-                  placeholder="Digite sua empresa"
+                  placeholder="Nome da sua empresa"
                   type="text"
                   name="company"
                   value={formData.company}
                   onChange={handleChange}
+                  required
                 />
                 <FieldSignUp
                   placeholder="Digite seu cargo"
@@ -248,6 +355,7 @@ const RegistrationForm = () => {
                   name="position"
                   value={formData.position}
                   onChange={handleChange}
+                  required
                 />
               </div>
 
@@ -259,11 +367,6 @@ const RegistrationForm = () => {
                 onChange={handleChange}
                 required
               />
-              {genderError && (
-                <div className="text-red-500 text-xs ml-1 -mt-2">
-                  {genderError}
-                </div>
-              )}
               {genderError && (
                 <div className="text-red-500 text-xs ml-1 -mt-2">
                   {genderError}
@@ -342,9 +445,19 @@ const RegistrationForm = () => {
                   ))}
                 </div>
               </div>
+              {errorMessage && (
+                <div className="text-red-500 text-center text-sm">
+                  {errorMessage}
+                </div>
+              )}
+              {successMessage && (
+                <div className="text-green-500 text-center text-sm">
+                  {successMessage}
+                </div>
+              )}
               <button
                 type="submit"
-                className="mt-5 tracking-wide font-semibold bg-green-700 text-gray-100 w-full py-4 rounded-lg hover:bg-green-600 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
+                className="mt-1 tracking-wide font-semibold bg-green-700 text-gray-100 w-full py-4 rounded-lg hover:bg-green-600 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
               >
                 <svg
                   className="w-6 h-6 -ml-2"
@@ -360,7 +473,7 @@ const RegistrationForm = () => {
                 </svg>
                 <span className="ml-3">Inscrever-se</span>
               </button>
-              <p className=" text-xs text-gray-600 text-center">
+              <p className="text-xs text-gray-600 text-center">
                 Já possui uma conta?{" "}
                 <a href="/signin">
                   <span className="text-green-900 font-semibold">Entrar</span>

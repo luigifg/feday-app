@@ -5,7 +5,7 @@ import linkedin from "../../assets/socials/linkedin.png";
 import SpeakerModal from "../../Components/design/SpeakerModal.jsx";
 import { events } from "../../data/speakerData.jsx";
 
-const filteredSlides = events.filter(event => !event.hideFromBanner);
+const filteredSlides = events.filter((event) => !event.hideFromBanner);
 
 // Função para processar parágrafos em JSX
 const formatDescriptionToJsx = (descriptionBanner, lineClampClass = "") => {
@@ -85,14 +85,20 @@ const ImageSlider = () => {
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+    // Reset do estado de expansão ao mudar de slide
+    setFullTextExpanded({});
   }, []);
 
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+    // Reset do estado de expansão ao mudar de slide
+    setFullTextExpanded({});
   };
 
   const goToSlide = (index) => {
     setCurrentSlide(index);
+    // Reset do estado de expansão ao mudar de slide
+    setFullTextExpanded({});
   };
 
   useEffect(() => {
@@ -117,20 +123,19 @@ const ImageSlider = () => {
   };
 
   const toggleTextExpansion = (slideId) => {
-    if (screenSize === "mobile" || screenSize === "tablet") {
-      setFullTextExpanded((prev) => ({
-        ...prev,
-        [slideId]: !prev[slideId],
-      }));
-    } else {
-      setFullTextModalOpen(true);
-    }
+    // Sempre abre o modal independente do dispositivo
+    setFullTextModalOpen(true);
+
+    // Pausar o slider automático quando o modal estiver aberto
+    setIsPlaying(false);
   };
 
   const closeFullTextModal = () => {
     setFullTextModalOpen(false);
-  };
 
+    // Retomar a reprodução automática quando o modal for fechado
+    setIsPlaying(true);
+  };
   const currentSlideData = slides[currentSlide];
 
   return (
@@ -252,15 +257,13 @@ const ImageSlider = () => {
                           </p>
                         )}
 
-                        {isTruncated && !is2XL && (
+                        {isTruncated && (
                           <div className="flex justify-start mt-6 mb-6 xl:mt-4 xl:mb-4">
                             <button
                               onClick={() => toggleTextExpansion(slide.id)}
                               className="text-green-600 hover:text-green-800 font-medium p-2 -m-2 underline hover:no-underline focus:outline-none focus:ring-2 focus:ring-green-300 rounded"
                             >
-                              {screenSize !== "desktop" && isExpanded
-                                ? "Mostrar menos"
-                                : "Ver mais"}
+                              Ver mais
                             </button>
                           </div>
                         )}
@@ -323,13 +326,13 @@ const ImageSlider = () => {
       </Section>
 
       <SpeakerModal
-        isOpen={fullTextModalOpen && screenSize === "desktop"}
+        isOpen={fullTextModalOpen}
         onClose={closeFullTextModal}
         currentSlide={currentSlide}
         onPrevSlide={prevSlide}
         onNextSlide={nextSlide}
         slides={slides}
-        useSpeakerName={true} // Flag para usar speakerName (não vindo da ScheduleSection)
+        useSpeakerName={true}
       />
     </div>
   );

@@ -15,6 +15,9 @@
   }
 }
 
+html {
+  scroll-behavior: smooth }
+
 @keyframes glow-animation {
   0% {
     background-position: -100% 0;

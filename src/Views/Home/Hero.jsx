@@ -33,7 +33,7 @@ const slideContent = [
     logo: keynote1,
     mobileImage: keynote1M,
     welcome: "Conheça Nosso",
-    title: "Palestrante Especial",
+    title: "Palestrante Principal",
     description:
       "Fernando Barrera é um líder de vendas com vasta experiência na indústria de Semicondutores e atualmente atua como Diretor Técnico Regional na Future Electronics, baseado no Vale do Silício",
     buttonText: "Conheça Fernando Barrera",

@@ -28,6 +28,9 @@ const Header = () => {
       }
     };
 
+    // Adiciona CSS para scroll suave apenas uma vez
+    document.documentElement.style.scrollBehavior = "smooth";
+
     fetchUser();
   }, []);
 
