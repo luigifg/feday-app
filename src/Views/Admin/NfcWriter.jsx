@@ -188,13 +188,13 @@ const NFCWriterAdmin = () => {
           records: [
             // Record 1: Dados de identificação para check-in (JSON)
             {
-              recordType: "text",
+              recordType: "mime",  // Alterado de 'text' para 'mime'
               mediaType: "application/json",
               data: idData
             },
             // Record 2: vCard para compartilhamento de contato
             {
-              recordType: "text",
+              recordType: "mime",  // Alterado de 'text' para 'mime'
               mediaType: "text/vcard",
               data: vCardData
             }
@@ -386,51 +386,8 @@ const NFCWriterAdmin = () => {
           <Database className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
         </div>
 
-        {/* Seleção de horário */}
-        <div className="relative w-full">
-          <select
-            value={selectedHour}
-            onChange={handleHourChange}
-            disabled={!selectedUser || isWriting}
-            className="w-full p-4 rounded-lg bg-gray-800 text-white border-2 border-gray-700 
-                    hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 
-                    transition-all duration-300 outline-none appearance-none 
-                    cursor-pointer shadow-lg backdrop-blur-sm disabled:opacity-60"
-          >
-            <option value="" className="bg-gray-800">
-              Selecione um horário
-            </option>
-            {horariosEvento.map((horario) => (
-              <option key={horario.id} value={horario.id} className="bg-gray-800">
-                {horario.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
         {/* Seleção de evento */}
-        <div className="relative w-full">
-          <select
-            value={selectedEvent}
-            onChange={handleEventChange}
-            disabled={!selectedHour || isWriting}
-            className="w-full p-4 rounded-lg bg-gray-800 text-white border-2 border-gray-700 
-                    hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 
-                    transition-all duration-300 outline-none appearance-none 
-                    cursor-pointer shadow-lg backdrop-blur-sm disabled:opacity-60"
-          >
-            <option value="" className="bg-gray-800">
-              {!selectedHour
-                ? "Primeiro selecione um horário"
-                : "Selecione um evento"}
-            </option>
-            {filteredEvents.map((event) => (
-              <option key={event.id} value={event.id} className="bg-gray-800">
-                {event.title} - Sala: {event.room}
-              </option>
-            ))}
-          </select>
-        </div>
+
 
         {/* Pré-visualização do vCard */}
         {selectedUser && (
