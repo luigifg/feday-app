@@ -154,13 +154,13 @@ const AdminList = () => {
           throw new Error("Formato de dados inválido");
         }
       }
-
+  
       if (qrData.id) {
         // Se for o mesmo código que acabou de ser processado, mantém a mensagem atual
         if (lastScannedQR === `${qrData.id}-${selectedEvent}-${selectedHour}`) {
           return;
         }
-
+  
         try {
           // Buscar informações do usuário
           const userResponse = await api.get(`/user`, {
@@ -168,13 +168,13 @@ const AdminList = () => {
               userName: qrData.name,
             },
           });
-
+  
           const userDataQr = {
             id: qrData.id,
             name: userResponse.data.name || qrData.name,
           };
-
-          // Verificar se já existe check-in
+  
+          // Verificar se já existe check-in para ESTE HORÁRIO E EVENTO específico
           const checkExistingResponse = await api.get("/checkIn", {
             params: {
               user_id: qrData.id,
@@ -182,15 +182,15 @@ const AdminList = () => {
               hour: selectedHour,
             },
           });
-
+  
           if (checkExistingResponse.data.exists) {
-            // Se já existe no banco, apenas atualiza o usuário e mostra mensagem de sucesso
+            // Se já existe check-in para este evento e horário, apenas mostra mensagem
             setScannedUser(userDataQr);
-            setSuccessMessage("Check-in já existente registrado com sucesso!");
+            setSuccessMessage(`Check-in já existente para ${userDataQr.name} neste evento e horário!`);
             setLastScannedQR(`${qrData.id}-${selectedEvent}-${selectedHour}`);
             return;
           }
-
+  
           // Realizar o check-in
           const checkInData = {
             userId: qrData.id,
@@ -199,22 +199,30 @@ const AdminList = () => {
             eventId: selectedEvent,
             adminId: userData.id,
           };
-
+  
           const response = await api.post("/checkIn", checkInData, {
             withCredentials: true,
           });
-
+  
           if (response.status === 200) {
             setScannedUser(userDataQr);
-            setSuccessMessage("Check-in realizado com sucesso!");
+            setSuccessMessage(`Check-in realizado com sucesso para ${userDataQr.name}!`);
             setLastScannedQR(`${qrData.id}-${selectedEvent}-${selectedHour}`);
           }
         } catch (error) {
           console.error("Erro na API:", error);
-          setError(
-            "Erro ao salvar o check-in: " +
-              (error.message || "Erro desconhecido")
-          );
+          
+          // Melhoria no feedback de erro
+          if (error.response && error.response.status === 409) {
+            // Código 409 pode ser usado para conflito (check-in já existe)
+            setSuccessMessage("Check-in já existente registrado com sucesso!");
+          } else {
+            setError(
+              "Erro ao salvar o check-in: " +
+                (error.response?.data?.message || error.message || "Erro desconhecido")
+            );
+          }
+          
           setLastScannedQR(null);
         }
       } else {
@@ -232,98 +240,128 @@ const AdminList = () => {
       setError("NFC não é suportado neste dispositivo ou navegador");
       return;
     }
-
+  
     try {
       const abortController = new AbortController();
       nfcAbortController.current = abortController;
-
+  
       const ndef = new NDEFReader();
       await ndef.scan({ signal: abortController.signal });
-
+  
       setSuccessMessage("Leitura NFC iniciada. Aproxime o cartão.");
       setError("");
-
+  
       ndef.addEventListener("reading", async ({ message, serialNumber }) => {
         try {
           // Extrair dados do cartão NFC
           let userIdFromNFC = "";
           let userNameFromNFC = "";
           let foundIdData = false;
-
+  
+          console.log("NFC lido - Total de records:", message.records.length);
+          console.log("Serial do cartão:", serialNumber);
+  
           // Percorre cada record procurando o record de ID para check-in
           for (const record of message.records) {
+            console.log("Tipo de record:", record.recordType, "Media Type:", record.mediaType);
+            
+            // Se o record for do tipo text (o que estamos gravando no NFCWriter)
             if (record.recordType === "text") {
-              const textDecoder = new TextDecoder();
-              const text = textDecoder.decode(record.data);
-
-              // Primeiro tentamos verificar se é JSON
               try {
-                // Se o record tiver mediaType application/json ou o conteúdo parecer JSON
-                if (
-                  record.mediaType === "application/json" ||
-                  text.startsWith("{")
-                ) {
+                // Para records de texto, o valor já deve estar disponível como string
+                const textData = record.data;
+                console.log("Conteúdo do texto:", textData);
+                
+                // Verifique se parece JSON
+                if (typeof textData === 'string' && (textData.startsWith("{") || textData.includes("id"))) {
+                  try {
+                    const jsonData = JSON.parse(textData);
+                    if (jsonData.id) {
+                      userIdFromNFC = jsonData.id;
+                      userNameFromNFC = jsonData.name || "";
+                      foundIdData = true;
+                      console.log("Dados JSON válidos encontrados:", jsonData);
+                      break;
+                    }
+                  } catch (jsonError) {
+                    console.log("Falha ao parsear JSON:", jsonError);
+                  }
+                }
+              } catch (textError) {
+                console.log("Erro ao processar texto:", textError);
+              }
+            } 
+            // Se o record for do tipo MIME e for JSON
+            else if (record.recordType === "mime" && record.mediaType === "application/json") {
+              try {
+                const textDecoder = new TextDecoder();
+                const text = textDecoder.decode(record.data);
+                console.log("Conteúdo MIME/JSON:", text);
+                
+                try {
                   const jsonData = JSON.parse(text);
                   if (jsonData.id) {
                     userIdFromNFC = jsonData.id;
                     userNameFromNFC = jsonData.name || "";
                     foundIdData = true;
-                    break; // Encontramos os dados de ID, não precisamos mais procurar
-                  }
-                }
-              } catch (e) {
-                // Se não for JSON, continuamos procurando
-                console.log("Record não é JSON válido:", e);
-              }
-            }
-          }
-
-          // Se não encontramos dados de ID mas temos vCard, tentamos extrair dali
-          if (!foundIdData) {
-            for (const record of message.records) {
-              if (record.recordType === "text") {
-                const textDecoder = new TextDecoder();
-                const text = textDecoder.decode(record.data);
-
-                // Verifica se é um vCard
-                if (
-                  record.mediaType === "text/vcard" ||
-                  text.startsWith("BEGIN:VCARD")
-                ) {
-                  // Tentar extrair nome do vCard
-                  const nameMatch = text.match(/FN:(.*?)(?:\r?\n|$)/);
-                  if (nameMatch && nameMatch[1]) {
-                    userNameFromNFC = nameMatch[1].trim();
-                    // Como não temos ID, usamos o serialNumber do cartão
-                    userIdFromNFC = serialNumber;
+                    console.log("Dados MIME/JSON válidos encontrados:", jsonData);
                     break;
                   }
+                } catch (jsonError) {
+                  console.log("Falha ao parsear MIME/JSON:", jsonError);
                 }
+              } catch (error) {
+                console.log("Erro ao decodificar MIME:", error);
+              }
+            }
+            // Para URL (caso utilizemos esse formato como fallback)
+            else if (record.recordType === "url") {
+              try {
+                const url = record.data;
+                console.log("URL encontrada:", url);
+                
+                // Verificar se a URL contém ID do usuário (como em https://futureday.id/123)
+                const matches = url.match(/\/([0-9]+)$/);
+                if (matches && matches[1]) {
+                  userIdFromNFC = matches[1];
+                  userNameFromNFC = "Usuário " + userIdFromNFC;  // Nome genérico se não tiver
+                  foundIdData = true;
+                  console.log("ID encontrado na URL:", userIdFromNFC);
+                  break;
+                }
+              } catch (urlError) {
+                console.log("Erro ao processar URL:", urlError);
               }
             }
           }
-
-          // Se ainda não encontramos dados suficientes, usamos o serialNumber como fallback
-          if (!userIdFromNFC) {
+  
+          // Se não encontramos dados de ID nos formatos principais, use o serial do cartão como último recurso
+          if (!foundIdData && serialNumber) {
+            console.log("Usando serial do cartão como fallback:", serialNumber);
             userIdFromNFC = serialNumber;
-            if (!userNameFromNFC) {
-              userNameFromNFC = "Usuário " + serialNumber;
-            }
+            userNameFromNFC = "Cartão " + serialNumber.substring(0, 8);
           }
-
-          // Processa os dados obtidos para check-in
-          const nfcData = JSON.stringify({
-            id: userIdFromNFC,
-            name: userNameFromNFC,
-          });
-
-          await processScannedData(nfcData);
+  
+          if (userIdFromNFC) {
+            console.log("Dados finais obtidos - ID:", userIdFromNFC, "Nome:", userNameFromNFC);
+            
+            // Transforma nos dados que processScannedData espera
+            const nfcData = JSON.stringify({
+              id: userIdFromNFC,
+              name: userNameFromNFC
+            });
+  
+            // Processa os dados obtidos para check-in
+            await processScannedData(nfcData);
+          } else {
+            setError("Nenhum dado de identificação encontrado no cartão NFC");
+          }
         } catch (error) {
           console.error("Erro ao processar tag NFC:", error);
           setError("Erro ao processar tag NFC: " + error.message);
         }
       });
-
+  
       ndef.addEventListener("error", (error) => {
         console.error("Erro na leitura NFC:", error);
         setError("Erro na leitura NFC: " + error.message);
@@ -347,6 +385,7 @@ const AdminList = () => {
     setScannedUser(null);
     setError("");
     setSuccessMessage("");
+    setLastScannedQR(null); // Limpar último QR lido para permitir nova leitura
   };
 
   const saveFavorites = (newFavorites) => {
@@ -376,7 +415,7 @@ const AdminList = () => {
   const handleEventChange = (e) => {
     const newEvent = e.target.value;
     setSelectedEvent(newEvent);
-    resetCheckInForm();
+    resetCheckInForm(); // Limpar dados do último check-in ao mudar de evento
 
     const newFavorites = {
       ...favorites,

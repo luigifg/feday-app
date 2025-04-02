@@ -197,7 +197,7 @@ const RegistrationForm = () => {
       const response = await api.post("/user", dataToSubmit);
       
       // Simplificar o fluxo pós-cadastro
-      setSuccessMessage("Cadastro realizado com sucesso! Redirecionando para login...");
+      setSuccessMessage("Cadastro realizado com sucesso! Redirecionando para pagina de Eventos...");
       
       // Limpar formulário após cadastro bem-sucedido
       setFormData({
@@ -214,8 +214,8 @@ const RegistrationForm = () => {
 
       // Redirecionar para login após um pequeno delay
       setTimeout(() => {
-        navigate("/signin");
-      }, 2000);
+        navigate("/events");
+      }, 1000);
     } catch (error) {
       // Tratamento de erro simplificado
       if (error.response?.data?.errors) {
