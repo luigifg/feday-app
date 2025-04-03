@@ -193,13 +193,37 @@ const RegistrationForm = () => {
       if (dataToSubmit.phone) {
         dataToSubmit.phone = dataToSubmit.phone.replace(/\D/g, '');
       }
-
+    
+      // Cadastro do usuário
       const response = await api.post("/user", dataToSubmit);
       
-      // Simplificar o fluxo pós-cadastro
-      setSuccessMessage("Cadastro realizado com sucesso! Redirecionando para pagina de Eventos...");
+      console.log("Cadastro realizado com sucesso. Iniciando login automático...");
       
-      // Limpar formulário após cadastro bem-sucedido
+      // IMPORTANTE: Configuração para garantir que os cookies sejam enviados
+      const loginConfig = {
+        withCredentials: true,  // Isso é crucial para o envio/recebimento de cookies
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      };
+      
+      // Login automático com configuração específica para cookies
+      const loginResponse = await api.post("/login", {
+        email: dataToSubmit.email,
+        password: dataToSubmit.password
+      }, loginConfig);
+      
+      console.log("Login automático realizado. Resposta:", loginResponse);
+      
+      // Se chegou aqui, o login foi bem-sucedido
+      // Vamos obter os dados do usuário para confirmar a autenticação
+      const userResponse = await api.get("/me", { withCredentials: true });
+      
+      console.log("Dados do usuário obtidos:", userResponse.data);
+      
+      setSuccessMessage("Cadastro realizado com sucesso! Redirecionando...");
+      
+      // Limpar formulário
       setFormData({
         name: "",
         phone: "",
@@ -211,11 +235,9 @@ const RegistrationForm = () => {
         password: "",
         confirmPassword: "",
       });
-
-      // Redirecionar para login após um pequeno delay
-      setTimeout(() => {
-        navigate("/events");
-      }, 1000);
+      
+      // Redirecionar para events
+      navigate("/events");
     } catch (error) {
       // Tratamento de erro simplificado
       if (error.response?.data?.errors) {

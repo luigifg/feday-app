@@ -35,8 +35,13 @@ export default function EventLocation() {
     );
   };
 
-  const handleImageClick = () => {
+  const openModal = (index) => {
+    setModalImage(index);
     setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   const nextModalImage = (e) => {
@@ -50,6 +55,7 @@ export default function EventLocation() {
       (prev) => (prev - 1 + locationImages.length) % locationImages.length
     );
   };
+
   const googleMapsEmbedUrl =
     "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3602.5229655414233!2d-49.26571032520299!3d-25.436767133778824!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94dce3f5c6d0c56b%3A0x6d0a0d0324b9!2sAv.%20Sete%20de%20Setembro%2C%204211%20-%20Batel%2C%20Curitiba%20-%20PR%2C%2080250-205!5e0!3m2!1spt-BR!2sbr!4v1703193177751!5m2!1spt-BR!2sbr";
 
@@ -59,6 +65,11 @@ export default function EventLocation() {
       "_blank"
     );
   };
+
+  // Verificação de segurança para evitar erros se não houver imagens
+  if (locationImages.length === 0) {
+    return <div>Carregando...</div>;
+  }
 
   return (
     <div className="relative">
@@ -79,11 +90,10 @@ export default function EventLocation() {
         id="local"
       >
         <div className="relative">
-          <h2 className="font-bold text-3xl sm:text-4xl md:text-4xl lg:text-5xl text-center mb-8 md:mb-12"
-          >
+          <h2 className="font-bold text-3xl sm:text-4xl md:text-4xl lg:text-5xl text-center mb-8 md:mb-12">
             Local do Evento - 2025
           </h2>
-          <div className=" mx-auto  ">
+          <div className="mx-auto">
             <div className="flex flex-col gap-6 md:gap-8 max-w-4xl mx-auto">
               <div className="text-center">
                 <h3 className="text-xl md:text-2xl font-bold mb-2">
@@ -114,8 +124,7 @@ export default function EventLocation() {
                   <Calendar className="w-6 h-6 text-primary text-green-600" />
                   <div>
                     <p className="font-bold text-xl text-green-600">Data</p>
-                    <p className="text-lg">08 de Maio de 2025
-                    </p>
+                    <p className="text-lg">08 de Maio de 2025</p>
                   </div>
                 </div>
 
@@ -140,84 +149,105 @@ export default function EventLocation() {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-4 relative">
+              {/* Galeria de imagens - VERSÃO REDESENHADA */}
+              <div className="relative">
                 {/* Mobile: Single image */}
-                <div className="md:hidden relative aspect-video overflow-hidden rounded-xl shadow-md">
-                  <img
-                    src={locationImages[currentIndex]}
-                    alt="Local do Evento"
-                    className="object-cover w-full h-full cursor-pointer"
-                    onClick={() => handleImageClick(currentIndex)}
-                  />
+                <div className="md:hidden">
+                  <button
+                    className="block w-full h-auto aspect-video overflow-hidden rounded-xl cursor-pointer border-0 p-0 m-0"
+                    onClick={() => openModal(currentIndex)}
+                    aria-label="Abrir visualização ampliada"
+                  >
+                    <img
+                      src={locationImages[currentIndex]}
+                      alt={`Foto ${currentIndex + 1} do Local do Evento`}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
                 </div>
 
                 {/* Desktop: Two images */}
-                <div
-                  className="hidden md:block relative aspect-video overflow-hidden rounded-xl shadow-md cursor-pointer"
-                  onClick={() => handleImageClick(currentIndex)}
-                >
-                  <img
-                    src={locationImages[currentIndex]}
-                    alt="Local do Evento"
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-
-                <div
-                  className="hidden md:block relative aspect-video overflow-hidden rounded-xl shadow-md cursor-pointer"
-                  onClick={() =>
-                    handleImageClick((currentIndex + 1) % locationImages.length)
-                  }
-                >
-                  <img
-                    src={
-                      locationImages[(currentIndex + 1) % locationImages.length]
-                    }
-                    alt="Local do Evento"
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-
-                {/* Navigation controls - centered between images */}
-                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-4 z-10">
+                <div className="hidden md:grid md:grid-cols-2 gap-4">
                   <button
-                    onClick={prevSlide}
-                    className="bg-white/80 p-2 rounded-full hover:bg-white"
+                    className="block w-full h-auto aspect-video overflow-hidden rounded-xl cursor-pointer border-0 p-0 m-0"
+                    onClick={() => openModal(currentIndex)}
+                    aria-label="Abrir visualização ampliada da primeira imagem"
                   >
-                    <ChevronLeft className="w-6 h-6" />
+                    <img
+                      src={locationImages[currentIndex]}
+                      alt={`Foto ${currentIndex + 1} do Local do Evento`}
+                      className="w-full h-full object-cover"
+                    />
                   </button>
-                  <button
-                    onClick={nextSlide}
-                    className="bg-white/80 p-2 rounded-full hover:bg-white"
-                  >
-                    <ChevronRight className="w-6 h-6" />
-                  </button>
+
+                  {locationImages.length > 1 && (
+                    <button
+                      className="block w-full h-auto aspect-video overflow-hidden rounded-xl cursor-pointer border-0 p-0 m-0"
+                      onClick={() => openModal((currentIndex + 1) % locationImages.length)}
+                      aria-label="Abrir visualização ampliada da segunda imagem"
+                    >
+                      <img
+                        src={locationImages[(currentIndex + 1) % locationImages.length]}
+                        alt={`Foto ${(currentIndex + 1) % locationImages.length + 1} do Local do Evento`}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                  )}
                 </div>
 
-                {/* Image counter */}
-                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 bg-white/80 px-3 py-1 rounded-full z-10">
+                {/* Navigation controls - agora sobre as imagens */}
+                {locationImages.length > 1 && (
+                  <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex justify-between px-4 z-10 pointer-events-none">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        prevSlide();
+                      }}
+                      className="bg-white/80 p-2 rounded-full hover:bg-white shadow-md pointer-events-auto"
+                      aria-label="Imagem anterior"
+                    >
+                      <ChevronLeft className="w-6 h-6" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        nextSlide();
+                      }}
+                      className="bg-white/80 p-2 rounded-full hover:bg-white shadow-md pointer-events-auto"
+                      aria-label="Próxima imagem"
+                    >
+                      <ChevronRight className="w-6 h-6" />
+                    </button>
+                  </div>
+                )}
+
+                {/* Contador de imagens */}
+                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white/80 px-3 py-1 rounded-full z-10 text-sm font-medium shadow-md">
                   {currentIndex + 1} / {locationImages.length}
                 </div>
               </div>
 
-              {/* Modal for mobile image view */}
+              {/* Modal de visualização ampliada */}
               {isModalOpen && (
                 <div
                   className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={closeModal}
                 >
                   <div className="relative w-full h-full flex items-center justify-center p-4">
                     <img
                       src={locationImages[modalImage]}
-                      alt="Local do Evento"
+                      alt={`Foto ampliada ${modalImage + 1} do Local do Evento`}
                       className="max-w-full max-h-full object-contain"
                     />
+                    
+                    {/* Botão de fechar */}
                     <button
-                      className="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/80 rounded-full p-2"
+                      className="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/80 rounded-full p-2 shadow-lg"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setIsModalOpen(false);
+                        closeModal();
                       }}
+                      aria-label="Fechar visualização ampliada"
                     >
                       <svg
                         className="w-6 h-6"
@@ -233,25 +263,36 @@ export default function EventLocation() {
                         />
                       </svg>
                     </button>
-                    <button
-                      onClick={prevModalImage}
-                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 p-2 rounded-full"
-                    >
-                      <ChevronLeft className="w-6 h-6 text-white" />
-                    </button>
-                    <button
-                      onClick={nextModalImage}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 p-2 rounded-full"
-                    >
-                      <ChevronRight className="w-6 h-6 text-white" />
-                    </button>
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/20 px-3 py-1 rounded-full text-white">
+                    
+                    {/* Navegação no modal */}
+                    {locationImages.length > 1 && (
+                      <>
+                        <button
+                          onClick={prevModalImage}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 p-2 rounded-full shadow-lg"
+                          aria-label="Imagem anterior"
+                        >
+                          <ChevronLeft className="w-6 h-6 text-white" />
+                        </button>
+                        <button
+                          onClick={nextModalImage}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 p-2 rounded-full shadow-lg"
+                          aria-label="Próxima imagem"
+                        >
+                          <ChevronRight className="w-6 h-6 text-white" />
+                        </button>
+                      </>
+                    )}
+                    
+                    {/* Contador no modal */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/20 px-3 py-1 rounded-full text-white shadow-md">
                       {modalImage + 1} / {locationImages.length}
                     </div>
                   </div>
                 </div>
               )}
 
+              {/* Mapa do Google */}
               <div className="mt-6 md:mt-8 aspect-video md:aspect-[3/1] overflow-hidden rounded-xl shadow-md">
                 <iframe
                   src={googleMapsEmbedUrl}

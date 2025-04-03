@@ -127,7 +127,7 @@ const SpeakerModal = ({
         <X className="w-6 h-6 text-gray-600" />
       </button>
 
-      <div className="flex flex-col items-center max-w-5xl w-full">
+      <div className="flex flex-col items-center max-w-5xl 2xl:max-w-7xl w-full">
         {/* Modal com estrutura responsiva e altura fixa */}
         <div
           className="bg-white rounded-xl bg-gradient-to-r from-green-300 to-green-500 p-1 shadow-2xl w-full grid grid-cols-1 xl:grid-cols-3 relative"

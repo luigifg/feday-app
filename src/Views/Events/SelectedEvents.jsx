@@ -255,6 +255,12 @@ const SelectedEvents = () => {
         Eventos Selecionados
       </h1>
 
+      <div className="text-center">
+        <p className="text-sm md:text-lg text-gray-600 mb-10 md:mb-12 mx-[2rem]">
+        Verifique e gerencie suas inscrições confirmadas. Para alterar sua programação, você pode cancelar eventos aqui e selecionar novas opções na seção 'Programação do Evento'.
+        </p>
+      </div>
+
       {Object.keys(stagedEvents).length > 0 ? (
         <>
           {/* Header com toggle de visibilidade */}

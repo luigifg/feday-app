@@ -84,7 +84,15 @@ const ScheduleSectionComponent = ({
         setTimeout(() => {
           if (headerElement) {
             const headerPosition = headerElement.getBoundingClientRect().top;
-            const scrollPosition = window.pageYOffset + headerPosition - 100;
+
+            // Verificamos se é mobile (largura da tela menor que 768px)
+            const isMobile = window.innerWidth < 768;
+
+            // Offset diferente para mobile e desktop
+            const offsetY = isMobile ? 125 : 100;
+
+            const scrollPosition =
+              window.pageYOffset + headerPosition - offsetY;
 
             window.scrollTo({
               top: scrollPosition,
@@ -177,39 +185,44 @@ const ScheduleSectionComponent = ({
           // Primeiro: scroll até a seção de programação
           const scheduleSection = document.getElementById(sectionId);
           if (scheduleSection) {
-            scheduleSection.scrollIntoView({ behavior: 'smooth' });
-            
+            scheduleSection.scrollIntoView({ behavior: "smooth" });
+
             // Aguarda 1500ms para a primeira rolagem completar
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
+            await new Promise((resolve) => setTimeout(resolve, 1500));
+
             // Segundo: encontra e expande o horário correto
             // Os IDs dos horários são baseados no array horariosEvento
             // ID "5" corresponde ao horário que precisamos focar
-            const targetHour = "5"; 
+            const targetHour = "5";
             const targetHourElement = hourRefs.current[targetHour];
-            
+
             if (targetHourElement) {
               // Rola até o horário alvo
-              targetHourElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              
+              targetHourElement.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+              });
+
               // Aguarda 1200ms antes de expandir
-              await new Promise(resolve => setTimeout(resolve, 1200));
-              
+              await new Promise((resolve) => setTimeout(resolve, 1200));
+
               // Expande o horário (simula clique no dropdown)
               if (!isHourExpanded(targetHour)) {
                 expandHour(targetHour);
-                
+
                 // Aguarda 1000ms para a expansão do conteúdo
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+
                 // Procura o evento hands-on com ID 14
-                const targetEvent = events.find(e => e.id === 14 && e.isHandsOn);
-                
+                const targetEvent = events.find(
+                  (e) => e.id === 14 && e.isHandsOn
+                );
+
                 if (targetEvent && targetHandsOnEventRef.current) {
                   // Rola até o evento específico
-                  targetHandsOnEventRef.current.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' 
+                  targetHandsOnEventRef.current.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center",
                   });
                 }
               }
@@ -219,12 +232,12 @@ const ScheduleSectionComponent = ({
           console.error("Erro durante o scroll automático:", error);
         }
       };
-      
+
       // Inicia o scroll automático após um delay maior para garantir que todos os elementos estão renderizados
       const timer = setTimeout(() => {
         scrollToTarget();
       }, 1500);
-      
+
       return () => clearTimeout(timer);
     }
   }, [restrictHandsOnOnly, isViewOnly, userData]);
@@ -525,7 +538,7 @@ const ScheduleSectionComponent = ({
       <div className="text-center">
         <p className="text-sm md:text-lg text-gray-600 mb-10 md:mb-12 mx-[2rem]">
           {customDescription ||
-            "Escolha os eventos que você possui interesse em participar no Future Day. Caso queira concorrer a vários sorteios ao final do Evento, se inscreva e participe de 6 eventos."}
+            "Planeje sua experiência no Future Day 2025! Navegue pela programação e reserve sua vaga nos eventos que mais combinam com você."}
         </p>
       </div>
 

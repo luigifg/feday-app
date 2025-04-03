@@ -257,7 +257,7 @@ const ImageSlider = () => {
                           </p>
                         )}
 
-                        {isTruncated && (
+                        {isTruncated && !is2XL && (
                           <div className="flex justify-start mt-6 mb-6 xl:mt-4 xl:mb-4">
                             <button
                               onClick={() => toggleTextExpansion(slide.id)}
