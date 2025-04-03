@@ -1,5 +1,12 @@
 {
-    "rewrites": [
-      { "source": "/(.*)", "destination": "/index.html" }
+    "routes": [
+      { 
+        "src": "/api/(.*)", 
+        "headers": { 
+          "cache-control": "no-cache, no-store, must-revalidate"
+        },
+        "continue": true
+      },
+      { "src": "/(.*)", "dest": "/index.html" }
     ]
   }
