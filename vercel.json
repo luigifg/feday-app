@@ -1,12 +1,15 @@
 {
-    "routes": [
-      { 
-        "src": "/api/(.*)", 
-        "headers": { 
-          "cache-control": "no-cache, no-store, must-revalidate"
-        },
-        "continue": true
-      },
-      { "src": "/(.*)", "dest": "/index.html" }
+    "rewrites": [
+      { "source": "/(.*)", "destination": "/index.html" }
+    ],
+    "headers": [
+      {
+        "source": "/api/(.*)",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
+          { "key": "Pragma", "value": "no-cache" },
+          { "key": "Expires", "value": "0" }
+        ]
+      }
     ]
   }
