@@ -11,26 +11,74 @@ export default {
   theme: {
     extend: {
       animation: {
-        slide: "slide 20s linear infinite",
-        'gradient-x': 'gradientX 15s ease infinite',
+        fadeIn: "fadeIn 0.3s ease-in-out",
+        slide: "slide 30s linear infinite",
+        "slide-reverse": "slide-reverse 30s linear infinite",
+        gradientBg: "gradientX 0.8s ease forwards",
+        "fade-in-up": "fade-in-up 0.5s ease-out",
+        "fade-in": "fade-in 0.5s ease-out",
+        "fade-in-down": "fade-in-down 0.5s ease-out",
       },
       keyframes: {
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
         gradientX: {
-          '0%, 100%': { 
-            'background-position': '0% 50%'
+          "0%": {
+            "background-position": "0% 50%",
+            opacity: "0",
           },
-          '50%': { 
-            'background-position': '100% 50%'
-          }
+          "50%": {
+            "background-position": "100% 50%",
+            opacity: "0.5",
+          },
+          "100%": {
+            "background-position": "0% 50%",
+            opacity: "1",
+          },
         },
         slide: {
-          "0%": { transform: "translateX(0)" },
-          "100%": { transform: "translateX(-50%)" },
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-100%)" },
+        },
+        "slide-reverse": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(0%)" },
+        },
+        "fade-in-up": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(20px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
+        "fade-in": {
+          "0%": {
+            opacity: "0",
+          },
+          "100%": {
+            opacity: "1",
+          },
+        },
+        "fade-in-down": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(-20px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
         },
       },
       fontSize: {
-        xxs: "0.7rem",
-        xxxs: "0.5rem",
+        xxs: "0.65rem",
+        xxxs: "0.55rem",
+        mdp: "0.95rem",
       },
       boxShadow: {
         custom: "0px 15px 40px rgba(0, 0, 0, 0.4)", // Sombra personalizada
@@ -107,6 +155,12 @@ export default {
         "benefit-card-5": "url(assets/benefits/card-5.svg)",
         "benefit-card-6": "url(assets/benefits/card-6.svg)",
       },
+      extend: {
+        content: {
+          bg1: 'url("/assets/logos/bg1.svg")',
+          bg2: 'url("/assets/logos/bg2.svg")',
+        },
+      },
     },
   },
   plugins: [
@@ -134,7 +188,7 @@ export default {
             {},
         },
         ".h2": {
-          "@apply text-[1.75rem] leading-[2.5rem] md:text-[2rem] md:leading-[2.5rem] lg:text-[2.5rem] lg:leading-[3.5rem] xl:text-[3rem] xl:leading-tight":
+          "@apply text-[1.9rem] leading-[2.5rem] md:text-[2rem] md:leading-[2.5rem] lg:text-[2.5rem] lg:leading-[3.5rem] xl:text-[3rem] xl:leading-tight":
             {},
         },
         ".h3": {

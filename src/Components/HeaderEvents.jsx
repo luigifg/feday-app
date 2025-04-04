@@ -1,11 +1,11 @@
 import { useLocation } from "react-router-dom";
 import { disablePageScroll, enablePageScroll } from "scroll-lock";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../constants/Axios";
 import fe from "../assets/logos/feLogo.svg";
-import Button from "./Button";
+import Button from "./design/Button";
 import MenuSvg from "../assets/svg/MenuSvg";
-import { HamburgerMenu } from "./design/Header";
+import { HamburgerMenu } from "./design/HamburgerMenu";
 
 const HeaderEvents = ({ navigation = [], logoHref = "/" }) => {
   const { hash: currentPath } = useLocation();
@@ -16,14 +16,10 @@ const HeaderEvents = ({ navigation = [], logoHref = "/" }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userResponse = await axios.get("https://feday-api.onrender.com/me", {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
+        const userResponse = await api.get("/me");
         if (userResponse.status === 200 && userResponse.data?.id) {
           setUserId(userResponse.data.id);
+          console.log('userresponde', userResponse.data)
           setIsAdmin(userResponse.data.idGroup === 2);
         }
       } catch (error) {

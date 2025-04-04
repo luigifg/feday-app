@@ -1,12 +1,12 @@
+// routes.jsx
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "../App";
-import SignUp from "../Views/SignUp";
-import SignIn from "../Views/SignIn";
-import Events from "../Views/Events";
-import Admin from "../Views/Admin"; // Você precisará criar este componente
-import PrivateRoute from "../constants/PrivateRoute";
-import AdminRoute from "../constants/AdminRoute";
+import Admin from "../Admin";
+import Events from "../Events";
+import SignUp from "../Views/Login/SignUp";
+import SignIn from "../Views/Login/SignIn";
+import ProtectedRoute from "../constants/ProtectedRoute";
 
 const AppRoutes = () => {
   return (
@@ -17,9 +17,16 @@ const AppRoutes = () => {
         <Route path="/signin" element={<SignIn />} />
         <Route
           path="/events"
-          element={<PrivateRoute element={<Events />} />}
+          element={<ProtectedRoute element={<Events />} />}
         />
-       <Route path="/admin" element={<AdminRoute element={<Admin />} />} />
+        <Route 
+          path="/admin" 
+          element={<ProtectedRoute 
+                    element={<Admin />} 
+                    requiredRole="admin" 
+                    redirectTo="/" 
+                  />} 
+        />
       </Routes>
     </BrowserRouter>
   );
