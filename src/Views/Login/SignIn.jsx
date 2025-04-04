@@ -30,18 +30,7 @@ const LoginForm = () => {
 
       if (response.status === 200) {
         setMessage("Login realizado com sucesso!");
-<<<<<<< HEAD:src/Views/SignIn.jsx
-
-        // Obtém o usuário logado após o sucesso
-        const rawUser = await axios.get("https://feday-api.onrender.com/me", {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
-=======
         const rawUser = await api.get("/me");
->>>>>>> prod:src/Views/Login/SignIn.jsx
         console.log("Dados do usuário:", rawUser.data);
         navigate("/events");
       }
