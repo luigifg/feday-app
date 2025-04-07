@@ -21,6 +21,8 @@ const ScheduleSectionComponent = ({
   const [pendingDeletions, setPendingDeletions] = useState(new Set());
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSpeaker, setSelectedSpeaker] = useState(null);
+  const [participantsCounts, setParticipantsCounts] = useState({});
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // Mantemos a referência para os elementos, mas removemos a rolagem automática
   const hourRefs = useRef({});
@@ -141,6 +143,25 @@ const ScheduleSectionComponent = ({
       setEventList(filteredEvents);
     }
   };
+
+  useEffect(() => {
+    const fetchEventCounts = async () => {
+      console.log("Buscando contagens de participantes");
+      try {
+        const response = await api.get("/eventCounts");
+        console.log("Resposta de contagens:", response.data);
+
+        if (response.status === 200) {
+          setParticipantsCounts(response.data);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar contagens:", error);
+      }
+    };
+
+    // Fetch unconditionally for now (for debugging)
+    fetchEventCounts();
+  }, [refreshTrigger]);
 
   // No useEffect inicial, onde carregamos os dados, também ajustamos a condição:
   useEffect(() => {
@@ -814,12 +835,17 @@ const ScheduleSectionComponent = ({
                             onRemoveCancel={() => {}}
                             isOtherSelected={isOtherSelected}
                             isViewOnly={isViewOnly}
-                            // Oculta o botão "Selecionar" no modo somente visualização
                             showRemoveButton={isViewOnly}
-                            // Mantém a informação visual de que é um hands-on
                             isHandsOn={event.isHandsOn || false}
-                            // Passa a restrição para o componente EventItem
                             restrictSelection={restrictHandsOnOnly}
+                            participantsCount={(() => {
+                              const key = `${event.id}-${event.hour}`;
+                              console.log(
+                                `Evento ${event.id}, hora ${event.hour}, contagem:`,
+                                participantsCounts[key]
+                              );
+                              return participantsCounts[key] || 0;
+                            })()}
                           />
                         </div>
                       );

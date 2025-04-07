@@ -57,6 +57,7 @@ const SpeakerPhotoModal = ({ isOpen, onClose, photoUrl }) => {
 const EventItem = ({
   event,
   isSelected,
+  participantsCount = 0,
   onSelect,
   onRemove,
   showRemoveButton,
@@ -74,6 +75,7 @@ const EventItem = ({
   isViewOnly = false,
   isHandsOn = false, // Indica se o evento é hands-on
   restrictSelection = false, // Nova prop que controla se a seleção deve ser restrita
+  isAdmin = false,
 }) => {
   const [removeMode, setRemoveMode] = useState(false);
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
@@ -184,7 +186,9 @@ const EventItem = ({
           {/* Tag para eventos exclusivos para mulheres */}
           {isFemaleOnlyEvent && (
             <div className="absolute -top-3 left-2 z-10 bg-pink-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
-              {isViewOnly ? "Exclusivo para Mulheres" : "Exclusivo para Mulheres"}
+              {isViewOnly
+                ? "Exclusivo para Mulheres"
+                : "Exclusivo para Mulheres"}
             </div>
           )}
 
@@ -463,6 +467,20 @@ const EventItem = ({
                   {event.room}
                 </div>
               </div>
+              {participantsCount > 0 && (
+                <div className="flex items-center gap-2 mt-2">
+                  <User
+                    className="w-4 h-4 transition-all duration-300"
+                    style={{
+                      color: "#43A047",
+                    }}
+                  />
+                  <span className="text-gray-600 text-sm">
+                    {participantsCount}{" "}
+                    {participantsCount === 1 ? "participante" : "participantes"}
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Botões com estados dinâmicos - AJUSTADOS PARA MANTEREM TAMANHO FIXO E SEREM MAIS SUTIS */}
