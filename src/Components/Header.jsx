@@ -67,13 +67,11 @@ const Header = () => {
   };
 
   const handleAuthButtonClick = (key) => {
-    setButtonText((prev) => ({ ...prev, [key]: "EM BREVE" }));
-    setTimeout(() => {
-      setButtonText((prev) => ({
-        ...prev,
-        [key]: key === "signup" ? "Novo Usuário" : "Entrar",
-      }));
-    }, 2000);
+    if (key === "signup") {
+      window.location.href = "/signup"; // Redireciona para a página de cadastro
+    } else if (key === "signin") {
+      window.location.href = "/signin"; // Redireciona para a página de login
+    }
   };
 
   const filteredNavigation = navigation.filter((item) => {

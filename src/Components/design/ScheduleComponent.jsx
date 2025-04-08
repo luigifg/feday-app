@@ -159,18 +159,14 @@ const ScheduleSectionComponent = ({
       }
     };
 
-    // Fetch unconditionally for now (for debugging)
-    fetchEventCounts();
-  }, [refreshTrigger]);
-
-  // No useEffect inicial, onde carregamos os dados, também ajustamos a condição:
-  useEffect(() => {
-    // Se estiver no modo somente visualização, carregamos todos os eventos
-    if (isViewOnly) {
-      filterEventsByUserGender(null); // Passa null para mostrar todos
-      return;
+    // Buscar contagens para todos os usuários (não apenas admin)
+    // Isto é necessário para verificar se eventos estão lotados
+    if (!isViewOnly) {
+      fetchEventCounts();
     }
+  }, [refreshTrigger, isViewOnly]);
 
+  useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await api.get("/me");
@@ -178,18 +174,28 @@ const ScheduleSectionComponent = ({
           setUserData(response.data);
           fetchUserEvents(response.data.id);
 
+          // Verificar se o usuário é admin (grupo 2)
+          console.log("Dados do usuário:", response.data);
+          if (response.data.idGroup === 2) {
+            setIsAdmin(true);
+            console.log("Usuário é administrador");
+          } else {
+            console.log("Usuário não é administrador");
+          }
+
           // Filtra os eventos baseado no gênero do usuário
           filterEventsByUserGender(response.data.gender);
         }
       } catch (error) {
         console.error("Erro ao carregar dados do usuário:", error);
-
         // Caso de erro, mostra todos os eventos não exclusivos
         filterEventsByUserGender(null);
       }
     };
 
-    fetchUserData();
+    if (!isViewOnly) {
+      fetchUserData();
+    }
   }, [isViewOnly]);
 
   useEffect(() => {
@@ -366,6 +372,19 @@ const ScheduleSectionComponent = ({
 
     // Verifica se a restrição está ativa e se o evento não é hands-on
     if (restrictHandsOnOnly && !event.isHandsOn) return;
+
+    // Verificar se o evento está lotado - ACESSANDO CORRETAMENTE OS DADOS
+    const currentParticipantsCount =
+      participantsCounts[`${event.id}-${event.hour}`] || 0;
+    const isFull =
+      event.maxParticipants > 0 &&
+      currentParticipantsCount >= event.maxParticipants;
+
+    // Se o evento estiver lotado, não permite seleção
+    if (isFull) {
+      alert("Este evento já está com todas as vagas preenchidas.");
+      return;
+    }
 
     const eventDetails = events.find((e) => e.id === event.id);
     const isCurrentlySelected =
@@ -808,6 +827,24 @@ const ScheduleSectionComponent = ({
                           ? pendingDeletions.has(savedEvent.dbId)
                           : false;
 
+                      // Obter a contagem de participantes atual
+                      const currentParticipantsCount = (() => {
+                        const key = `${event.id}-${event.hour}`;
+                        // Garantir que estamos acessando o objeto participantsCounts corretamente
+                        return (participantsCounts && participantsCounts[key]) || 0;
+                      })();
+
+                      // Verificar se o evento está lotado
+                      const isFull = event.maxParticipants > 0 && currentParticipantsCount >= event.maxParticipants;
+
+                      console.log(`Evento ${event.room}-${event.hour}: ${currentParticipantsCount}/${event.maxParticipants} (Lotado: ${isFull})`);
+
+                      // Adicionar isFull ao objeto event que passamos para o EventItem
+                      const eventWithFull = {
+                        ...event,
+                        isFull: isFull,
+                      };
+
                       return (
                         <div
                           key={event.id}
@@ -821,7 +858,7 @@ const ScheduleSectionComponent = ({
                           }`}
                         >
                           <EventItem
-                            event={event}
+                            event={eventWithFull}
                             isSelected={isSelected}
                             isPreSelected={isPreSelected}
                             isSaved={isSaved}
@@ -838,14 +875,8 @@ const ScheduleSectionComponent = ({
                             showRemoveButton={isViewOnly}
                             isHandsOn={event.isHandsOn || false}
                             restrictSelection={restrictHandsOnOnly}
-                            participantsCount={(() => {
-                              const key = `${event.id}-${event.hour}`;
-                              console.log(
-                                `Evento ${event.id}, hora ${event.hour}, contagem:`,
-                                participantsCounts[key]
-                              );
-                              return participantsCounts[key] || 0;
-                            })()}
+                            isAdmin={isAdmin}
+                            participantsCount={currentParticipantsCount}
                           />
                         </div>
                       );
