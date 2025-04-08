@@ -19,7 +19,7 @@ const HeaderEvents = ({ navigation = [], logoHref = "/" }) => {
         const userResponse = await api.get("/me");
         if (userResponse.status === 200 && userResponse.data?.id) {
           setUserId(userResponse.data.id);
-          console.log('userresponde', userResponse.data)
+          // console.log('userresponde', userResponse.data)
           setIsAdmin(userResponse.data.idGroup === 2);
         }
       } catch (error) {

@@ -11,6 +11,7 @@ const HomeScheduleSection = () => {
       isViewOnly={true} 
       customDescription={homeDescription}
       sectionId="home-schedule"
+      restrictHandsOnOnly={false}
     />
   );
 };

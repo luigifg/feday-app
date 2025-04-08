@@ -226,7 +226,7 @@ const SelectedEvents = () => {
 
   return (
     <Section
-      className="px-[1rem] md:px-[5rem] xl:px-[6rem] pt-[3rem] pb-[4rem]"
+      className="px-[1rem] md:px-[5rem] xl:px-[6rem] pt-[3rem] md:pb-[4rem]"
       crosses
       customPaddings
       id="eventos"
@@ -243,9 +243,8 @@ const SelectedEvents = () => {
         descriptionField="descriptionLecture"
         useSpeakerName={false} // Adicionando esta prop para garantir que use sempre palestrante
       />
-
       <h1
-        className="text-4xl font-extrabold text-center mb-8 text-gray-800"
+        className="font-bold text-3xl sm:text-4xl md:text-4xl lg:text-5xl text-center mb-10 md:mb-12"
         style={{
           background: "linear-gradient(to right, #A8E6CF, #56B87B, #8FC93A)",
           WebkitBackgroundClip: "text",
@@ -257,7 +256,9 @@ const SelectedEvents = () => {
 
       <div className="text-center">
         <p className="text-sm md:text-lg text-gray-600 mb-10 md:mb-12 mx-[2rem]">
-        Verifique e gerencie suas inscrições confirmadas. Para alterar sua programação, você pode cancelar eventos aqui e selecionar novas opções na seção 'Programação do Evento'.
+          Verifique e gerencie suas inscrições confirmadas. Para alterar sua
+          programação, você pode cancelar eventos aqui e selecionar novas opções
+          na seção 'Programação do Evento'.
         </p>
       </div>
 

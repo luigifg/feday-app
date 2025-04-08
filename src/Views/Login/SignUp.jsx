@@ -219,7 +219,7 @@ const RegistrationForm = () => {
       // Vamos obter os dados do usuário para confirmar a autenticação
       const userResponse = await api.get("/me", { withCredentials: true });
       
-      console.log("Dados do usuário obtidos:", userResponse.data);
+      // console.log("Dados do usuário obtidos:", userResponse.data);
       
       setSuccessMessage("Cadastro realizado com sucesso! Redirecionando...");
       

@@ -145,26 +145,46 @@ const ScheduleSectionComponent = ({
   };
 
   useEffect(() => {
-    const fetchEventCounts = async () => {
-      console.log("Buscando contagens de participantes");
+  const fetchEventCounts = async () => {
+    if (!isViewOnly) {
       try {
         const response = await api.get("/eventCounts");
-        console.log("Resposta de contagens:", response.data);
-
         if (response.status === 200) {
           setParticipantsCounts(response.data);
         }
       } catch (error) {
         console.error("Erro ao buscar contagens:", error);
       }
-    };
-
-    // Buscar contagens para todos os usuários (não apenas admin)
-    // Isto é necessário para verificar se eventos estão lotados
-    if (!isViewOnly) {
-      fetchEventCounts();
+    } else {
+      // No modo view only, define contagens padrão ou vazias
+      setParticipantsCounts({});
     }
-  }, [refreshTrigger, isViewOnly]);
+  };
+
+  fetchEventCounts();
+}, [refreshTrigger, isViewOnly]);
+
+useEffect(() => {
+  const fetchUserData = async () => {
+    if (!isViewOnly) {
+      try {
+        const response = await api.get("/me");
+        if (response.status === 200) {
+          setUserData(response.data);
+          filterEventsByUserGender(response.data.gender);
+        }
+      } catch (error) {
+        filterEventsByUserGender(null);
+      }
+    } else {
+      // No modo view only, define dados de usuário padrão
+      setUserData(null);
+      filterEventsByUserGender(null);
+    }
+  };
+
+  fetchUserData();
+}, [isViewOnly]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -175,12 +195,12 @@ const ScheduleSectionComponent = ({
           fetchUserEvents(response.data.id);
 
           // Verificar se o usuário é admin (grupo 2)
-          console.log("Dados do usuário:", response.data);
+          // console.log("Dados do usuário:", response.data);
           if (response.data.idGroup === 2) {
             setIsAdmin(true);
-            console.log("Usuário é administrador");
+            // console.log("Usuário é administrador");
           } else {
-            console.log("Usuário não é administrador");
+            // console.log("Usuário não é administrador");
           }
 
           // Filtra os eventos baseado no gênero do usuário
@@ -571,7 +591,17 @@ const ScheduleSectionComponent = ({
         useSpeakerName={false}
       />
 
-      <h2 className="font-bold text-3xl sm:text-4xl md:text-4xl lg:text-5xl text-center mb-10 md:mb-12">
+      <h2
+        className="font-bold text-3xl sm:text-4xl md:text-4xl lg:text-5xl text-center mb-10 md:mb-12"
+        style={{
+          background: "linear-gradient(to right, #A8E6CF, #56B87B, #8FC93A)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          paddingBottom: "0.1em", // Adiciona um pequeno padding para evitar cortes
+          color: "transparent",
+          textShadow: "none" // Evita sombras que podem interferir
+        }}
+      >
         Programação do Evento
       </h2>
 
@@ -831,13 +861,17 @@ const ScheduleSectionComponent = ({
                       const currentParticipantsCount = (() => {
                         const key = `${event.id}-${event.hour}`;
                         // Garantir que estamos acessando o objeto participantsCounts corretamente
-                        return (participantsCounts && participantsCounts[key]) || 0;
+                        return (
+                          (participantsCounts && participantsCounts[key]) || 0
+                        );
                       })();
 
                       // Verificar se o evento está lotado
-                      const isFull = event.maxParticipants > 0 && currentParticipantsCount >= event.maxParticipants;
+                      const isFull =
+                        event.maxParticipants > 0 &&
+                        currentParticipantsCount >= event.maxParticipants;
 
-                      console.log(`Evento ${event.room}-${event.hour}: ${currentParticipantsCount}/${event.maxParticipants} (Lotado: ${isFull})`);
+                      // console.log(`Evento ${event.room}-${event.hour}: ${currentParticipantsCount}/${event.maxParticipants} (Lotado: ${isFull})`);
 
                       // Adicionar isFull ao objeto event que passamos para o EventItem
                       const eventWithFull = {
