@@ -26,12 +26,12 @@ const LoginForm = () => {
 
     try {
       const response = await api.post("/login", { email, password });
-      console.log("Login response:", response);
+      // console.log("Login response:", response);
 
       if (response.status === 200) {
         setMessage("Login realizado com sucesso!");
         const rawUser = await api.get("/me");
-        console.log("Dados do usuário:", rawUser.data);
+        // console.log("Dados do usuário:", rawUser.data);
         navigate("/events");
       }
     } catch (error) {

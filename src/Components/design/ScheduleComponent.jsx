@@ -21,6 +21,8 @@ const ScheduleSectionComponent = ({
   const [pendingDeletions, setPendingDeletions] = useState(new Set());
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSpeaker, setSelectedSpeaker] = useState(null);
+  const [participantsCounts, setParticipantsCounts] = useState({});
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // Mantemos a referência para os elementos, mas removemos a rolagem automática
   const hourRefs = useRef({});
@@ -142,14 +144,49 @@ const ScheduleSectionComponent = ({
     }
   };
 
-  // No useEffect inicial, onde carregamos os dados, também ajustamos a condição:
   useEffect(() => {
-    // Se estiver no modo somente visualização, carregamos todos os eventos
-    if (isViewOnly) {
-      filterEventsByUserGender(null); // Passa null para mostrar todos
-      return;
+  const fetchEventCounts = async () => {
+    if (!isViewOnly) {
+      try {
+        const response = await api.get("/eventCounts");
+        if (response.status === 200) {
+          setParticipantsCounts(response.data);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar contagens:", error);
+      }
+    } else {
+      // No modo view only, define contagens padrão ou vazias
+      setParticipantsCounts({});
     }
+  };
 
+  fetchEventCounts();
+}, [refreshTrigger, isViewOnly]);
+
+useEffect(() => {
+  const fetchUserData = async () => {
+    if (!isViewOnly) {
+      try {
+        const response = await api.get("/me");
+        if (response.status === 200) {
+          setUserData(response.data);
+          filterEventsByUserGender(response.data.gender);
+        }
+      } catch (error) {
+        filterEventsByUserGender(null);
+      }
+    } else {
+      // No modo view only, define dados de usuário padrão
+      setUserData(null);
+      filterEventsByUserGender(null);
+    }
+  };
+
+  fetchUserData();
+}, [isViewOnly]);
+
+  useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await api.get("/me");
@@ -157,18 +194,28 @@ const ScheduleSectionComponent = ({
           setUserData(response.data);
           fetchUserEvents(response.data.id);
 
+          // Verificar se o usuário é admin (grupo 2)
+          // console.log("Dados do usuário:", response.data);
+          if (response.data.idGroup === 2) {
+            setIsAdmin(true);
+            // console.log("Usuário é administrador");
+          } else {
+            // console.log("Usuário não é administrador");
+          }
+
           // Filtra os eventos baseado no gênero do usuário
           filterEventsByUserGender(response.data.gender);
         }
       } catch (error) {
         console.error("Erro ao carregar dados do usuário:", error);
-
         // Caso de erro, mostra todos os eventos não exclusivos
         filterEventsByUserGender(null);
       }
     };
 
-    fetchUserData();
+    if (!isViewOnly) {
+      fetchUserData();
+    }
   }, [isViewOnly]);
 
   useEffect(() => {
@@ -345,6 +392,19 @@ const ScheduleSectionComponent = ({
 
     // Verifica se a restrição está ativa e se o evento não é hands-on
     if (restrictHandsOnOnly && !event.isHandsOn) return;
+
+    // Verificar se o evento está lotado - ACESSANDO CORRETAMENTE OS DADOS
+    const currentParticipantsCount =
+      participantsCounts[`${event.id}-${event.hour}`] || 0;
+    const isFull =
+      event.maxParticipants > 0 &&
+      currentParticipantsCount >= event.maxParticipants;
+
+    // Se o evento estiver lotado, não permite seleção
+    if (isFull) {
+      alert("Este evento já está com todas as vagas preenchidas.");
+      return;
+    }
 
     const eventDetails = events.find((e) => e.id === event.id);
     const isCurrentlySelected =
@@ -531,7 +591,17 @@ const ScheduleSectionComponent = ({
         useSpeakerName={false}
       />
 
-      <h2 className="font-bold text-3xl sm:text-4xl md:text-4xl lg:text-5xl text-center mb-10 md:mb-12">
+      <h2
+        className="font-bold text-3xl sm:text-4xl md:text-4xl lg:text-5xl text-center mb-10 md:mb-12"
+        style={{
+          background: "linear-gradient(to right, #A8E6CF, #56B87B, #8FC93A)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          paddingBottom: "0.1em", // Adiciona um pequeno padding para evitar cortes
+          color: "transparent",
+          textShadow: "none" // Evita sombras que podem interferir
+        }}
+      >
         Programação do Evento
       </h2>
 
@@ -787,6 +857,28 @@ const ScheduleSectionComponent = ({
                           ? pendingDeletions.has(savedEvent.dbId)
                           : false;
 
+                      // Obter a contagem de participantes atual
+                      const currentParticipantsCount = (() => {
+                        const key = `${event.id}-${event.hour}`;
+                        // Garantir que estamos acessando o objeto participantsCounts corretamente
+                        return (
+                          (participantsCounts && participantsCounts[key]) || 0
+                        );
+                      })();
+
+                      // Verificar se o evento está lotado
+                      const isFull =
+                        event.maxParticipants > 0 &&
+                        currentParticipantsCount >= event.maxParticipants;
+
+                      // console.log(`Evento ${event.room}-${event.hour}: ${currentParticipantsCount}/${event.maxParticipants} (Lotado: ${isFull})`);
+
+                      // Adicionar isFull ao objeto event que passamos para o EventItem
+                      const eventWithFull = {
+                        ...event,
+                        isFull: isFull,
+                      };
+
                       return (
                         <div
                           key={event.id}
@@ -800,7 +892,7 @@ const ScheduleSectionComponent = ({
                           }`}
                         >
                           <EventItem
-                            event={event}
+                            event={eventWithFull}
                             isSelected={isSelected}
                             isPreSelected={isPreSelected}
                             isSaved={isSaved}
@@ -814,12 +906,11 @@ const ScheduleSectionComponent = ({
                             onRemoveCancel={() => {}}
                             isOtherSelected={isOtherSelected}
                             isViewOnly={isViewOnly}
-                            // Oculta o botão "Selecionar" no modo somente visualização
                             showRemoveButton={isViewOnly}
-                            // Mantém a informação visual de que é um hands-on
                             isHandsOn={event.isHandsOn || false}
-                            // Passa a restrição para o componente EventItem
                             restrictSelection={restrictHandsOnOnly}
+                            isAdmin={isAdmin}
+                            participantsCount={currentParticipantsCount}
                           />
                         </div>
                       );

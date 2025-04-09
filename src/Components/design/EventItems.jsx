@@ -57,6 +57,7 @@ const SpeakerPhotoModal = ({ isOpen, onClose, photoUrl }) => {
 const EventItem = ({
   event,
   isSelected,
+  participantsCount = 0,
   onSelect,
   onRemove,
   showRemoveButton,
@@ -74,6 +75,7 @@ const EventItem = ({
   isViewOnly = false,
   isHandsOn = false, // Indica se o evento é hands-on
   restrictSelection = false, // Nova prop que controla se a seleção deve ser restrita
+  isAdmin = false,
 }) => {
   const [removeMode, setRemoveMode] = useState(false);
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
@@ -82,8 +84,13 @@ const EventItem = ({
   // Verifica se o evento é exclusivo para mulheres
   const isFemaleOnlyEvent = event.femaleOnly;
 
-  // Determina se o evento é selecionável
-  const isSelectable = !restrictSelection || isHandsOn;
+  const isFull =
+    event.isFull !== undefined
+      ? event.isFull
+      : event.maxParticipants > 0 && participantsCount >= event.maxParticipants;
+
+  // Determina se o evento é selecionável (agora considerando também se está lotado)
+  const isSelectable = (!restrictSelection || isHandsOn) && !isFull;
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -184,10 +191,11 @@ const EventItem = ({
           {/* Tag para eventos exclusivos para mulheres */}
           {isFemaleOnlyEvent && (
             <div className="absolute -top-3 left-2 z-10 bg-pink-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md">
-              {isViewOnly ? "Exclusivo para Mulheres" : "Exclusivo para Mulheres"}
+              {isViewOnly
+                ? "Exclusivo para Mulheres"
+                : "Exclusivo para Mulheres"}
             </div>
           )}
-
           {/* Tag para eventos hands-on */}
           {isHandsOn && (
             <div
@@ -198,7 +206,39 @@ const EventItem = ({
               Hands-on
             </div>
           )}
-
+          {isAdmin && event.maxParticipants > 0 && (
+            <div
+              className="absolute -top-3 right-2 z-10 px-3 py-1 rounded-full text-xs font-semibold shadow-md text-white flex items-center"
+              style={{
+                backgroundColor: isFull
+                  ? "#DC2626" // Vermelho quando lotado
+                  : participantsCount >= event.maxParticipants * 0.8
+                  ? "#F97316" // Laranja quando quase lotado
+                  : "#22C55E", // Verde quando tem muitas vagas disponíveis
+                transition: "background-color 0.3s ease",
+              }}
+            >
+              <User className="w-3 h-3 mr-1" />
+              <span>
+                {participantsCount}/{event.maxParticipants}
+              </span>
+            </div>
+          )}
+          {!isAdmin && isFull && (
+            <div
+              className={`absolute -top-3 ${
+                isHandsOn && !isFemaleOnlyEvent
+                  ? "left-20 sm:left-24"
+                  : isFemaleOnlyEvent && !isHandsOn
+                  ? "left-32 sm:left-44"
+                  : isFemaleOnlyEvent && isHandsOn
+                  ? "left-44 sm:left-56"
+                  : "left-2"
+              } z-10 bg-red-700 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-md`}
+            >
+              Lotado
+            </div>
+          )}
           {isSelected && showRemoveButton && !specialEvent && (
             <button
               onClick={(e) => {
@@ -210,7 +250,6 @@ const EventItem = ({
               <X className="w-5 h-5" />
             </button>
           )}
-
           <div
             className="rounded-3xl p-4 relative overflow-hidden"
             style={{
@@ -624,7 +663,11 @@ const EventItem = ({
                       }}
                       disabled={!isSelectable}
                     >
-                      {isSelectable ? "Selecionar" : "Indisponível"}
+                      {isFull
+                        ? "Evento Lotado"
+                        : restrictSelection && !isHandsOn
+                        ? "Indisponível"
+                        : "Selecionar"}
                     </button>
                   )}
                 </>

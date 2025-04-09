@@ -15,7 +15,7 @@ import keynote1M from "../../assets/speakersBanner/barreraM.png";
 import Button from "../../Components/design/Button";
 import Section from "../../Components/Section";
 import CompanyLogos from "./CompanyLogos";
-import SpeakerModal from "../../Components/design/SpeakerModal";  // Importando o componente SpeakerModal
+import SpeakerModal from "../../Components/design/SpeakerModal"; // Importando o componente SpeakerModal
 
 const slideContent = [
   {
@@ -26,7 +26,8 @@ const slideContent = [
     title: "Future Day 2025",
     description:
       "Acompanhe todas as novidades do nosso evento e fique por dentro das palestras, horários, convidados e inovações do mundo eletrônico que o Future Day 2025 tem para apresentar",
-    buttonText: "Inscrições - EM BREVE",
+    buttonText: "Monte sua agenda",
+    redirectUrl: "/events",
   },
   {
     id: 2,
@@ -95,7 +96,7 @@ const Hero = () => {
   const [direction, setDirection] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const intervalRef = useRef(null);
-  
+
   // Estado para controlar a exibição do modal
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -186,12 +187,12 @@ const Hero = () => {
   // Função para fechar o modal
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    
+
     // Limpar qualquer timeout existente
     if (pauseTimeoutRef.current) {
       clearTimeout(pauseTimeoutRef.current);
     }
-    
+
     // Retomar o slider automático após 5 segundos
     pauseTimeoutRef.current = setTimeout(() => {
       setIsPaused(false);
@@ -273,8 +274,7 @@ const Hero = () => {
 
                 <div className="flex flex-col items-center mt-[2.5rem] w-full space-y-15">
                   <div className="mt-5 md:mt-10 text-center">
-                    <span className="h2 md:h1 font-bold block"
-                    >
+                    <span className="h2 md:h1 font-bold block">
                       {slideContent[currentSlide].welcome}
                     </span>
                     <span className="h2 md:h1 font-bold inline-block relative">
@@ -297,7 +297,14 @@ const Hero = () => {
                   <Button
                     className="transition-all duration-300 hover:scale-105 hover:text-green-800"
                     aria-label={slideContent[currentSlide].buttonText}
-                    onClick={slideContent[currentSlide].speakerId ? handleOpenModal : undefined}
+                    onClick={() => {
+                      if (slideContent[currentSlide].redirectUrl) {
+                        window.location.href =
+                          slideContent[currentSlide].redirectUrl;
+                      } else if (slideContent[currentSlide].speakerId) {
+                        handleOpenModal();
+                      }
+                    }}
                   >
                     {slideContent[currentSlide].buttonText}
                   </Button>

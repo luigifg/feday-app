@@ -44,7 +44,7 @@ import onsemi from "./manufactures/onsemi.png";
 import recom from "./manufactures/recom.png";
 import smc from "./manufactures/smc.png";
 import ublox from "./manufactures/ublox.png";
-import vermont from "./manufactures/vermont.png";
+// import vermont from "./manufactures/vermont.png";
 import viking from "./manufactures/viking.png";
 import yageo from "./manufactures/yageo.png";
 import nic from "./manufactures/nic.png";
@@ -85,7 +85,7 @@ export {
   recom,
   smc,
   ublox,
-  vermont,
+  // vermont,
   viking,
   yageo,
   osram,

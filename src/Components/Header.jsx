@@ -67,13 +67,16 @@ const Header = () => {
   };
 
   const handleAuthButtonClick = (key) => {
-    setButtonText((prev) => ({ ...prev, [key]: "EM BREVE" }));
-    setTimeout(() => {
-      setButtonText((prev) => ({
-        ...prev,
-        [key]: key === "signup" ? "Novo Usuário" : "Entrar",
-      }));
-    }, 2000);
+    if (key === "signup") {
+      window.location.href = "/signup"; // Redireciona para a página de cadastro
+    } else if (key === "signin") {
+      window.location.href = "/signin"; // Redireciona para a página de login
+    }
+    
+    // Fecha o menu hamburger após clicar
+    if (openNavigation) {
+      handleClick();
+    }
   };
 
   const filteredNavigation = navigation.filter((item) => {
@@ -167,7 +170,7 @@ const Header = () => {
               </a>
             ))}
 
-            {user && (
+            {user ? (
               <>
                 <a
                   href="/events"
@@ -182,6 +185,21 @@ const Header = () => {
                 >
                   Sair
                 </button>
+              </>
+            ) : (
+              <>
+                <a
+                  onClick={() => handleAuthButtonClick("signup")}
+                  className="block relative font-code text-2xl uppercase text-n-8 transition-colors hover:text-color-4 px-6 py-6 md:py-8 cursor-pointer"
+                >
+                  {buttonText.signup}
+                </a>
+                <a
+                  onClick={() => handleAuthButtonClick("signin")}
+                  className="block relative font-code text-2xl uppercase text-color-4 transition-colors hover:text-color-3 px-6 py-6 md:py-8 cursor-pointer"
+                >
+                  {buttonText.signin}
+                </a>
               </>
             )}
           </div>
