@@ -1,10 +1,10 @@
-// constants/ProtectedRoute.jsx (modificado)
+// constants/ProtectedRoute.jsx
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "./useAuth";
 
 const ProtectedRoute = ({ element, requiredRole = null, redirectTo = "/signin" }) => {
-  const { isLoading, isAuthenticated, hasRequiredRole } = useAuth();
+  const { isLoading, isAuthenticated, hasRequiredRole } = useAuth(requiredRole);
 
   if (isLoading) {
     // Componente de loading

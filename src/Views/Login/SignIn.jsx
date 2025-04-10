@@ -1,17 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import api from "../../constants/Axios";
+import { ArrowLeft, Eye, EyeOff, Loader } from "lucide-react";
 import { future, fbg, futureGif } from "../../assets";
 import FieldSignUp from "../../Components/design/FieldSignUp";
-import { useAuth } from "../../context/AuthContext"; // Importando o novo hook
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth(); // Usando o contexto de autenticação
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,23 +22,55 @@ const LoginForm = () => {
     }
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
+    setIsLoading(true); // Inicia o estado de carregamento
+    setMessage(""); // Limpa mensagens anteriores
+
+    console.log("Iniciando processo de login:", new Date().toISOString());
+
     try {
-      // Usando a função de login do contexto
-      const result = await login(email, password);
-      
-      if (result.success) {
+      console.log("Enviando requisição para /login");
+      const startTime = performance.now();
+
+      const response = await api.post("/login", { email, password });
+
+      const endTime = performance.now();
+      console.log(
+        `Resposta do login recebida em ${(endTime - startTime).toFixed(2)}ms`
+      );
+
+      if (response.status === 200) {
         setMessage("Login realizado com sucesso!");
+        console.log("Login bem-sucedido, buscando dados do usuário");
+
+        const userStartTime = performance.now();
+        const rawUser = await api.get("/me");
+        const userEndTime = performance.now();
+
+        console.log(
+          `Dados do usuário recebidos em ${(
+            userEndTime - userStartTime
+          ).toFixed(2)}ms`
+        );
+        console.log("Redirecionando para /events");
+
         navigate("/events");
-      } else {
-        setMessage(result.error || "Erro ao realizar o login. Verifique suas credenciais.");
       }
     } catch (error) {
-      console.error("Erro ao fazer login:", error);
+      console.error(
+        "Erro ao fazer login:",
+        error.response?.data || error.message
+      );
+      console.log(
+        "Tempo de resposta do erro:",
+        error.response?.headers?.["request-duration"] || "Não disponível"
+      );
       setMessage("Erro ao realizar o login. Verifique suas credenciais.");
+    } finally {
+      setIsLoading(false); // Finaliza o estado de carregamento independente do resultado
+      console.log("Processo de login finalizado:", new Date().toISOString());
     }
   };
 
@@ -125,21 +157,31 @@ const LoginForm = () => {
 
               <button
                 onClick={handleSubmit}
+                disabled={isLoading}
                 className="mt-5 tracking-wide font-semibold bg-green-700 text-gray-100 w-full py-4 rounded-lg hover:bg-green-600 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
               >
-                <svg
-                  className="w-6 h-6 -ml-2"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                  <circle cx="8.5" cy="7" r="4" />
-                  <path d="M20 8v6M23 11h-6" />
-                </svg>
-                <span className="ml-3">Entrar</span>
+                {isLoading ? (
+                  <>
+                    <Loader className="w-6 h-6 animate-spin mr-2" />
+                    <span>Processando...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="w-6 h-6 -ml-2"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                      <circle cx="8.5" cy="7" r="4" />
+                      <path d="M20 8v6M23 11h-6" />
+                    </svg>
+                    <span className="ml-3">Entrar</span>
+                  </>
+                )}
               </button>
             </div>
           </div>

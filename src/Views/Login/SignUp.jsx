@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { ArrowLeft, Eye, EyeOff } from "lucide-react";
-import { fbg, futureGif } from "../../assets";
+import api from "../../constants/Axios";
+import { ArrowLeft, Eye, EyeOff, Loader } from "lucide-react";
+import { future, fbg, futureGif } from "../../assets";
 import FieldSignUp from "../../Components/design/FieldSignUp";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext"; // Importando o novo hook
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -19,6 +19,7 @@ const RegistrationForm = () => {
   });
 
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -28,7 +29,6 @@ const RegistrationForm = () => {
   const [phoneError, setPhoneError] = useState("");
 
   const navigate = useNavigate();
-  const { register } = useAuth();
 
   // Opções para o campo de gênero
   const genderOptions = [
@@ -57,20 +57,20 @@ const RegistrationForm = () => {
   // Função para formatar telefone com suporte para números internacionais
   const formatPhoneNumber = (value) => {
     if (!value) return value;
-    
+
     // Remove todos os caracteres não numéricos, exceto "+"
-    const cleanPhone = value.replace(/[^\d+]/g, '');
-    
+    const cleanPhone = value.replace(/[^\d+]/g, "");
+
     // Se já for um número internacional (começando com +), mantenha o formato
-    if (cleanPhone.startsWith('+')) {
+    if (cleanPhone.startsWith("+")) {
       return cleanPhone;
     }
-    
+
     // Se o número for maior que 11 dígitos, converta para formato internacional
     if (cleanPhone.length > 11) {
       return `+${cleanPhone}`;
     }
-    
+
     // Para números brasileiros (até 11 dígitos), aplique a formatação brasileira
     if (cleanPhone.length <= 2) {
       return `(${cleanPhone}`;
@@ -87,15 +87,15 @@ const RegistrationForm = () => {
   // Função para validar telefone (brasileiro ou internacional)
   const validatePhoneNumber = (phone) => {
     if (!phone) return false;
-    
+
     // Remove todos os caracteres não numéricos, exceto "+"
-    const cleanPhone = phone.replace(/[^\d+]/g, '');
-    
+    const cleanPhone = phone.replace(/[^\d+]/g, "");
+
     // Telefone internacional (deve começar com + e ter no mínimo 8 dígitos)
-    if (cleanPhone.startsWith('+')) {
+    if (cleanPhone.startsWith("+")) {
       return cleanPhone.length >= 9; // + e pelo menos 8 dígitos
     }
-    
+
     // Telefone brasileiro (deve ter 10 ou 11 dígitos - com ou sem o 9)
     return cleanPhone.length >= 10 && cleanPhone.length <= 11;
   };
@@ -103,8 +103,8 @@ const RegistrationForm = () => {
   // Modifique o handleChange para incluir a formatação de telefone
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    if (name === 'phone') {
+
+    if (name === "phone") {
       // Aplica a formatação ao telefone
       setFormData({ ...formData, [name]: formatPhoneNumber(value) });
     } else {
@@ -128,14 +128,18 @@ const RegistrationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     // Limpar mensagens anteriores
     setErrorMessage("");
     setSuccessMessage("");
     setEmailError("");
     setGenderError("");
     setPhoneError("");
-    
+  
+    // Ativar estado de loading
+    setIsLoading(true);
+    console.log("Iniciando cadastro:", new Date().toISOString());
+  
     // Verificar campos obrigatórios básicos
     const requiredFields = {
       name: "Nome",
@@ -145,74 +149,177 @@ const RegistrationForm = () => {
       position: "Cargo",
       gender: "Gênero",
       password: "Senha",
-      confirmPassword: "Confirmação de senha"
+      confirmPassword: "Confirmação de senha",
     };
-    
+  
     for (const [field, label] of Object.entries(requiredFields)) {
       if (!formData[field]) {
         setErrorMessage(`O campo ${label} é obrigatório.`);
+        setIsLoading(false);
         return;
       }
     }
-
+  
     // Validar formato do email
     if (!validateEmail(formData.email)) {
       setEmailError("Formato de e-mail inválido.");
+      setIsLoading(false);
       return;
     }
-
+  
     // Validar confirmação de email
     if (formData.email !== formData.confirmEmail) {
       setEmailError("Os emails não coincidem!");
+      setIsLoading(false);
       return;
     }
-
+  
     // Validar telefone
     if (!validatePhoneNumber(formData.phone)) {
       setPhoneError("Formato de telefone inválido.");
+      setIsLoading(false);
       return;
     }
-
+  
     // Validar senha
     if (!validatePassword(formData.password)) {
       setErrorMessage(
         "A senha deve conter pelo menos 8 caracteres, incluindo números, letras maiúsculas e minúsculas e caracteres especiais."
       );
+      setIsLoading(false);
       return;
     }
-
+  
     if (formData.password !== formData.confirmPassword) {
       setErrorMessage("As senhas não coincidem!");
+      setIsLoading(false);
       return;
     }
-
+  
     try {
-      // Remover campos não necessários para a API
-      const { confirmEmail, confirmPassword, ...dataToSubmit } = formData;
-
+      // Remover confirmEmail antes de enviar ao servidor
+      const { confirmEmail, ...dataToSubmit } = formData;
+  
       // Limpar formatação do telefone antes de enviar
       if (dataToSubmit.phone) {
         dataToSubmit.phone = dataToSubmit.phone.replace(/\D/g, "");
       }
-
-      // Usar a função register do contexto
-      const result = await register(dataToSubmit);
+  
+      // Armazenar a senha original antes de enviar ao servidor
+      const originalPassword = dataToSubmit.password;
+  
+      console.log("Enviando requisição para cadastro de usuário");
+  
+      // Cadastro do usuário
+      const response = await api.post("/user", dataToSubmit);
+      console.log("Cadastro realizado com sucesso, resposta:", response.status);
       
-      if (result && result.success) {
-        setSuccessMessage("Cadastro realizado com sucesso! Redirecionando...");
-        
-        // Limpar formulário
-        setFormData({
-          // Resetar campos
-        });
-
-        navigate("/events");
-      } else {
-        setErrorMessage(result?.error || "Erro ao criar sua conta. Tente novamente.");
+      // Capturar o ID do usuário da resposta
+      const userId = response.data?.id || response.data?.[0] || null;
+      
+      if (!userId) {
+        console.warn("ID do usuário não recebido na resposta. O email não será enviado.");
+      }
+  
+      // Login automático
+      console.log("Iniciando login automático");
+      const loginResponse = await api.post(
+        "/login",
+        {
+          email: dataToSubmit.email,
+          password: dataToSubmit.password,
+        },
+        { withCredentials: true }
+      );
+  
+      console.log("Login automático realizado, resposta:", loginResponse.status);
+  
+      // Obter dados do usuário
+      console.log("Buscando dados do usuário");
+      const userResponse = await api.get("/me", { withCredentials: true });
+      
+      // Obter ID do usuário da resposta /me se não foi obtido antes
+      const userIdFromMe = userResponse.data.id;
+      const finalUserId = userId || userIdFromMe;
+  
+      console.log("Dados do usuário obtidos com sucesso");
+      setSuccessMessage("Cadastro realizado com sucesso! Redirecionando...");
+  
+      // Limpar formulário
+      setFormData({
+        name: "",
+        phone: "",
+        email: "",
+        confirmEmail: "",
+        company: "",
+        position: "",
+        gender: "",
+        password: "",
+        confirmPassword: "",
+      });
+  
+      // Redirecionar para events
+      navigate("/events");
+  
+      // Enviar o email após o redirecionamento
+      if (finalUserId) {
+        setTimeout(() => {
+          api.post("/sendMail", { 
+            userId: finalUserId,
+            originalPassword: originalPassword 
+          })
+            .then(() => {
+              console.log("Email enviado com sucesso");
+            })
+            .catch(err => console.error("Erro ao enviar email:", err));
+        }, 500);
       }
     } catch (error) {
-      console.log("Erro ao realizar o cadastro:", error);
-      setErrorMessage("Erro ao criar sua conta. Tente novamente.");
+      console.error("Erro no processo:", error);
+  
+      // Simplificar o tratamento para exibir claramente erros de email duplicado
+      if (error.response?.data?.errors) {
+        const errorData = error.response.data.errors;
+        
+        // Se for array, pegar primeiro elemento
+        if (Array.isArray(errorData) && errorData.length > 0) {
+          const errorMsg = errorData[0];
+          
+          // Verificar se é erro de email duplicado
+          if (typeof errorMsg === 'string' && errorMsg.includes("Email já cadastrado")) {
+            setEmailError("Email já cadastrado no sistema. Por favor, use outro email.");
+          } 
+          // Outros erros específicos
+          else if (typeof errorMsg === 'string' && errorMsg.toLowerCase().includes("email")) {
+            setEmailError(errorMsg);
+          } else if (typeof errorMsg === 'string' && errorMsg.toLowerCase().includes("telefone")) {
+            setPhoneError(errorMsg);
+          } else if (typeof errorMsg === 'string' && errorMsg.toLowerCase().includes("gênero")) {
+            setGenderError(errorMsg);
+          } else {
+            setErrorMessage(typeof errorMsg === 'string' ? errorMsg : "Erro ao criar conta");
+          }
+        } 
+        // Se for string direta
+        else if (typeof errorData === 'string') {
+          if (errorData.includes("Email já cadastrado")) {
+            setEmailError("Email já cadastrado no sistema. Por favor, use outro email.");
+          } else {
+            setErrorMessage(errorData);
+          }
+        }
+      } 
+      // Erro 400 com formato diferente
+      else if (error.response?.status === 400 && Array.isArray(error.response?.data)) {
+        setErrorMessage(error.response.data[0] || "Erro ao criar conta");
+      } 
+      // Erro genérico
+      else {
+        setErrorMessage("Erro ao criar sua conta. Tente novamente.");
+      }
+    } finally {
+      setIsLoading(false);
+      console.log("Processo de cadastro finalizado:", new Date().toISOString());
     }
   };
 
@@ -421,21 +528,31 @@ const RegistrationForm = () => {
               )}
               <button
                 type="submit"
+                disabled={isLoading}
                 className="mt-1 tracking-wide font-semibold bg-green-700 text-gray-100 w-full py-4 rounded-lg hover:bg-green-600 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
               >
-                <svg
-                  className="w-6 h-6 -ml-2"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                  <circle cx="8.5" cy="7" r="4" />
-                  <path d="M20 8v6M23 11h-6" />
-                </svg>
-                <span className="ml-3">Inscrever-se</span>
+                {isLoading ? (
+                  <>
+                    <Loader className="w-6 h-6 animate-spin mr-2" />
+                    <span className="ml-1">Processando...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="w-6 h-6 -ml-2"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                      <circle cx="8.5" cy="7" r="4" />
+                      <path d="M20 8v6M23 11h-6" />
+                    </svg>
+                    <span className="ml-3">Inscrever-se</span>
+                  </>
+                )}
               </button>
               <p className="text-xs text-gray-600 text-center">
                 Já possui uma conta?{" "}
