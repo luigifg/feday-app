@@ -1,26 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import QRCode from "react-qr-code";
 import Section from "../../Components/Section";
-import api from "../../constants/Axios";
 import qrBg from "../../assets/logos/qrBg.svg";
+import { useAuth } from "../../context/AuthContext"; // Importando o novo hook
 
 const QRCodeSection = () => {
-  const [userData, setUserData] = useState(null);
+  const { user } = useAuth(); // Usando o contexto de autenticação
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await api.get("/me");
-        if (response.status === 200) {
-          setUserData(response.data);
-        }
-      } catch (error) {
-        console.error("Erro ao carregar dados do usuário:", error);
-      }
-    };
-
-    fetchUserData();
-  }, []);
 
   const generateVCardData = (user) => {
     if (!user) return "";
@@ -39,7 +25,7 @@ const QRCodeSection = () => {
     return vCard;
   };
 
-  if (!userData) return null;
+  if (!user) return null;
 
   return (
     <Section
@@ -56,7 +42,7 @@ const QRCodeSection = () => {
           
           <div className="flex flex-col gap-2 md:max-w-[450px] lg:max-w-[600px] xl:max-w-[800px]">
             <h1 className="text-3xl font-bold mt-10">
-              Bem-vindo, {userData?.name || "Participante"}!
+              Bem-vindo, {user?.name || "Participante"}!
             </h1>
             <p className="text-lg opacity-90">
               Prepare-se para o Future Day. Explore a programação e escolha seus
@@ -71,13 +57,13 @@ const QRCodeSection = () => {
 
         <div className="bg-white rounded-xl shadow-lg p-6 text-center self-center md:self-end">
           <QRCode
-            value={generateVCardData(userData)}
+            value={generateVCardData(user)}
             size={200}
             level={"H"}
             className="mx-auto mb-4"
           />
           <div className="mt-4">
-            <h2 className="text-xl font-semibold">{userData.name}</h2>
+            <h2 className="text-xl font-semibold">{user.name}</h2>
           </div>
         </div>
       </div>

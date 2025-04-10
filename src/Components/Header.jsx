@@ -1,38 +1,21 @@
 import { useLocation } from "react-router-dom";
 import { disablePageScroll, enablePageScroll } from "scroll-lock";
-import { useState, useEffect } from "react";
+import { useState } from "react"; // Removido useEffect
 import fe from "../assets/logos/feLogo.svg";
 import { navigation } from "../constants";
 import Button from "./design/Button";
 import MenuSvg from "../assets/svg/MenuSvg";
 import { HamburgerMenu } from "./design/HamburgerMenu";
-import api from "../constants/Axios";
+import { useAuth } from "../context/AuthContext"; // Importando o novo hook
 
 const Header = () => {
   const pathname = useLocation();
   const [openNavigation, setOpenNavigation] = useState(false);
-  const [user, setUser] = useState(null);
-  const [buttonText, setButtonText] = useState({
+  const { user, logout } = useAuth(); // Usando o contexto de autenticação
+  const [buttonText] = useState({
     signup: "Novo Usuário",
     signin: "Entrar",
   });
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await api.get("/me");
-        setUser(response.data);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        setUser(null);
-      }
-    };
-
-    // Adiciona CSS para scroll suave apenas uma vez
-    document.documentElement.style.scrollBehavior = "smooth";
-
-    fetchUser();
-  }, []);
 
   const toggleNavigation = () => {
     if (openNavigation) {
@@ -51,18 +34,12 @@ const Header = () => {
   };
 
   const handleLogout = async () => {
-    try {
-      document.cookie.split(";").forEach((cookie) => {
-        document.cookie = cookie
-          .replace(/^ +/, "")
-          .replace(/=.*/, `=;expires=${new Date(0).toUTCString()};path=/`);
-      });
-
-      await api.post("/logout");
-      setUser(null);
+    // Usando a função de logout do contexto
+    const success = await logout();
+    
+    if (success) {
+      // Redireciona para a página inicial
       window.location.href = "/";
-    } catch (error) {
-      console.error("Error logging out:", error);
     }
   };
 

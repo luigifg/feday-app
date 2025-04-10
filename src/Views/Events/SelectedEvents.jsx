@@ -5,9 +5,10 @@ import { horariosEvento, events } from "../../data/speakerData";
 import api from "../../constants/Axios";
 import { useEvents } from "./EventsContext";
 import SpeakerModal from "../../Components/design/SpeakerModal.jsx";
+import { useAuth } from "../../context/AuthContext.jsx"; // Importando o novo hook
 
 const SelectedEvents = () => {
-  const [userData, setUserData] = useState(null);
+  const { user } = useAuth(); // Usando o contexto de autenticação
   const [selectedEvents, setSelectedEvents] = useState({});
   const [stagedEvents, setStagedEvents] = useState({});
   const [pendingDeletions, setPendingDeletions] = useState(new Set());
@@ -27,20 +28,11 @@ const SelectedEvents = () => {
   } = useEvents();
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await api.get("/me");
-        if (response.status === 200) {
-          setUserData(response.data);
-          fetchUserEvents(response.data.id);
-        }
-      } catch (error) {
-        console.error("Erro ao carregar dados do usuário:", error);
-      }
-    };
-
-    fetchUserData();
-  }, [refreshTrigger]);
+    // Se tivermos um usuário autenticado, buscamos suas participações
+    if (user?.id) {
+      fetchUserEvents(user.id);
+    }
+  }, [refreshTrigger, user?.id]);
 
   const fetchUserEvents = async (userId) => {
     try {

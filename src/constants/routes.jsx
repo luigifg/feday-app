@@ -19,13 +19,15 @@ const AppRoutes = () => {
           path="/events"
           element={<ProtectedRoute element={<Events />} />}
         />
-        <Route 
-          path="/admin" 
-          element={<ProtectedRoute 
-                    element={<Admin />} 
-                    requiredRole="admin" 
-                    redirectTo="/" 
-                  />} 
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute
+              element={<Admin />}
+              requiredRole="admin"
+              redirectTo="/"
+            />
+          }
         />
       </Routes>
     </BrowserRouter>

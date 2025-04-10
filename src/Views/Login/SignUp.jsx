@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import api from "../../constants/Axios";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
-import { future, fbg, futureGif } from "../../assets";
+import { fbg, futureGif } from "../../assets";
 import FieldSignUp from "../../Components/design/FieldSignUp";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext"; // Importando o novo hook
 
 const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -28,6 +28,7 @@ const RegistrationForm = () => {
   const [phoneError, setPhoneError] = useState("");
 
   const navigate = useNavigate();
+  const { register } = useAuth();
 
   // Opções para o campo de gênero
   const genderOptions = [
@@ -186,91 +187,32 @@ const RegistrationForm = () => {
     }
 
     try {
-      // Remover confirmEmail antes de enviar ao servidor
-      const { confirmEmail, ...dataToSubmit } = formData;
-      
+      // Remover campos não necessários para a API
+      const { confirmEmail, confirmPassword, ...dataToSubmit } = formData;
+
       // Limpar formatação do telefone antes de enviar
       if (dataToSubmit.phone) {
-        dataToSubmit.phone = dataToSubmit.phone.replace(/\D/g, '');
+        dataToSubmit.phone = dataToSubmit.phone.replace(/\D/g, "");
       }
-    
-      // Cadastro do usuário
-      const response = await api.post("/user", dataToSubmit);
+
+      // Usar a função register do contexto
+      const result = await register(dataToSubmit);
       
-      console.log("Cadastro realizado com sucesso. Iniciando login automático...");
-      
-      // IMPORTANTE: Configuração para garantir que os cookies sejam enviados
-      const loginConfig = {
-        withCredentials: true,  // Isso é crucial para o envio/recebimento de cookies
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      };
-      
-      // Login automático com configuração específica para cookies
-      const loginResponse = await api.post("/login", {
-        email: dataToSubmit.email,
-        password: dataToSubmit.password
-      }, loginConfig);
-      
-      console.log("Login automático realizado. Resposta:", loginResponse);
-      
-      // Se chegou aqui, o login foi bem-sucedido
-      // Vamos obter os dados do usuário para confirmar a autenticação
-      const userResponse = await api.get("/me", { withCredentials: true });
-      
-      // console.log("Dados do usuário obtidos:", userResponse.data);
-      
-      setSuccessMessage("Cadastro realizado com sucesso! Redirecionando...");
-      
-      // Limpar formulário
-      setFormData({
-        name: "",
-        phone: "",
-        email: "",
-        confirmEmail: "",
-        company: "",
-        position: "",
-        gender: "",
-        password: "",
-        confirmPassword: "",
-      });
-      
-      // Redirecionar para events
-      navigate("/events");
-    } catch (error) {
-      // Tratamento de erro simplificado
-      if (error.response?.data?.errors) {
-        const errorData = error.response.data.errors;
+      if (result && result.success) {
+        setSuccessMessage("Cadastro realizado com sucesso! Redirecionando...");
         
-        if (Array.isArray(errorData) && errorData.length > 0) {
-          const errorMsg = errorData[0];
-          if (errorMsg.toLowerCase().includes('email')) {
-            setEmailError(errorMsg);
-          } else if (errorMsg.toLowerCase().includes('telefone')) {
-            setPhoneError(errorMsg);
-          } else if (errorMsg.toLowerCase().includes('gênero')) {
-            setGenderError(errorMsg);
-          } else {
-            setErrorMessage(errorMsg);
-          }
-        } else if (typeof errorData === 'string') {
-          if (errorData.toLowerCase().includes('email')) {
-            setEmailError(errorData);
-          } else if (errorData.toLowerCase().includes('telefone')) {
-            setPhoneError(errorData);
-          } else if (errorData.toLowerCase().includes('gênero')) {
-            setGenderError(errorData);
-          } else {
-            setErrorMessage(errorData);
-          }
-        }
-      } else if (error.response?.status === 400 && Array.isArray(error.response?.data)) {
-        const errorMessage = error.response.data[0];
-        setErrorMessage(errorMessage);
+        // Limpar formulário
+        setFormData({
+          // Resetar campos
+        });
+
+        navigate("/events");
       } else {
-        setErrorMessage("Erro ao criar sua conta. Tente novamente.");
+        setErrorMessage(result?.error || "Erro ao criar sua conta. Tente novamente.");
       }
+    } catch (error) {
+      console.log("Erro ao realizar o cadastro:", error);
+      setErrorMessage("Erro ao criar sua conta. Tente novamente.");
     }
   };
 

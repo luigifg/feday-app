@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../constants/Axios";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { future, fbg, futureGif } from "../../assets";
 import FieldSignUp from "../../Components/design/FieldSignUp";
+import { useAuth } from "../../context/AuthContext"; // Importando o novo hook
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -11,6 +11,7 @@ const LoginForm = () => {
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth(); // Usando o contexto de autenticação
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,24 +22,22 @@ const LoginForm = () => {
     }
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
-      const response = await api.post("/login", { email, password });
-      // console.log("Login response:", response);
-
-      if (response.status === 200) {
+      // Usando a função de login do contexto
+      const result = await login(email, password);
+      
+      if (result.success) {
         setMessage("Login realizado com sucesso!");
-        const rawUser = await api.get("/me");
-        // console.log("Dados do usuário:", rawUser.data);
         navigate("/events");
+      } else {
+        setMessage(result.error || "Erro ao realizar o login. Verifique suas credenciais.");
       }
     } catch (error) {
-      console.error(
-        "Erro ao fazer login:",
-        error.response?.data || error.message
-      );
+      console.error("Erro ao fazer login:", error);
       setMessage("Erro ao realizar o login. Verifique suas credenciais.");
     }
   };
