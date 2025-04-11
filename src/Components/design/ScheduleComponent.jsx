@@ -23,6 +23,7 @@ const ScheduleSectionComponent = ({
   const [selectedSpeaker, setSelectedSpeaker] = useState(null);
   const [participantsCounts, setParticipantsCounts] = useState({});
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Mantemos a referência para os elementos, mas removemos a rolagem automática
   const hourRefs = useRef({});
@@ -145,46 +146,46 @@ const ScheduleSectionComponent = ({
   };
 
   useEffect(() => {
-  const fetchEventCounts = async () => {
-    if (!isViewOnly) {
-      try {
-        const response = await api.get("/eventCounts");
-        if (response.status === 200) {
-          setParticipantsCounts(response.data);
+    const fetchEventCounts = async () => {
+      if (!isViewOnly) {
+        try {
+          const response = await api.get("/eventCounts");
+          if (response.status === 200) {
+            setParticipantsCounts(response.data);
+          }
+        } catch (error) {
+          console.error("Erro ao buscar contagens:", error);
         }
-      } catch (error) {
-        console.error("Erro ao buscar contagens:", error);
+      } else {
+        // No modo view only, define contagens padrão ou vazias
+        setParticipantsCounts({});
       }
-    } else {
-      // No modo view only, define contagens padrão ou vazias
-      setParticipantsCounts({});
-    }
-  };
+    };
 
-  fetchEventCounts();
-}, [refreshTrigger, isViewOnly]);
+    fetchEventCounts();
+  }, [refreshTrigger, isViewOnly]);
 
-useEffect(() => {
-  const fetchUserData = async () => {
-    if (!isViewOnly) {
-      try {
-        const response = await api.get("/me");
-        if (response.status === 200) {
-          setUserData(response.data);
-          filterEventsByUserGender(response.data.gender);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (!isViewOnly) {
+        try {
+          const response = await api.get("/me");
+          if (response.status === 200) {
+            setUserData(response.data);
+            filterEventsByUserGender(response.data.gender);
+          }
+        } catch (error) {
+          filterEventsByUserGender(null);
         }
-      } catch (error) {
+      } else {
+        // No modo view only, define dados de usuário padrão
+        setUserData(null);
         filterEventsByUserGender(null);
       }
-    } else {
-      // No modo view only, define dados de usuário padrão
-      setUserData(null);
-      filterEventsByUserGender(null);
-    }
-  };
+    };
 
-  fetchUserData();
-}, [isViewOnly]);
+    fetchUserData();
+  }, [isViewOnly]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -302,7 +303,9 @@ useEffect(() => {
   };
 
   const removeEvent = async (event) => {
-    if (isViewOnly || !userData?.id) return;
+    if (isViewOnly || !userData?.id || isLoading) return;
+
+    setIsLoading(true); // Inicia o estado de loading
 
     try {
       await api.delete(`/participation/${event.dbId}`);
@@ -330,6 +333,8 @@ useEffect(() => {
     } catch (error) {
       console.error("Erro ao remover evento:", error);
       alert("Erro ao remover evento. Por favor, tente novamente.");
+    } finally {
+      setIsLoading(false); // Finaliza o estado de loading independente do resultado
     }
   };
 
@@ -436,7 +441,9 @@ useEffect(() => {
   };
 
   const handleSaveChanges = async (event = null) => {
-    if (isViewOnly || !userData?.id) return;
+    if (isViewOnly || !userData?.id || isLoading) return; // Verifica se já está carregando
+
+    setIsLoading(true); // Inicia o estado de loading
 
     try {
       if (event) {
@@ -493,6 +500,8 @@ useEffect(() => {
     } catch (error) {
       console.error("Erro ao salvar alterações:", error);
       alert("Erro ao salvar alterações. Por favor, tente novamente.");
+    } finally {
+      setIsLoading(false); // Finaliza o estado de loading independente do resultado
     }
   };
 
@@ -599,7 +608,7 @@ useEffect(() => {
           WebkitTextFillColor: "transparent",
           paddingBottom: "0.1em", // Adiciona um pequeno padding para evitar cortes
           color: "transparent",
-          textShadow: "none" // Evita sombras que podem interferir
+          textShadow: "none", // Evita sombras que podem interferir
         }}
       >
         Programação do Evento
@@ -911,6 +920,7 @@ useEffect(() => {
                             restrictSelection={restrictHandsOnOnly}
                             isAdmin={isAdmin}
                             participantsCount={currentParticipantsCount}
+                            isLoading={isLoading}
                           />
                         </div>
                       );
@@ -924,7 +934,14 @@ useEffect(() => {
                           e.stopPropagation();
                           handleCancelChanges();
                         }}
-                        className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md border-2 border-red-600"
+                        disabled={isLoading} // Desabilita o botão durante carregamento
+                        className={`${
+                          isLoading
+                            ? "opacity-70 cursor-not-allowed"
+                            : "hover:bg-red-600"
+                        } bg-red-500 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform ${
+                          !isLoading && "hover:scale-105"
+                        } shadow-md border-2 border-red-600`}
                       >
                         Cancelar
                       </button>

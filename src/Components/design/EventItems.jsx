@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Factory, MapPin, User, X } from "lucide-react";
+import { Factory, MapPin, User, X, Loader  } from "lucide-react";
 import { getRoomColor } from "../../data/speakerData";
 
 const SpeakerPhotoModal = ({ isOpen, onClose, photoUrl }) => {
@@ -76,6 +76,7 @@ const EventItem = ({
   isHandsOn = false, // Indica se o evento é hands-on
   restrictSelection = false, // Nova prop que controla se a seleção deve ser restrita
   isAdmin = false,
+  isLoading = false,
 }) => {
   const [removeMode, setRemoveMode] = useState(false);
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
@@ -513,7 +514,10 @@ const EventItem = ({
                       e.stopPropagation();
                       onCancelSelection && onCancelSelection();
                     }}
-                    className="bg-red-500 text-white px-3 py-2 rounded-lg text-sm font-medium flex-1 border-2 border-red-600 transition-colors duration-300 h-10"
+                    disabled={isLoading} // Desabilita durante carregamento
+                    className={`${
+                      isLoading ? "opacity-70 cursor-not-allowed" : ""
+                    } bg-red-500 text-white px-3 py-2 rounded-lg text-sm font-medium flex-1 border-2 border-red-600 transition-colors duration-300 h-10`}
                     style={{
                       backgroundColor: isHovered ? "#E53935" : "#EF5350",
                       boxShadow: isHovered
@@ -521,14 +525,24 @@ const EventItem = ({
                         : "none",
                     }}
                   >
-                    Cancelar
+                    {isLoading ? (
+                      <div className="flex items-center justify-center">
+                        <Loader className="w-4 h-4 animate-spin mr-1" />
+                        <span>Cancelando...</span>
+                      </div>
+                    ) : (
+                      "Cancelar"
+                    )}
                   </button>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       onSaveEvent && onSaveEvent();
                     }}
-                    className="bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium flex-1 border-2 border-green-700 transition-colors duration-300 h-10"
+                    disabled={isLoading} // Desabilita durante carregamento
+                    className={`${
+                      isLoading ? "opacity-70 cursor-not-allowed" : ""
+                    } bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium flex-1 border-2 border-green-700 transition-colors duration-300 h-10`}
                     style={{
                       backgroundColor: isHovered ? "#2E7D32" : "#43A047",
                       boxShadow: isHovered
@@ -536,7 +550,14 @@ const EventItem = ({
                         : "none",
                     }}
                   >
-                    Salvar
+                    {isLoading ? (
+                      <div className="flex items-center justify-center">
+                        <Loader className="w-4 h-4 animate-spin mr-1" />
+                        <span>Salvando...</span>
+                      </div>
+                    ) : (
+                      "Salvar"
+                    )}
                   </button>
                 </>
               ) : isSaved ? (
@@ -550,9 +571,12 @@ const EventItem = ({
                         setRemoveMode(false);
                         onRemoveCancel && onRemoveCancel();
                       }}
-                      className="bg-blue-500 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-medium flex-1 border-2 border-blue-600 transition-colors duration-300 h-10"
+                      disabled={isLoading} // Desabilita durante carregamento
+                      className={`${
+                        isLoading ? "opacity-70 cursor-not-allowed" : ""
+                      } bg-blue-500 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-medium flex-1 border-2 border-blue-600 transition-colors duration-300 h-10`}
                       style={{
-                        backgroundColor: isHovered ? "#2563EB" : "#3B82F6", // azul brilhante
+                        backgroundColor: isHovered ? "#2563EB" : "#3B82F6",
                         boxShadow: isHovered
                           ? "0 2px 4px rgba(37, 99, 235, 0.3)"
                           : "none",
@@ -566,7 +590,10 @@ const EventItem = ({
                         onRemoveConfirm && onRemoveConfirm();
                         setRemoveMode(false);
                       }}
-                      className="bg-red-600 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-medium flex-1 border-2 border-red-700 transition-colors duration-300 h-10"
+                      disabled={isLoading} // Desabilita durante carregamento
+                      className={`${
+                        isLoading ? "opacity-70 cursor-not-allowed" : ""
+                      } bg-red-600 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-medium flex-1 border-2 border-red-700 transition-colors duration-300 h-10`}
                       style={{
                         backgroundColor: isHovered ? "#D32F2F" : "#E53935",
                         boxShadow: isHovered
@@ -574,7 +601,14 @@ const EventItem = ({
                           : "none",
                       }}
                     >
-                      Confirmar
+                      {isLoading ? (
+                        <div className="flex items-center justify-center">
+                          <Loader className="w-4 h-4 animate-spin mr-1" />
+                          <span>Removendo...</span>
+                        </div>
+                      ) : (
+                        "Confirmar"
+                      )}
                     </button>
                   </>
                 ) : (
@@ -585,7 +619,10 @@ const EventItem = ({
                         e.stopPropagation();
                         onOpenModal && onOpenModal(event);
                       }}
-                      className="bg-green-600 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-medium flex-1 border-2 border-green-700 transition-colors duration-300 h-10 flex items-center justify-center"
+                      disabled={isLoading} // Desabilita durante carregamento
+                      className={`${
+                        isLoading ? "opacity-70 cursor-not-allowed" : ""
+                      } bg-green-600 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-medium flex-1 border-2 border-green-700 transition-colors duration-300 h-10 flex items-center justify-center`}
                       style={{
                         backgroundColor: isHovered ? "#2E7D32" : "#43A047",
                         boxShadow: isHovered
@@ -601,7 +638,10 @@ const EventItem = ({
                           e.stopPropagation();
                           setRemoveMode(true);
                         }}
-                        className="bg-red-600 text-white px-1 py-2 rounded-lg text-xs sm:text-sm font-medium flex-1 border-2 border-red-700 transition-colors duration-300 h-10 flex items-center justify-center whitespace-nowrap"
+                        disabled={isLoading} // Desabilita durante carregamento
+                        className={`${
+                          isLoading ? "opacity-70 cursor-not-allowed" : ""
+                        } bg-red-600 text-white px-1 py-2 rounded-lg text-xs sm:text-sm font-medium flex-1 border-2 border-red-700 transition-colors duration-300 h-10 flex items-center justify-center whitespace-nowrap`}
                         style={{
                           backgroundColor: isHovered ? "#D32F2F" : "#E53935",
                           boxShadow: isHovered
@@ -622,7 +662,10 @@ const EventItem = ({
                       e.stopPropagation();
                       onOpenModal && onOpenModal(event);
                     }}
-                    className="bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium flex-1 border-2 border-green-700 transition-colors duration-300 h-10"
+                    disabled={isLoading} // Desabilita durante carregamento
+                    className={`${
+                      isLoading ? "opacity-70 cursor-not-allowed" : ""
+                    } bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium flex-1 border-2 border-green-700 transition-colors duration-300 h-10`}
                     style={{
                       backgroundColor: isHovered ? "#2E7D32" : "#43A047",
                       boxShadow: isHovered
@@ -637,12 +680,15 @@ const EventItem = ({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (isSelectable) {
+                        if (isSelectable && !isLoading) {
                           onSelect();
                         }
                       }}
+                      disabled={!isSelectable || isLoading} // Desabilita se não é selecionável ou está carregando
                       className={`${
                         isSelectable ? "bg-blue-500" : "bg-gray-400"
+                      } ${
+                        isLoading ? "opacity-70 cursor-not-allowed" : ""
                       } text-white px-3 py-2 rounded-lg text-sm font-medium flex-1 border-2 ${
                         isSelectable ? "border-blue-600" : "border-gray-500"
                       } transition-colors duration-300 h-10`}
@@ -659,15 +705,24 @@ const EventItem = ({
                               isSelectable ? "37, 99, 235" : "0, 0, 0"
                             }, 0.2)`
                           : "none",
-                        cursor: isSelectable ? "pointer" : "not-allowed",
+                        cursor:
+                          isSelectable && !isLoading
+                            ? "pointer"
+                            : "not-allowed",
                       }}
-                      disabled={!isSelectable}
                     >
-                      {isFull
-                        ? "Evento Lotado"
-                        : restrictSelection && !isHandsOn
-                        ? "Indisponível"
-                        : "Selecionar"}
+                      {isLoading ? (
+                        <div className="flex items-center justify-center">
+                          <Loader className="w-4 h-4 animate-spin mr-1" />
+                          <span>Processando...</span>
+                        </div>
+                      ) : isFull ? (
+                        "Evento Lotado"
+                      ) : restrictSelection && !isHandsOn ? (
+                        "Indisponível"
+                      ) : (
+                        "Selecionar"
+                      )}
                     </button>
                   )}
                 </>

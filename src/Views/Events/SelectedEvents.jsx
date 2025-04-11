@@ -14,6 +14,7 @@ const SelectedEvents = () => {
   const [pendingChanges, setPendingChanges] = useState(new Set());
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSpeaker, setSelectedSpeaker] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Referência ao keynote speaker (ID 26)
   const keynoteEvent = events.find((event) => event.id === 26);
@@ -122,7 +123,9 @@ const SelectedEvents = () => {
 
   // Remove um evento individualmente
   const removeEventIndividually = async (event) => {
-    if (!userData?.id) return;
+    if (!userData?.id || isLoading) return;
+
+    setIsLoading(true); // Inicia o estado de loading
 
     try {
       // Remove evento do banco de dados
@@ -161,6 +164,8 @@ const SelectedEvents = () => {
     } catch (error) {
       console.error("Erro ao remover evento:", error);
       alert("Erro ao remover evento. Por favor, tente novamente.");
+    } finally {
+      setIsLoading(false); // Finaliza o estado de loading independente do resultado
     }
   };
 
@@ -202,7 +207,9 @@ const SelectedEvents = () => {
   };
 
   const handleSaveChanges = async () => {
-    if (!userData?.id) return;
+    if (!userData?.id || isLoading) return;
+
+    setIsLoading(true); // Inicia o estado de loading
 
     try {
       // Handle deletions
@@ -219,6 +226,8 @@ const SelectedEvents = () => {
     } catch (error) {
       console.error("Erro ao remover eventos:", error);
       alert("Erro ao remover eventos. Por favor, tente novamente.");
+    } finally {
+      setIsLoading(false); // Finaliza o estado de loading independente do resultado
     }
   };
 
@@ -356,6 +365,7 @@ const SelectedEvents = () => {
                         specialEvent={isKeynote} // Passamos a prop especialEvent quando for o keynote
                         isHandsOn={event.isHandsOn || false} // Passamos a informação de hands-on
                         restrictSelection={false} // Não restringimos a seleção na tela de eventos selecionados
+                        isLoading={isLoading}
                       />
                     </div>
                   );
@@ -368,9 +378,23 @@ const SelectedEvents = () => {
             <div className="flex justify-center gap-4 mt-6">
               <button
                 onClick={handleSaveChanges}
-                className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md border-2 border-red-600"
+                disabled={isLoading} // Desabilita durante o carregamento
+                className={`${
+                  isLoading
+                    ? "opacity-70 cursor-not-allowed"
+                    : "hover:bg-red-600"
+                } bg-red-500 text-white font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform ${
+                  !isLoading && "hover:scale-105"
+                } shadow-md border-2 border-red-600`}
               >
-                Confirmar Remoção ({pendingDeletions.size})
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <Loader className="w-5 h-5 animate-spin mr-2" />
+                    <span>Processando...</span>
+                  </div>
+                ) : (
+                  `Confirmar Remoção (${pendingDeletions.size})`
+                )}
               </button>
             </div>
           )}
