@@ -617,7 +617,7 @@ const ScheduleSectionComponent = ({
       <div className="text-center">
         <p className="text-sm md:text-lg text-gray-600 mb-10 md:mb-12 mx-[2rem]">
           {customDescription ||
-            "Planeje sua experiência no Future Day 2025! Navegue pela programação e reserve sua vaga nos eventos que mais combinam com você."}
+            "Planeje sua experiência no Future Day 2025! Navegue pela programação e reserve sua vaga nos eventos que mais combinam com você. As vagas são limitadas por sala, então garanta já o seu lugar para não ficar de fora!"}
         </p>
       </div>
 

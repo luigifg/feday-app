@@ -1,54 +1,64 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Html5QrcodeScanner } from "html5-qrcode";
-import { Check, QrCode, Wifi, X, Layers } from "lucide-react";
+import { QrCode, Wifi, Layers } from "lucide-react";
 
 import api from "../../constants/Axios";
 import Section from "../../Components/Section";
 import { horariosEvento, events } from "../../data/speakerData";
 import NFCWriterAdmin from "./NfcWriter";
+import CheckInSelector from "./CheckInSelector";
+import CheckInScanner from "./CheckInScanner";
+import CheckInStatus from "./CheckInStatus";
 
 const AdminList = () => {
+  // Estados principais
+  const [activeTab, setActiveTab] = useState("checkin");
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [userData, setUserData] = useState(null);
+
+  // Estados para seleção de evento
   const [selectedHour, setSelectedHour] = useState("");
   const [selectedEvent, setSelectedEvent] = useState("");
-  const [scanMethod, setScanMethod] = useState("qrcode"); // 'qrcode' ou 'nfc'
+  const [favorites, setFavorites] = useState({ hour: "", event: "" });
+
+  // Estados para scanner
+  const [scanMethod, setScanMethod] = useState("qrcode");
   const [showScanner, setShowScanner] = useState(false);
-  const [isReading, setIsReading] = useState(true);
-  const [lastScannedQR, setLastScannedQR] = useState(null);
   const [isNfcReading, setIsNfcReading] = useState(false);
   const [nfcSupported, setNfcSupported] = useState(null);
+
+  // Estados de processamento e feedback
+  const [lastProcessedQRContent, setLastProcessedQRContent] = useState(null);
+  const [lastProcessTime, setLastProcessTime] = useState(0);
+  const [lastScannedQR, setLastScannedQR] = useState(null);
   const [scannedUser, setScannedUser] = useState(null);
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [activeTab, setActiveTab] = useState("checkin"); // 'checkin' ou 'write'
-  const [favorites, setFavorites] = useState({
-    hour: "",
-    event: "",
-  });
-  const qrScannerRef = useRef(null);
+
+  // Refs
   const nfcAbortController = useRef(null);
   const navigate = useNavigate();
+
+  // Key para armazenar e recuperar favoritos
+  const getFavoritesKey = (userId) => `eventFavorites_${userId}`;
 
   // Verificar suporte a NFC no navegador
   useEffect(() => {
     setNfcSupported(typeof window !== "undefined" && "NDEFReader" in window);
   }, []);
 
-  // Reset messages after 3 seconds
+  // Reset messages after 5 seconds
   useEffect(() => {
     if (successMessage || error) {
       const timer = setTimeout(() => {
         setSuccessMessage("");
         setError("");
-      }, 3000);
+      }, 5000);
       return () => clearTimeout(timer);
     }
   }, [successMessage, error]);
 
-  const getFavoritesKey = (userId) => `eventFavorites_${userId}`;
-
+  // Carregar favoritos quando o usuário estiver disponível
   useEffect(() => {
     if (userData?.id) {
       const savedFavorites = localStorage.getItem(getFavoritesKey(userData.id));
@@ -61,6 +71,7 @@ const AdminList = () => {
     }
   }, [userData]);
 
+  // Verificar autenticação do usuário
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -81,47 +92,28 @@ const AdminList = () => {
     fetchUserData();
   }, [navigate]);
 
+  // Resetar informações ao trocar evento ou horário
   useEffect(() => {
-    let html5QrcodeScanner;
+    setLastScannedQR(null);
+    setLastProcessedQRContent(null);
+    setScannedUser(null);
+    setError("");
+    setSuccessMessage("");
 
-    if (
-      showScanner &&
-      selectedHour &&
-      selectedEvent &&
-      scanMethod === "qrcode"
-    ) {
-      html5QrcodeScanner = new Html5QrcodeScanner(
-        "qr-reader",
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        false
-      );
-
-      qrScannerRef.current = html5QrcodeScanner;
-
-      const handleQrCodeSuccess = async (decodedText) => {
-        try {
-          await processScannedData(decodedText);
-        } catch (error) {
-          setError("Erro ao processar QR Code: " + error.message);
-          setLastScannedQR(null);
-        }
-      };
-
-      html5QrcodeScanner.render(handleQrCodeSuccess, (errorMessage) => {
-        console.error("Erro na leitura do QR code:", errorMessage);
-      });
+    // Forçar o fechamento do scanner e parar a leitura NFC
+    if (showScanner) {
+      setShowScanner(false);
     }
 
-    return () => {
-      if (html5QrcodeScanner) {
-        html5QrcodeScanner.clear().catch((error) => {
-          console.error("Erro ao limpar scanner:", error);
-        });
-      }
-    };
-  }, [showScanner, selectedHour, selectedEvent, scanMethod, userData]);
+    if (isNfcReading) {
+      setIsNfcReading(false);
+      stopNfcReading();
+    }
 
-  // Iniciar ou parar leitura de NFC conforme estado do isNfcReading
+    // Reset completo - usuário deve selecionar método de leitura novamente
+  }, [selectedEvent, selectedHour]);
+
+  // Iniciar ou parar leitura de NFC
   useEffect(() => {
     if (isNfcReading && nfcSupported) {
       startNfcReading();
@@ -134,224 +126,382 @@ const AdminList = () => {
     };
   }, [isNfcReading, nfcSupported]);
 
-  useEffect(() => {
-    setLastScannedQR(null);
-  }, [selectedEvent, selectedHour]);
-
-  // Função para processar dados escaneados (de QR ou NFC)
+  /**
+   * Função para processar dados escaneados (QR/NFC)
+   */
   const processScannedData = async (decodedText) => {
     try {
       let qrData;
-      try {
-        // Tenta parsear como JSON
-        qrData = JSON.parse(decodedText);
-      } catch (e) {
-        // Se não for JSON, verifica se é uma string com ID e nome
-        if (typeof decodedText === "string" && decodedText.includes("|")) {
-          const [id, name] = decodedText.split("|");
-          qrData = { id, name };
+  
+      // Limita processamentos rápidos do mesmo QR code para evitar duplicação
+      const now = Date.now();
+      if (
+        decodedText === lastProcessedQRContent &&
+        now - lastProcessTime < 800
+      ) {
+        console.log("QR code lido recentemente, ignorando");
+        return;
+      }
+  
+      // Atualizar o timestamp para controle de leituras repetidas
+      setLastProcessedQRContent(decodedText);
+      setLastProcessTime(now);
+  
+      // Limpar mensagens anteriores quando um novo QR code é lido
+      setError("");
+      setSuccessMessage("");
+  
+      // PROCESSAMENTO DO CONTEÚDO DO QR CODE
+      // Processar vCard, JSON ou formato separado por pipe
+      if (
+        typeof decodedText === "string" &&
+        decodedText.includes("BEGIN:VCARD")
+      ) {
+        // Processamento de vCard (extrair ID e nome)
+        const noteRegex = /NOTE:(\d+)\|(.+?)(?:\r?\n|$)/;
+        const noteMatch = decodedText.match(noteRegex);
+  
+        if (noteMatch && noteMatch[1] && noteMatch[2]) {
+          qrData = { id: noteMatch[1], name: noteMatch[2] };
         } else {
-          throw new Error("Formato de dados inválido");
+          // Tentar extrair email e nome e buscar usuário
+          const emailRegex = /EMAIL[^:]*:(.+?)(?:\r?\n|$)/i;
+          const nameRegex = /FN:(.+?)(?:\r?\n|$)/i;
+  
+          const emailMatch = decodedText.match(emailRegex);
+          const nameMatch = decodedText.match(nameRegex);
+  
+          if (emailMatch && emailMatch[1] && nameMatch && nameMatch[1]) {
+            try {
+              const userResponse = await api.get(`/user`, {
+                params: { userEmail: emailMatch[1].trim() },
+              });
+  
+              if (userResponse.data && userResponse.data.id) {
+                qrData = {
+                  id: userResponse.data.id,
+                  name: nameMatch[1].trim(),
+                };
+              } else {
+                throw new Error("Usuário não encontrado pelo email");
+              }
+            } catch (emailError) {
+              throw new Error(
+                "Não foi possível identificar o usuário pelo vCard"
+              );
+            }
+          } else {
+            throw new Error("vCard não contém dados necessários para check-in");
+          }
+        }
+      } else {
+        // Tentar processar como JSON ou formato separado por pipe
+        try {
+          qrData = JSON.parse(decodedText);
+        } catch (e) {
+          if (typeof decodedText === "string" && decodedText.includes("|")) {
+            const [id, name] = decodedText.split("|");
+            qrData = { id, name };
+          } else {
+            throw new Error("Formato de dados inválido");
+          }
         }
       }
   
-      if (qrData.id) {
-        // Se for o mesmo código que acabou de ser processado, mantém a mensagem atual
-        if (lastScannedQR === `${qrData.id}-${selectedEvent}-${selectedHour}`) {
+      // VERIFICAÇÃO DO USUÁRIO E CHECK-IN
+      if (!qrData || !qrData.id) {
+        throw new Error("Dados inválidos: ID não encontrado");
+      }
+  
+      // Definir informações do usuário imediatamente para feedback rápido
+      setScannedUser({
+        id: qrData.id,
+        name: qrData.name || "Usuário #" + qrData.id,
+      });
+  
+      // Chave única para este check-in para evitar duplicatas
+      const checkInKey = `${qrData.id}-${selectedEvent}-${selectedHour}`;
+  
+      // Se for o mesmo check-in recente, não processa novamente
+      if (lastScannedQR === checkInKey) {
+        console.log("Check-in já processado recentemente");
+        return;
+      }
+  
+      // Verificar se já existe check-in para este usuário no evento e horário
+      try {
+        const checkExistingResponse = await api.get("/checkIn", {
+          params: {
+            user_id: qrData.id,
+            event_id: selectedEvent,
+            hour: selectedHour,
+          },
+        });
+  
+        if (checkExistingResponse.data.exists) {
+          // Check-in já existente - mostrar mensagem em LARANJA
+          const eventDetails = events.find((e) => e.id == selectedEvent) || {};
+          setSuccessMessage(
+            `${qrData.name} já registrado na sala ${eventDetails.room}.`
+          );
+          setLastScannedQR(checkInKey);
           return;
         }
   
-        try {
-          // Buscar informações do usuário
-          const userResponse = await api.get(`/user`, {
-            params: {
-              userName: qrData.name,
-            },
-          });
+        // Fazer o check-in no banco de dados
+        const checkInData = {
+          userId: qrData.id,
+          userName: qrData.name,
+          hour: selectedHour,
+          eventId: selectedEvent,
+          adminId: userData.id,
+        };
   
-          const userDataQr = {
-            id: qrData.id,
-            name: userResponse.data.name || qrData.name,
-          };
+        const response = await api.post("/checkIn", checkInData, {
+          withCredentials: true,
+        });
   
-          // Verificar se já existe check-in para ESTE HORÁRIO E EVENTO específico
-          const checkExistingResponse = await api.get("/checkIn", {
-            params: {
-              user_id: qrData.id,
-              event_id: selectedEvent,
-              hour: selectedHour,
-            },
-          });
+        // Check-in realizado com sucesso
+        const eventDetails = events.find((e) => e.id == selectedEvent) || {};
+        setSuccessMessage(
+          `Check-in realizado! ${qrData.name} registrado para "${
+            eventDetails.title || "Evento selecionado"
+          }" na sala ${eventDetails.room || "designada"}.`
+        );
+        setLastScannedQR(checkInKey);
+      } catch (apiError) {
+        // Tratar erro da API
+        console.error("Erro na API:", apiError);
   
-          if (checkExistingResponse.data.exists) {
-            // Se já existe check-in para este evento e horário, apenas mostra mensagem
-            setScannedUser(userDataQr);
-            setSuccessMessage(`Check-in já existente para ${userDataQr.name} neste evento e horário!`);
-            setLastScannedQR(`${qrData.id}-${selectedEvent}-${selectedHour}`);
-            return;
-          }
-  
-          // Realizar o check-in
-          const checkInData = {
-            userId: qrData.id,
-            userName: qrData.name,
-            hour: selectedHour,
-            eventId: selectedEvent,
-            adminId: userData.id,
-          };
-  
-          const response = await api.post("/checkIn", checkInData, {
-            withCredentials: true,
-          });
-  
-          if (response.status === 200) {
-            setScannedUser(userDataQr);
-            setSuccessMessage(`Check-in realizado com sucesso para ${userDataQr.name}!`);
-            setLastScannedQR(`${qrData.id}-${selectedEvent}-${selectedHour}`);
-          }
-        } catch (error) {
-          console.error("Erro na API:", error);
-          
-          // Melhoria no feedback de erro
-          if (error.response && error.response.status === 409) {
-            // Código 409 pode ser usado para conflito (check-in já existe)
-            setSuccessMessage("Check-in já existente registrado com sucesso!");
+        if (apiError.response && apiError.response.status === 409) {
+          if (apiError.response.data.isHourConflict) {
+            // Get details of the conflicting event
+            const conflictingEventDetails =
+              events.find(
+                (e) => e.id == apiError.response.data.conflictEventId
+              ) || {};
+            
+            // Get details of the current event
+            const currentEventDetails = 
+              events.find((e) => e.id == selectedEvent) || {};
+            
+            // Compare the hours to determine if this is a time conflict or a room conflict
+            const conflictingHour = 
+              events.find((e) => e.id == apiError.response.data.conflictEventId)?.hour;
+              
+            if (conflictingHour === selectedHour) {
+              // This is a room conflict at the same time - always prevent it
+              // and show clear warning that the user is already registered elsewhere
+              setError(
+                `CONFLITO: ${
+                  qrData.name
+                } já está registrado em outro evento no mesmo horário: "${
+                  conflictingEventDetails.title ||
+                  "Evento #" + apiError.response.data.conflictEventId
+                }" (Sala ${
+                  conflictingEventDetails.room || "N/A"
+                }). Não é possível registrar em duas salas no mesmo horário.`
+              );
+              setLastScannedQR(checkInKey);
+            } else if (conflictingHour !== selectedHour) {
+              // Different time slots - allow check-in regardless of room
+              // Create a new check-in record directly
+              try {
+                const checkInData = {
+                  userId: qrData.id,
+                  userName: qrData.name,
+                  hour: selectedHour,
+                  eventId: selectedEvent,
+                  adminId: userData.id,
+                  // Add a flag to indicate this is for different time slots
+                  allowDifferentTimeSlots: true
+                };
+                
+                const response = await api.post("/checkIn", checkInData, {
+                  withCredentials: true,
+                });
+                
+                setSuccessMessage(
+                  `Check-in realizado! ${qrData.name} registrado para "${
+                    currentEventDetails.title || "Evento selecionado"
+                  }" na sala ${currentEventDetails.room || "designada"}.`
+                );
+                setLastScannedQR(checkInKey);
+              } catch (secondAttemptError) {
+                setError("Erro ao processar check-in: " + (secondAttemptError.response?.data?.message || secondAttemptError.message));
+              }
+            } else {
+              // Same room, same time - show as already registered (shouldn't happen normally)
+              setSuccessMessage(
+                `${qrData.name} já registrado para "${
+                  currentEventDetails.title || "Evento selecionado"
+                }" na sala ${currentEventDetails.room || "designada"}.`
+              );
+              setLastScannedQR(checkInKey);
+            }
+          } else if (apiError.response.data.isDuplicate) {
+            // Check-in duplicado (mostrar como já existente, em laranja)
+            const eventDetails =
+              events.find((e) => e.id == selectedEvent) || {};
+            setSuccessMessage(
+              `${qrData.name} já registrado para "${
+                eventDetails.title || "Evento selecionado"
+              }" na sala ${eventDetails.room || "designada"}.`
+            );
+            setLastScannedQR(checkInKey);
           } else {
+            // Outros erros de conflito
             setError(
-              "Erro ao salvar o check-in: " +
-                (error.response?.data?.message || error.message || "Erro desconhecido")
+              "Erro de conflito: " +
+                (apiError.response?.data?.message || "Conflito desconhecido")
             );
           }
-          
-          setLastScannedQR(null);
+        } else {
+          // Erros técnicos continuam aparecendo como erro
+          setError(
+            "Erro ao processar check-in: " +
+              (apiError.response?.data?.message ||
+                apiError.message ||
+                "Erro desconhecido")
+          );
         }
-      } else {
-        setError("Dados inválidos: ID não encontrado");
-        setLastScannedQR(null);
       }
     } catch (error) {
-      setError("Formato inválido de dados: " + error.message);
+      console.error("Erro ao processar dados:", error);
+      setError("Erro: " + (error.message || "Falha no processamento"));
       setLastScannedQR(null);
     }
   };
 
+  /**
+   * Função para iniciar leitura de NFC
+   */
   const startNfcReading = async () => {
     if (!nfcSupported) {
       setError("NFC não é suportado neste dispositivo ou navegador");
       return;
     }
-  
+
     try {
       const abortController = new AbortController();
       nfcAbortController.current = abortController;
-  
+
       const ndef = new NDEFReader();
       await ndef.scan({ signal: abortController.signal });
-  
+
       setSuccessMessage("Leitura NFC iniciada. Aproxime o cartão.");
       setError("");
-  
+
       ndef.addEventListener("reading", async ({ message, serialNumber }) => {
         try {
           // Extrair dados do cartão NFC
           let userIdFromNFC = "";
           let userNameFromNFC = "";
           let foundIdData = false;
-  
-          console.log("NFC lido - Total de records:", message.records.length);
-          console.log("Serial do cartão:", serialNumber);
-  
-          // Percorre cada record procurando o record de ID para check-in
+
+          console.log("NFC lido - Records:", message.records.length);
+
+          // Buscar dados de identificação nos records
           for (const record of message.records) {
-            console.log("Tipo de record:", record.recordType, "Media Type:", record.mediaType);
-            
-            // Se o record for do tipo text (o que estamos gravando no NFCWriter)
-            if (record.recordType === "text") {
+            // Verificar se é um vCard pelo tipo MIME
+            if (
+              record.recordType === "mime" &&
+              record.mediaType === "text/vcard"
+            ) {
               try {
-                // Para records de texto, o valor já deve estar disponível como string
-                const textData = record.data;
-                console.log("Conteúdo do texto:", textData);
-                
-                // Verifique se parece JSON
-                if (typeof textData === 'string' && (textData.startsWith("{") || textData.includes("id"))) {
-                  try {
-                    const jsonData = JSON.parse(textData);
-                    if (jsonData.id) {
-                      userIdFromNFC = jsonData.id;
-                      userNameFromNFC = jsonData.name || "";
-                      foundIdData = true;
-                      console.log("Dados JSON válidos encontrados:", jsonData);
-                      break;
-                    }
-                  } catch (jsonError) {
-                    console.log("Falha ao parsear JSON:", jsonError);
+                const textDecoder = new TextDecoder();
+                const vCardText = textDecoder.decode(record.data);
+
+                // Buscar especificamente pelo formato NOTE:ID|Nome
+                const noteRegex = /NOTE:(\d+)\|(.+?)(?:\r?\n|$)/;
+                const noteMatch = vCardText.match(noteRegex);
+
+                if (noteMatch && noteMatch[1] && noteMatch[2]) {
+                  userIdFromNFC = noteMatch[1];
+                  userNameFromNFC = noteMatch[2];
+                  foundIdData = true;
+                  console.log(
+                    "Dados encontrados no NOTE do vCard:",
+                    userIdFromNFC,
+                    userNameFromNFC
+                  );
+                  break;
+                }
+              } catch (vCardError) {
+                console.error("Erro ao processar vCard:", vCardError);
+              }
+            }
+            // Verificar se é um texto simples que pode conter ID|Nome
+            else if (record.recordType === "text") {
+              try {
+                const textDecoder = new TextDecoder();
+                const textData = textDecoder.decode(record.data);
+
+                // Verificar se o formato é ID|Nome
+                if (textData.includes("|")) {
+                  const [id, name] = textData.split("|");
+                  if (id && name) {
+                    userIdFromNFC = id;
+                    userNameFromNFC = name;
+                    foundIdData = true;
+                    console.log(
+                      "Dados encontrados no formato texto ID|Nome:",
+                      userIdFromNFC,
+                      userNameFromNFC
+                    );
+                    break;
                   }
                 }
               } catch (textError) {
-                console.log("Erro ao processar texto:", textError);
+                console.error("Erro ao processar texto:", textError);
               }
-            } 
-            // Se o record for do tipo MIME e for JSON
-            else if (record.recordType === "mime" && record.mediaType === "application/json") {
+            }
+            // Verificar outros formatos como JSON
+            else if (
+              record.recordType === "mime" &&
+              record.mediaType === "application/json"
+            ) {
               try {
                 const textDecoder = new TextDecoder();
-                const text = textDecoder.decode(record.data);
-                console.log("Conteúdo MIME/JSON:", text);
-                
-                try {
-                  const jsonData = JSON.parse(text);
-                  if (jsonData.id) {
-                    userIdFromNFC = jsonData.id;
-                    userNameFromNFC = jsonData.name || "";
-                    foundIdData = true;
-                    console.log("Dados MIME/JSON válidos encontrados:", jsonData);
-                    break;
-                  }
-                } catch (jsonError) {
-                  console.log("Falha ao parsear MIME/JSON:", jsonError);
-                }
-              } catch (error) {
-                console.log("Erro ao decodificar MIME:", error);
-              }
-            }
-            // Para URL (caso utilizemos esse formato como fallback)
-            else if (record.recordType === "url") {
-              try {
-                const url = record.data;
-                console.log("URL encontrada:", url);
-                
-                // Verificar se a URL contém ID do usuário (como em https://futureday.id/123)
-                const matches = url.match(/\/([0-9]+)$/);
-                if (matches && matches[1]) {
-                  userIdFromNFC = matches[1];
-                  userNameFromNFC = "Usuário " + userIdFromNFC;  // Nome genérico se não tiver
+                const jsonText = textDecoder.decode(record.data);
+                const jsonData = JSON.parse(jsonText);
+
+                if (jsonData.id) {
+                  userIdFromNFC = jsonData.id;
+                  userNameFromNFC = jsonData.name || "";
                   foundIdData = true;
-                  console.log("ID encontrado na URL:", userIdFromNFC);
+                  console.log(
+                    "Dados encontrados no formato JSON:",
+                    userIdFromNFC,
+                    userNameFromNFC
+                  );
                   break;
                 }
-              } catch (urlError) {
-                console.log("Erro ao processar URL:", urlError);
+              } catch (jsonError) {
+                console.error("Erro ao processar JSON:", jsonError);
               }
             }
           }
-  
-          // Se não encontramos dados de ID nos formatos principais, use o serial do cartão como último recurso
+
+          // Usar serial do cartão como último recurso
           if (!foundIdData && serialNumber) {
-            console.log("Usando serial do cartão como fallback:", serialNumber);
             userIdFromNFC = serialNumber;
             userNameFromNFC = "Cartão " + serialNumber.substring(0, 8);
+            console.log(
+              "Usando número serial como identificação:",
+              userIdFromNFC,
+              userNameFromNFC
+            );
           }
-  
+
           if (userIdFromNFC) {
-            console.log("Dados finais obtidos - ID:", userIdFromNFC, "Nome:", userNameFromNFC);
-            
-            // Transforma nos dados que processScannedData espera
+            // Transformar nos dados para processamento
             const nfcData = JSON.stringify({
               id: userIdFromNFC,
-              name: userNameFromNFC
+              name: userNameFromNFC,
             });
-  
-            // Processa os dados obtidos para check-in
+
+            // Processar dados para check-in
             await processScannedData(nfcData);
           } else {
             setError("Nenhum dado de identificação encontrado no cartão NFC");
@@ -361,11 +511,6 @@ const AdminList = () => {
           setError("Erro ao processar tag NFC: " + error.message);
         }
       });
-  
-      ndef.addEventListener("error", (error) => {
-        console.error("Erro na leitura NFC:", error);
-        setError("Erro na leitura NFC: " + error.message);
-      });
     } catch (error) {
       console.error("Falha ao iniciar leitura NFC:", error);
       setError("Falha ao iniciar leitura NFC: " + error.message);
@@ -373,7 +518,9 @@ const AdminList = () => {
     }
   };
 
-  // Função para parar leitura de NFC
+  /**
+   * Função para parar leitura de NFC
+   */
   const stopNfcReading = () => {
     if (nfcAbortController.current) {
       nfcAbortController.current.abort();
@@ -381,11 +528,70 @@ const AdminList = () => {
     }
   };
 
+  /**
+   * Função para forçar reativação do scanner
+   * Reinicia o scanner mas mantém as seleções de sala e horário
+   */
+  const refreshScannerOnly = () => {
+    // Limpa mensagens e resultados anteriores
+    resetScanner();
+
+    if (scanMethod === "nfc") {
+      // Para NFC, precisamos reiniciar a leitura com as novas seleções
+      if (isNfcReading) {
+        stopNfcReading();
+      }
+
+      // Em modo NFC, reiniciamos a leitura imediatamente com novos parâmetros
+      setTimeout(() => {
+        if (selectedHour && selectedEvent) {
+          setIsNfcReading(true);
+        }
+      }, 300);
+    } else {
+      // Para QR code, precisamos recriar o componente de scanner
+      setShowScanner(false);
+
+      // Dá um tempo maior para o DOM realmente se atualizar antes de reabrir o scanner
+      setTimeout(() => {
+        setShowScanner(true);
+      }, 300);
+    }
+  };
+
+  /**
+   * Funções para gerenciar seleção de evento e horário
+   * Reset completo do formulário e do scanner
+   */
   const resetCheckInForm = () => {
     setScannedUser(null);
     setError("");
     setSuccessMessage("");
-    setLastScannedQR(null); // Limpar último QR lido para permitir nova leitura
+    setLastScannedQR(null);
+    setLastProcessedQRContent(null);
+
+    // Sempre pare o scanner quando resetar o formulário
+    if (showScanner) {
+      setShowScanner(false);
+    }
+
+    if (isNfcReading) {
+      setIsNfcReading(false);
+      stopNfcReading();
+    }
+  };
+
+  /**
+   * Reseta o scanner para um novo check-in sem fechar a câmera
+   * Mantém as seleções de sala e horário
+   */
+  const resetScanner = () => {
+    setScannedUser(null);
+    setError("");
+    setSuccessMessage("");
+    setLastScannedQR(null);
+    setLastProcessedQRContent(null);
+    // Não resetamos selectedHour e selectedEvent para manter as seleções entre scans
   };
 
   const saveFavorites = (newFavorites) => {
@@ -410,39 +616,50 @@ const AdminList = () => {
       event: "",
     };
     saveFavorites(newFavorites);
+
+    // Complete reset: close scanner and stop all readings
+    handleStopScanning();
   };
 
   const handleEventChange = (e) => {
     const newEvent = e.target.value;
     setSelectedEvent(newEvent);
-    resetCheckInForm(); // Limpar dados do último check-in ao mudar de evento
+    resetCheckInForm();
 
     const newFavorites = {
       ...favorites,
       event: newEvent,
     };
     saveFavorites(newFavorites);
+
+    // Complete reset: close scanner and stop all readings
+    handleStopScanning();
   };
 
+  /**
+   * Funções para controle do scanner
+   */
   const handleStartScanning = () => {
-    setShowScanner(true);
-    if (scanMethod === "nfc") {
-      setIsNfcReading(true);
-    }
+    resetScanner();
+    // Garante que o scanner anterior foi fechado completamente antes de abrir um novo
+    setShowScanner(false);
+    setTimeout(() => {
+      setShowScanner(true);
+      if (scanMethod === "nfc") {
+        setIsNfcReading(true);
+      }
+    }, 100);
   };
 
   const handleStopScanning = () => {
     setShowScanner(false);
     setIsNfcReading(false);
-    setScannedUser(null);
-    if (qrScannerRef.current) {
-      qrScannerRef.current.clear().catch((error) => {
-        console.error("Erro ao limpar scanner QR:", error);
-      });
-    }
+    resetScanner();
     stopNfcReading();
+    // Ensure we always go back to the scan method selection screen
   };
 
+  // Filtrar eventos com base no horário selecionado
   const filteredEvents = events.filter((event) => event.hour === selectedHour);
 
   if (isAuthenticated === null) {
@@ -452,11 +669,11 @@ const AdminList = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Section
-        className="flex-grow px-4 md:px-8 lg:px-16  pb-16"
+        className="flex-grow px-2 sm:px-4 md:px-8 lg:px-16 pb-8 md:pb-16 overflow-x-hidden"
         crosses
         customPaddings
       >
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto w-full">
           <div className="mb-8">
             <h1 className="text-4xl font-bold mt-10 mb-4 bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
               Área do Administrador
@@ -498,196 +715,48 @@ const AdminList = () => {
                 Selecione o horário e o evento para realizar o check-in
               </p>
 
-              {successMessage && (
-                <div className="w-full p-4 bg-emerald-500 text-white rounded-lg flex items-center gap-2">
-                  <Check size={24} />
-                  {successMessage}
-                </div>
+              {/* Componente de seleção de horário e evento */}
+              <CheckInSelector
+                selectedHour={selectedHour}
+                selectedEvent={selectedEvent}
+                handleHourChange={handleHourChange}
+                handleEventChange={handleEventChange}
+                horariosEvento={horariosEvento}
+                filteredEvents={filteredEvents}
+                favorites={favorites}
+                resetCheckInForm={resetCheckInForm}
+              />
+
+              {/* Status do check-in em tempo real (quando evento selecionado) */}
+              {selectedEvent && (
+                <CheckInStatus
+                  resetScanner={resetScanner}
+                  successMessage={successMessage}
+                  error={error}
+                  scannedUser={scannedUser}
+                  selectedEvent={selectedEvent}
+                  events={events}
+                />
               )}
 
-              <div className="relative w-full">
-                <select
-                  value={selectedHour}
-                  onChange={handleHourChange}
-                  className="w-full p-4 rounded-lg bg-gray-800 text-white border-2 border-gray-700 
-                           hover:border-emerald-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 
-                           transition-all duration-300 outline-none appearance-none 
-                           cursor-pointer shadow-lg backdrop-blur-sm"
-                >
-                  <option value="" className="bg-gray-800">
-                    Selecione um horário
-                  </option>
-                  {horariosEvento.map((horario) => (
-                    <option
-                      key={horario.id}
-                      value={horario.id}
-                      className="bg-gray-800"
-                    >
-                      {horario.label}
-                    </option>
-                  ))}
-                </select>
-                {favorites.hour && selectedHour === favorites.hour && (
-                  <Check
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-400"
-                    size={24}
-                  />
-                )}
-              </div>
-
-              <div className="relative w-full">
-                <select
-                  value={selectedEvent}
-                  onChange={handleEventChange}
-                  className={`w-full p-4 rounded-lg bg-gray-800 text-white border-2 
-                           hover:border-emerald-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500 
-                           transition-all duration-300 outline-none appearance-none 
-                           cursor-pointer shadow-lg backdrop-blur-sm
-                           ${
-                             !selectedHour
-                               ? "border-gray-700 opacity-50"
-                               : "border-gray-700"
-                           }`}
-                  disabled={!selectedHour}
-                >
-                  <option value="" className="bg-gray-800">
-                    {!selectedHour
-                      ? "Primeiro selecione um horário"
-                      : "Selecione um evento"}
-                  </option>
-                  {filteredEvents.map((event) => (
-                    <option
-                      key={event.id}
-                      value={event.id}
-                      className="bg-gray-800"
-                    >
-                      {event.title} - Sala: {event.room}
-                    </option>
-                  ))}
-                </select>
-                {favorites.event && selectedEvent === favorites.event && (
-                  <Check
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-400"
-                    size={24}
-                  />
-                )}
-              </div>
-
-              {/* Seleção do método de escaneamento */}
-              {!showScanner && selectedHour && selectedEvent && (
-                <div className="w-full grid grid-cols-2 gap-4">
-                  <button
-                    onClick={() => setScanMethod("qrcode")}
-                    className={`p-4 rounded-lg text-white font-semibold flex items-center justify-center gap-2
-                            transition-colors duration-300 ${
-                              scanMethod === "qrcode"
-                                ? "bg-emerald-600 hover:bg-emerald-500"
-                                : "bg-gray-600 hover:bg-gray-500"
-                            }`}
-                  >
-                    <QrCode size={20} />
-                    QR Code
-                  </button>
-                  <button
-                    onClick={() => setScanMethod("nfc")}
-                    className={`p-4 rounded-lg text-white font-semibold flex items-center justify-center gap-2
-                            transition-colors duration-300 ${
-                              scanMethod === "nfc"
-                                ? "bg-emerald-600 hover:bg-emerald-500"
-                                : "bg-gray-600 hover:bg-gray-500"
-                            } ${
-                      !nfcSupported ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
-                    disabled={!nfcSupported}
-                  >
-                    <Wifi size={20} />
-                    NFC
-                    {nfcSupported === false && (
-                      <X
-                        size={16}
-                        className="text-red-400 absolute top-1 right-1"
-                      />
-                    )}
-                  </button>
-                </div>
-              )}
-
-              {!showScanner ? (
-                <button
-                  onClick={handleStartScanning}
-                  className="w-full p-4 rounded-lg bg-emerald-600 text-white font-semibold
-                           hover:bg-emerald-500 transition-colors duration-300
-                           disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={
-                    !selectedHour ||
-                    !selectedEvent ||
-                    (scanMethod === "nfc" && !nfcSupported)
-                  }
-                >
-                  {scanMethod === "qrcode"
-                    ? "Escanear QR Code"
-                    : "Iniciar Leitura NFC"}
-                </button>
-              ) : (
-                <div className="w-full relative">
-                  {scanMethod === "qrcode" ? (
-                    <div
-                      id="qr-reader"
-                      className="w-full bg-gray-800 text-white [&_button]:bg-emerald-500 [&_button]:hover:bg-emerald-600 [&_button]:transition-colors [&_button]:duration-300 [&_button]:px-2 [&_button]:py-2 [&_button]:rounded-lg [&_button]:cursor-pointer [&_img]:invert-[1] rounded-lg overflow-hidden"
-                    />
-                  ) : (
-                    <div className="w-full p-8 bg-gray-800 text-white rounded-lg text-center">
-                      <div className="animate-pulse mb-4">
-                        <Wifi size={64} className="mx-auto text-emerald-400" />
-                      </div>
-                      <p className="text-lg font-medium mb-2">
-                        Leitura NFC ativa
-                      </p>
-                      <p className="text-sm text-gray-300">
-                        Aproxime o cartão NFC do dispositivo para fazer o
-                        check-in
-                      </p>
-                    </div>
-                  )}
-                  <button
-                    onClick={handleStopScanning}
-                    className="absolute top-2 right-8 bg-red-500 text-white px-3 py-1 rounded-full
-                             hover:bg-red-600 transition-colors duration-300"
-                  >
-                    ✕
-                  </button>
-                </div>
-              )}
-
-              {scannedUser && (
-                <div className="w-full p-4 bg-green-800 rounded-lg text-white">
-                  <p>
-                    Check-In do usuário:{" "}
-                    <span className="font-bold text-yellow-400">
-                      {scannedUser.name}
-                    </span>
-                    , realizado!
-                  </p>
-                </div>
-              )}
-
-              {error && (
-                <div className="w-full p-4 bg-red-500 text-white rounded-lg">
-                  {error}
-                </div>
-              )}
-
-              {nfcSupported === false && !showScanner && (
-                <div className="w-full p-4 bg-yellow-600 text-white rounded-lg text-sm">
-                  <p className="font-medium">
-                    NFC não suportado neste dispositivo ou navegador
-                  </p>
-                  <p className="mt-1">
-                    NFC funciona apenas em Chrome/Edge em dispositivos Android
-                    com NFC. Não funciona em iOS.
-                  </p>
-                </div>
-              )}
+              {/* Componente de scanner */}
+              <CheckInScanner
+                scanMethod={scanMethod}
+                setScanMethod={setScanMethod}
+                showScanner={showScanner}
+                setShowScanner={setShowScanner}
+                selectedHour={selectedHour}
+                selectedEvent={selectedEvent}
+                nfcSupported={nfcSupported}
+                processScannedData={processScannedData}
+                handleStartScanning={handleStartScanning}
+                handleStopScanning={handleStopScanning}
+                resetScanner={resetScanner}
+                successMessage={successMessage}
+                error={error}
+                scannedUser={scannedUser}
+                isNfcReading={isNfcReading}
+              />
             </div>
           ) : (
             // Aba de gravação de cartões NFC

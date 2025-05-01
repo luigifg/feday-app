@@ -24,7 +24,8 @@ const QRCodeSection = () => {
 
   const generateVCardData = (user) => {
     if (!user) return "";
-
+  
+    // Criando um vCard que também funcionará para check-in
     const vCard = [
       "BEGIN:VCARD",
       "VERSION:3.0",
@@ -33,9 +34,11 @@ const QRCodeSection = () => {
       `TEL;TYPE=CELL:${user.phone || ""}`,
       `EMAIL;TYPE=INTERNET:${user.email}`,
       `ORG:${user.company || ""}`,
+      // Adiciona o ID e nome no formato que o check-in espera
+      `NOTE:${user.id}|${user.name}`,
       "END:VCARD",
     ].join("\n");
-
+  
     return vCard;
   };
 

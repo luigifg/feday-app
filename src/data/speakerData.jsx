@@ -168,7 +168,7 @@ export const events = [
     palestrante: "Américo Paulicchi",
     position: "Engenheiro Sênior de Design Conceitual",
     descriptionBanner: formatDescription(
-      "Américo ingressou na Littelfuse ESBU Vendas Regionais Sul da Europa em 1º de agosto de 2022, como Engenheiro de Aplicação de Campo para Brasil e América do Sul, reportando-se a Tim Elliott. Ele suporta os negócios da Littelfuse em tecnologias ESBU através de distribuição e OEM direto, focando no desenvolvimento de novos negócios para aumentar a receita. Américo estudou Engenharia Elétrica na FESP, com especialização em Eletrônica, Ele tem uma forte experiência em semicondutores de potência, iniciando sua carreira em P&D na PHILIPS do BRASIL em 1978. Ocupou vários cargos na indústria de semicondutores, contribuindo para um crescimento significativo nas vendas e desenvolvendo soluções para grandes empresas e projetos."
+      "Américo ingressou na Littelfuse ESBU Vendas Regionais Sul da Europa em 1º de agosto de 2022, como Engenheiro de Aplicação de Campo para Brasil e América do Sul, reportando-se a Tim Elliott. Ele suporta os negócios da Littelfuse em tecnologias ESBU através de distribuição e OEM direto, focando no desenvolvimento de novos negócios para aumentar a receita. Américo estudou Engenharia Elétrica na FESP, com especialização em Eletrônica, Ele tem uma forte experiência em semicondutores de potência, iniciando sua carreira em P&D na PHILIPS do BRASIL em 1978. Ocupou vários cargos na indústria de semicondutores, desenvolvendo soluções para grandes empresas e projetos."
     ),
     imageBanner: americo,
     linkedinUrl: "https://linkedin.com/in/américo-paulicchi-filho-b118ab1",
@@ -220,7 +220,7 @@ export const events = [
     ),
     hour: "6",
     room: "São Lourenço",
-    maxParticipants: 35,
+    maxParticipants: 49,
     image: hellerFace,
     ...getCompanyInfo("MCC Semiconductor"),
   },
@@ -281,14 +281,14 @@ export const events = [
     ),
     hour: "1",
     room: "Tanguá",
-    maxParticipants: 49,
+    maxParticipants: 63,
     image: pompeuFace,
     ...getCompanyInfo("STMicroelectronics"),
   },
   {
     id: 7,
     speakerName: "Dario Savastano",
-    palestrante: "Conradi & Savastano",
+    palestrante: "Corradi & Savastano",
     position: "Gerente de Desenvolvimento de Negócios",
     descriptionBanner: formatDescription(
       "Engenheiro Eletrônico experiente com MBA e mais de 20 anos de expertise na indústria PEMCO (Passivos, Eletromecânicos e Conectores). Possui mais de 10 anos de experiência em vendas e marketing, com foco em geração de demanda no setor de tecnologia. Treinou clientes e parceiros em toda a América do Sul e interage regularmente com a alta gestão para discutir estratégia corporativa e objetivos organizacionais. Seu compromisso com inovação e excelência contribuiu significativamente para o avanço do setor."
@@ -360,13 +360,13 @@ export const events = [
     ),
     hour: "1",
     room: "Barigui",
-    maxParticipants: 35,
+    maxParticipants: 49,
     image: fabioFace,
     ...getCompanyInfo("Würth"),
   },
   {
     id: 30,
-    palestrante: "Fellipe Conradi",
+    palestrante: "Fellipe Corradi",
     position: "Gerente de Vendas",
     descriptionBanner: formatDescription(
       "Gerente de Vendas da Cvilux no Brasil, responsável por estratégias comerciais e expansão de mercado no setor de conectores. Formado em Administração e experiência de 15 anos em Supply Chain."
@@ -417,7 +417,7 @@ export const events = [
     palestrante: "Gene Volchenko",
     position: "Diretor de Desenvolvimento de Negócios",
     descriptionBanner: formatDescription(
-      "Gene Volchenko possui mais de 24 anos de experiência na indústria eletrônica. Ingressou na Vishay em 2005 como Engenheiro de Aplicação de Campo, passou pela Maxim Integrated Products como especialista em PMIC e retornou à Vishay em 2011, onde atuou como Diretor de Marketing Regional e, em 2023, foi promovido a Diretor de Desenvolvimento de Negócios. Antes disso, trabalhou na Motorola Automotive Group por 6 anos em projetos de controle de motores, no início da carreira, atuou por 7 anos como Chefe do Departamento de Rádio em navios mercantes da Ucrânia, sendo responsável por sistemas de navegação, comunicação e energia. Gene possui um Mestrado em Engenharia Eletrônica pela Odessa Marine Academy, e um Bacharelado em Engenharia Eletrônica pelo Kherson Marine College – Kherson, Ucrânia."
+      "Gene Volchenko possui mais de 24 anos de experiência na indústria eletrônica. Ingressou na Vishay em 2005 como Engenheiro de Aplicação de Campo, futuramente atuou como Diretor de Marketing Regional e, em 2023, foi promovido a Diretor de Desenvolvimento de Negócios. Antes disso, trabalhou na Motorola Automotive Group por 6 anos em projetos de controle de motores, no início da carreira, atuou por 7 anos como Chefe do Departamento de Rádio em navios mercantes da Ucrânia, sendo responsável por sistemas de navegação, comunicação e energia. Gene possui um Mestrado em Engenharia Eletrônica pela Odessa Marine Academy, e um Bacharelado em Engenharia Eletrônica pelo Kherson Marine College – Kherson, Ucrânia."
     ),
     imageBanner: gene,
     linkedinUrl: "https://www.linkedin.com/in/genevolchenko/",
@@ -428,7 +428,7 @@ export const events = [
     ),
     hour: "5",
     room: "São Lourenço",
-    maxParticipants: 35,
+    maxParticipants: 49,
     image: geneFace,
     ...getCompanyInfo("Vishay"),
   },
@@ -447,7 +447,7 @@ export const events = [
     descriptionLecture: formatDescription(
       "A série MCX W da NXP é uma plataforma de microcontroladores sem fio multiprotocolo projetada para maximizar a flexibilidade em aplicações IoT, industriais e de casa inteligente. Oferece integração com Matter, Thread, Zigbee e Bluetooth LE, além de avançados recursos de localização e segurança EdgeLock. Nesta sessão, exploraremos as principais características do MCX W71, seu ecossistema de desenvolvimento com MCUXpresso, e realizaremos um hands-on para configuração, atualização de firmware e testes de conectividade sem fio com o kit FRDM-MCXW71."
     ),
-    hour: "5",
+    hour: "6",
     room: "Bacacheri",
     maxParticipants: 30,
     image: petersonFace,
@@ -488,7 +488,7 @@ export const events = [
     hour: "4",
     room: "Barigui",
     image: guarizoFace,
-    maxParticipants: 35,
+    maxParticipants: 49,
     ...getCompanyInfo("Yageo"),
   },
   {
@@ -506,7 +506,7 @@ export const events = [
     descriptionLecture: formatDescription("Junte-se à nossa apresentação de Integração de Potência para uma exploração aprofundada da tecnologia PowiGaN e seu impacto transformador em seus projetos. Nesta sessão, você irá: Desmistificaremos os princípios fundamentais do Nitreto de Gálio e como ele difere do silício tradicional. Explorar as principais vantagens do GaN. Aprender como a tecnologia PowiGaN permite a criação de fontes de alimentação menores, mais leves e mais eficientes. Entender técnicas para maximizar a densidade de potência e minimizar as perdas de energia em seus projetos."),
     hour: "2",
     room: "Barigui",
-    maxParticipants: 35,
+    maxParticipants: 49,
     image: guarizoFace2,
     ...getCompanyInfo("Power Integrations"),
   },
@@ -575,7 +575,7 @@ export const events = [
     ),
     hour: "3",
     room: "Tanguá",
-    maxParticipants: 49,
+    maxParticipants: 63,
     image: petersonFace,
     ...getCompanyInfo("NXP Semiconductors"),
   },
