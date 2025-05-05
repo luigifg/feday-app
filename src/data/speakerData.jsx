@@ -97,7 +97,7 @@ export const horariosEvento = [
   { id: "5", label: "15:10 às 16:10", type: "event" },
   { id: "5-6", label: "16:10 às 17:00", type: "break", description: "Coffee Break" },
   { id: "6", label: "17:00 às 18:00", type: "event" },
-  { id: "6-end", label: "18:00", type: "break", description: "Encerramento" },
+  { id: "7", label: "18:00", type: "break", description: "Encerramento" },
 ];
 
 
@@ -199,8 +199,8 @@ export const events = [
       "Venha descobrir como a proteção invisível impacta diversas áreas do nosso cotidiano. Nesta palestra, abordaremos o fenômeno Iceberg e suas implicações nos setores automotivo (veículos a combustão e elétricos), eletrodomésticos e pequenos eletrodomésticos, industrial, iluminação, acionamentos de motores e soft starters. Também discutiremos proteções para packs de baterias, proteção contra ESD, SPDs tipos 1 e 2, SPDs externos para iluminação pública, proteção para comunicação e controle (portas USB, USB-C, RS485, RS232, hot connection, etc.), proteção geral e proteção de portas, e medição inteligente."
     ),
     hour: "6",
-    room: "Tingui",
-    maxParticipants: 63,
+    room: "São Lourenço",
+    maxParticipants: 35,
     image: americoFace,
     ...getCompanyInfo("Littelfuse"),
   },
@@ -219,8 +219,8 @@ export const events = [
       "As perdas de potência em um circuito se traduzem em calor e perda de eficiência. Elas são críticas em MOSFETs de Potência para garantir a operação dentro de uma faixa de temperatura segura e a confiabilidade do produto. Neste seminário, abordaremos as perdas por condução e comutação no MOSFET, com expressões analíticas e métodos para calcular e estimar a dissipação de calor causada tanto pela condução quanto pela comutação."
     ),
     hour: "6",
-    room: "São Lourenço",
-    maxParticipants: 49,
+    room: "Tingui",
+    maxParticipants: 63,
     image: hellerFace,
     ...getCompanyInfo("MCC Semiconductor"),
   },
@@ -239,8 +239,8 @@ export const events = [
       "Se você estiver trabalhando em aplicações na nuvem ou em endpoints e edge, os MCUs, MPUs e software de IA da Renesas são ideais para designs baseados em IA e ML. Com nosso ecossistema em expansão de parceiros e uma biblioteca crescente de soluções, como exemplos de aplicações, toolboxes, suítes de soluções e muito mais, a Renesas oferece um portfólio feito sob medida para suas aplicações de visão, voz e análises em tempo real."
     ),
     hour: "2",
-    room: "Tanguá",
-    maxParticipants: 49,
+    room: "Barigui",
+    maxParticipants: 35,
     image: oliveiraFace,
     ...getCompanyInfo("Renesas"),
   },
@@ -260,8 +260,8 @@ export const events = [
       "Se você estiver trabalhando em aplicações na nuvem ou em endpoints e edge, os MCUs, MPUs e software de IA da Renesas são ideais para designs baseados em IA e ML. Com nosso ecossistema em expansão de parceiros e uma biblioteca crescente de soluções, como exemplos de aplicações, toolboxes, suítes de soluções e muito mais, a Renesas oferece um portfólio feito sob medida para suas aplicações de visão, voz e análises em tempo real."
     ),
     hour: "5",
-    room: "Tanguá",
-    maxParticipants: 49,
+    room: "São Lourenço",
+    maxParticipants: 35,
     image: oliveiraFace,
     ...getCompanyInfo("Renesas"),
   },
@@ -359,8 +359,8 @@ export const events = [
       "Neste estudo de caso veremos a influência de diversos componentes para evitar e eliminar ruídos EMI em uma fonte Flyback."
     ),
     hour: "1",
-    room: "Barigui",
-    maxParticipants: 49,
+    room: "Tingui",
+    maxParticipants: 63,
     image: fabioFace,
     ...getCompanyInfo("Würth"),
   },
@@ -427,7 +427,7 @@ export const events = [
       "A eletrônica de potência é um campo crítico que impulsiona inovações na conversão de energia, gerenciamento de potência e sustentabilidade. Conforme cresce a demanda global por soluções energeticamente eficientes, a indústria está se voltando para tecnologias que minimizam perdas de energia, reduzem a pegada de carbono e apoiam a integração de fontes renováveis. A Vishay, um dos principais fabricantes de semicondutores discretos e componentes passivos, está na vanguarda desses avanços e apresentará os produtos mais recentes e os roadmaps de produtos para demonstrar sua estratégia para o futuro."
     ),
     hour: "5",
-    room: "São Lourenço",
+    room: "Tanguá",
     maxParticipants: 49,
     image: geneFace,
     ...getCompanyInfo("Vishay"),
@@ -486,9 +486,9 @@ export const events = [
       "A Arte do Design Passivo: Eficiência, Confiabilidade e Controle de EMI em Eletrônicos Modernos",
     descriptionLecture: formatDescription("Uma sessão perspicaz sobre estratégias para otimizar seu circuito. Nesta aula você irá: Aprender dicas práticas e truques para selecionar os componentes passivos certos para funções específicas de circuito. Descobrir técnicas para otimizar o posicionamento e layout de componentes para aumentar a eficiência, confiabilidade e economia de espaço. Obter insights valiosos sobre estratégias de mitigação de EMI usando os componentes de filtragem EMI da YAGEO. Aprender como suprimir efetivamente o ruído e garantir a integridade do sinal em seus projetos. Conhecer os componentes de alta confiabilidade oferecidos pela YAGEO."),
     hour: "4",
-    room: "Barigui",
-    image: guarizoFace,
+    room: "Tanguá",
     maxParticipants: 49,
+    image: guarizoFace,
     ...getCompanyInfo("Yageo"),
   },
   {
@@ -505,7 +505,7 @@ export const events = [
       "Otimizando Densidade de Potência e Eficiência: Um olhar profundo sobre a Tecnologia GaN",
     descriptionLecture: formatDescription("Junte-se à nossa apresentação de Integração de Potência para uma exploração aprofundada da tecnologia PowiGaN e seu impacto transformador em seus projetos. Nesta sessão, você irá: Desmistificaremos os princípios fundamentais do Nitreto de Gálio e como ele difere do silício tradicional. Explorar as principais vantagens do GaN. Aprender como a tecnologia PowiGaN permite a criação de fontes de alimentação menores, mais leves e mais eficientes. Entender técnicas para maximizar a densidade de potência e minimizar as perdas de energia em seus projetos."),
     hour: "2",
-    room: "Barigui",
+    room: "Tanguá",
     maxParticipants: 49,
     image: guarizoFace2,
     ...getCompanyInfo("Power Integrations"),
@@ -554,8 +554,8 @@ export const events = [
       "Participe da nossa palestra para conhecer a linha de produtos de curto alcance da U-Blox, com foco nos produtos MAYA, IRIS e no módulo BLE/atualização de CPU aberta. Além disso, apresentaremos uma visão geral dos produtos GNSS, destacando os modelos ZED-F9P, ZED-X20 e MIA-M10. Descubra as últimas inovações e atualizações que a U-Blox tem a oferecer!"
     ),
     hour: "1",
-    room: "Tingui",
-    maxParticipants: 63,
+    room: "Barigui",
+    maxParticipants: 35,
     image: siegelFace,
     ...getCompanyInfo("u-blox"),
   },
@@ -671,9 +671,9 @@ export const events = [
       "Nesta palestra abordaremos todos os blocos para implementação de um sistema de iluminação pública conectada e inteligente. Apresentaremos as tecnologias de comunicação NBIoT e Power Line, metrologia, conversores chaveados, isoladores digitais, led drivers e acelerômetros."
     ),
     hour: "4",
-    room: "Tanguá",
+    room: "Barigui",
+    maxParticipants: 35,
     image: buenoFace,
-    maxParticipants: 49,
     ...getCompanyInfo("STMicroelectronics"),
   },
   {
@@ -689,7 +689,7 @@ export const events = [
     title: "Projete com mais inteligência, adquira com mais eficiência, construa mais rápido.",
     descriptionLecture: formatDescription("Bem-vindos à nossa sessão principal. Hoje, nosso objetivo é demonstrar como a Future Electronics pode ser sua parceira confiável para Projetar de Forma Mais Inteligente, Comprar Melhor e Construir Mais Rápido. O processo de desenvolvimento de produtos eletrônicos é repleto de desafios. Engenheiros e profissionais da cadeia de suprimentos enfrentam diversos obstáculos, incluindo escassez de componentes, complexidade no design e pressão para reduzir o tempo de lançamento no mercado. Esses desafios podem impactar significativamente o sucesso de colocar um produto no mercado. Ao integrar a Future Electronics no seu fluxo de design desde o início, podemos colaborar com suas equipes de engenharia e cadeia de suprimentos para mitigar riscos e garantir o lançamento bem-sucedido de seus produtos. Nossa expertise ajuda você a Projetar de Forma Mais Inteligente com soluções otimizadas, Comprar Melhor com disponibilidade confiável de componentes e Construir Mais Rápido para acelerar o tempo de lançamento no mercado. Estamos ansiosos para colaborar com você e ajudá-lo a alcançar o sucesso. "),
     hour: "0",
-    room: "São Lourenço",
+    room: "Paraná",
     image: barreraFace,
     companyLogo: feLogo,
   },
@@ -709,6 +709,12 @@ export const events = [
     maxParticipants: 35,
     image: viniciusFace,
     ...getCompanyInfo("Allegro"),
+  },
+  {
+    id: 33,
+    hour: "7",
+    room: "Bacacheri",
+    title: "Check-in dos Brindes",
   },
 ];
 
@@ -739,6 +745,11 @@ export const ROOM_COLORS = {
     color: "bg-orange-500",
     idRoom: 5
   },
+  paraná: {
+    name: "Paraná",
+    color: "bg-teal-500",
+    idRoom: 6
+  }
 };
 
 // Função para obter a cor da sala

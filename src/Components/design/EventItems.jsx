@@ -717,7 +717,7 @@ const EventItem = ({
                           <span>Processando...</span>
                         </div>
                       ) : isFull ? (
-                        "Evento Lotado"
+                        "Esgotado"
                       ) : restrictSelection && !isHandsOn ? (
                         "Indisponível"
                       ) : (

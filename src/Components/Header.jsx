@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { disablePageScroll, enablePageScroll } from "scroll-lock";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import fe from "../assets/logos/feLogo.svg";
 import { navigation } from "../constants";
 import Button from "./design/Button";
@@ -16,6 +16,7 @@ const Header = () => {
     signup: "Novo Usuário",
     signin: "Entrar",
   });
+  const navRef = useRef(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -152,11 +153,12 @@ const Header = () => {
 
         {/* Menu mobile */}
         <nav
+          ref={navRef}
           className={`${
             openNavigation ? "flex" : "hidden"
-          } fixed top-[7.59rem] left-0 right-0 bottom-0 bg-n-1 lg:hidden`}
+          } fixed top-[7.59rem] left-0 right-0 bottom-0 bg-n-1 lg:hidden overflow-y-auto`}
         >
-          <div className="relative z-2 flex flex-col items-center justify-center m-auto">
+          <div className="relative z-2 flex flex-col items-center justify-center w-full py-8">
             {filteredNavigation.map((item) => (
               <a
                 key={item.id}
@@ -164,7 +166,7 @@ const Header = () => {
                 onClick={handleClick}
                 className={`block relative font-code text-2xl uppercase text-n-8 transition-colors hover:text-color-4 ${
                   item.onlyMobile ? "lg:hidden" : ""
-                } px-6 py-6 md:py-8`}
+                } px-6 py-5 md:py-6`}
               >
                 {item.title}
               </a>
@@ -175,13 +177,13 @@ const Header = () => {
                 <a
                   href="/events"
                   onClick={handleClick}
-                  className="block relative font-code text-2xl uppercase text-n-8 transition-colors hover:text-color-4 px-6 py-6 md:py-8"
+                  className="block relative font-code text-2xl uppercase text-n-8 transition-colors hover:text-color-4 px-6 py-5 md:py-6"
                 >
                   Meus Eventos
                 </a>
                 <button
                   onClick={handleLogout}
-                  className="block relative font-code text-2xl uppercase text-red-500 transition-colors hover:text-red-600 px-6 py-6 md:py-8"
+                  className="block relative font-code text-2xl uppercase text-red-500 transition-colors hover:text-red-600 px-6 py-5 md:py-6"
                 >
                   Sair
                 </button>
@@ -190,13 +192,13 @@ const Header = () => {
               <>
                 <a
                   onClick={() => handleAuthButtonClick("signup")}
-                  className="block relative font-code text-2xl uppercase text-n-8 transition-colors hover:text-color-4 px-6 py-6 md:py-8 cursor-pointer"
+                  className="block relative font-code text-2xl uppercase text-n-8 transition-colors hover:text-color-4 px-6 py-5 md:py-6 cursor-pointer"
                 >
                   {buttonText.signup}
                 </a>
                 <a
                   onClick={() => handleAuthButtonClick("signin")}
-                  className="block relative font-code text-2xl uppercase text-color-4 transition-colors hover:text-color-3 px-6 py-6 md:py-8 cursor-pointer"
+                  className="block relative font-code text-2xl uppercase text-color-4 transition-colors hover:text-color-3 px-6 py-5 md:py-6 cursor-pointer"
                 >
                   {buttonText.signin}
                 </a>

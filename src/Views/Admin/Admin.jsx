@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { QrCode, Wifi, Layers } from "lucide-react";
+import { QrCode, Wifi, Layers, FileText } from "lucide-react";
 
 import api from "../../constants/Axios";
+import CheckInExport from "./CheckInExport";
 import Section from "../../Components/Section";
 import { horariosEvento, events } from "../../data/speakerData";
 import NFCWriterAdmin from "./NfcWriter";
@@ -132,7 +133,7 @@ const AdminList = () => {
   const processScannedData = async (decodedText) => {
     try {
       let qrData;
-  
+
       // Limita processamentos rápidos do mesmo QR code para evitar duplicação
       const now = Date.now();
       if (
@@ -142,15 +143,15 @@ const AdminList = () => {
         console.log("QR code lido recentemente, ignorando");
         return;
       }
-  
+
       // Atualizar o timestamp para controle de leituras repetidas
       setLastProcessedQRContent(decodedText);
       setLastProcessTime(now);
-  
+
       // Limpar mensagens anteriores quando um novo QR code é lido
       setError("");
       setSuccessMessage("");
-  
+
       // PROCESSAMENTO DO CONTEÚDO DO QR CODE
       // Processar vCard, JSON ou formato separado por pipe
       if (
@@ -160,23 +161,23 @@ const AdminList = () => {
         // Processamento de vCard (extrair ID e nome)
         const noteRegex = /NOTE:(\d+)\|(.+?)(?:\r?\n|$)/;
         const noteMatch = decodedText.match(noteRegex);
-  
+
         if (noteMatch && noteMatch[1] && noteMatch[2]) {
           qrData = { id: noteMatch[1], name: noteMatch[2] };
         } else {
           // Tentar extrair email e nome e buscar usuário
           const emailRegex = /EMAIL[^:]*:(.+?)(?:\r?\n|$)/i;
           const nameRegex = /FN:(.+?)(?:\r?\n|$)/i;
-  
+
           const emailMatch = decodedText.match(emailRegex);
           const nameMatch = decodedText.match(nameRegex);
-  
+
           if (emailMatch && emailMatch[1] && nameMatch && nameMatch[1]) {
             try {
               const userResponse = await api.get(`/user`, {
                 params: { userEmail: emailMatch[1].trim() },
               });
-  
+
               if (userResponse.data && userResponse.data.id) {
                 qrData = {
                   id: userResponse.data.id,
@@ -207,27 +208,27 @@ const AdminList = () => {
           }
         }
       }
-  
+
       // VERIFICAÇÃO DO USUÁRIO E CHECK-IN
       if (!qrData || !qrData.id) {
         throw new Error("Dados inválidos: ID não encontrado");
       }
-  
+
       // Definir informações do usuário imediatamente para feedback rápido
       setScannedUser({
         id: qrData.id,
         name: qrData.name || "Usuário #" + qrData.id,
       });
-  
+
       // Chave única para este check-in para evitar duplicatas
       const checkInKey = `${qrData.id}-${selectedEvent}-${selectedHour}`;
-  
+
       // Se for o mesmo check-in recente, não processa novamente
       if (lastScannedQR === checkInKey) {
         console.log("Check-in já processado recentemente");
         return;
       }
-  
+
       // Verificar se já existe check-in para este usuário no evento e horário
       try {
         const checkExistingResponse = await api.get("/checkIn", {
@@ -237,7 +238,7 @@ const AdminList = () => {
             hour: selectedHour,
           },
         });
-  
+
         if (checkExistingResponse.data.exists) {
           // Check-in já existente - mostrar mensagem em LARANJA
           const eventDetails = events.find((e) => e.id == selectedEvent) || {};
@@ -247,7 +248,7 @@ const AdminList = () => {
           setLastScannedQR(checkInKey);
           return;
         }
-  
+
         // Fazer o check-in no banco de dados
         const checkInData = {
           userId: qrData.id,
@@ -256,11 +257,11 @@ const AdminList = () => {
           eventId: selectedEvent,
           adminId: userData.id,
         };
-  
+
         const response = await api.post("/checkIn", checkInData, {
           withCredentials: true,
         });
-  
+
         // Check-in realizado com sucesso
         const eventDetails = events.find((e) => e.id == selectedEvent) || {};
         setSuccessMessage(
@@ -272,7 +273,7 @@ const AdminList = () => {
       } catch (apiError) {
         // Tratar erro da API
         console.error("Erro na API:", apiError);
-  
+
         if (apiError.response && apiError.response.status === 409) {
           if (apiError.response.data.isHourConflict) {
             // Get details of the conflicting event
@@ -280,15 +281,16 @@ const AdminList = () => {
               events.find(
                 (e) => e.id == apiError.response.data.conflictEventId
               ) || {};
-            
+
             // Get details of the current event
-            const currentEventDetails = 
+            const currentEventDetails =
               events.find((e) => e.id == selectedEvent) || {};
-            
+
             // Compare the hours to determine if this is a time conflict or a room conflict
-            const conflictingHour = 
-              events.find((e) => e.id == apiError.response.data.conflictEventId)?.hour;
-              
+            const conflictingHour = events.find(
+              (e) => e.id == apiError.response.data.conflictEventId
+            )?.hour;
+
             if (conflictingHour === selectedHour) {
               // This is a room conflict at the same time - always prevent it
               // and show clear warning that the user is already registered elsewhere
@@ -314,13 +316,13 @@ const AdminList = () => {
                   eventId: selectedEvent,
                   adminId: userData.id,
                   // Add a flag to indicate this is for different time slots
-                  allowDifferentTimeSlots: true
+                  allowDifferentTimeSlots: true,
                 };
-                
+
                 const response = await api.post("/checkIn", checkInData, {
                   withCredentials: true,
                 });
-                
+
                 setSuccessMessage(
                   `Check-in realizado! ${qrData.name} registrado para "${
                     currentEventDetails.title || "Evento selecionado"
@@ -328,7 +330,11 @@ const AdminList = () => {
                 );
                 setLastScannedQR(checkInKey);
               } catch (secondAttemptError) {
-                setError("Erro ao processar check-in: " + (secondAttemptError.response?.data?.message || secondAttemptError.message));
+                setError(
+                  "Erro ao processar check-in: " +
+                    (secondAttemptError.response?.data?.message ||
+                      secondAttemptError.message)
+                );
               }
             } else {
               // Same room, same time - show as already registered (shouldn't happen normally)
@@ -684,29 +690,43 @@ const AdminList = () => {
           </div>
 
           {/* Tabs para alternar entre modos */}
-          <div className="flex border-b border-gray-700 mb-8">
-            <button
-              onClick={() => setActiveTab("checkin")}
-              className={`flex items-center gap-2 py-3 px-5 font-medium transition-colors ${
-                activeTab === "checkin"
-                  ? "border-b-2 border-emerald-500 text-emerald-400"
-                  : "text-gray-400 hover:text-gray-200"
-              }`}
-            >
-              <QrCode size={18} />
-              Check-in de Participantes
-            </button>
-            <button
-              onClick={() => setActiveTab("write")}
-              className={`flex items-center gap-2 py-3 px-5 font-medium transition-colors ${
-                activeTab === "write"
-                  ? "border-b-2 border-blue-500 text-blue-400"
-                  : "text-gray-400 hover:text-gray-200"
-              }`}
-            >
-              <Layers size={18} />
-              Gravação de Cartões NFC
-            </button>
+          <div className="w-full overflow-x-auto mb-6 border-b border-gray-700">
+            <div className="flex min-w-[500px]">
+              <button
+                onClick={() => setActiveTab("checkin")}
+                className={`flex items-center gap-2 py-3 px-5 font-medium transition-colors ${
+                  activeTab === "checkin"
+                    ? "border-b-2 border-emerald-500 text-emerald-400"
+                    : "text-gray-400 hover:text-gray-200"
+                }`}
+              >
+                <QrCode size={18} />
+                <span className="whitespace-nowrap">Check-in</span>
+              </button>
+              <button
+                onClick={() => setActiveTab("write")}
+                className={`flex items-center gap-2 py-3 px-5 font-medium transition-colors ${
+                  activeTab === "write"
+                    ? "border-b-2 border-blue-500 text-blue-400"
+                    : "text-gray-400 hover:text-gray-200"
+                }`}
+              >
+                <Layers size={18} />
+                <span className="whitespace-nowrap">Gravação NFC</span>
+              </button>
+              {/* Nova tab para exportação */}
+              <button
+                onClick={() => setActiveTab("export")}
+                className={`flex items-center gap-2 py-3 px-5 font-medium transition-colors ${
+                  activeTab === "export"
+                    ? "border-b-2 border-orange-500 text-orange-400"
+                    : "text-gray-400 hover:text-gray-200"
+                }`}
+              >
+                <FileText size={18} />
+                <span className="whitespace-nowrap">Exportar</span>
+              </button>
+            </div>
           </div>
 
           {activeTab === "checkin" ? (
@@ -758,10 +778,13 @@ const AdminList = () => {
                 isNfcReading={isNfcReading}
               />
             </div>
-          ) : (
+          ) : activeTab === "write" ? (
             // Aba de gravação de cartões NFC
             <NFCWriterAdmin />
-          )}
+          ) : activeTab === "export" ? (
+            // Nova aba de exportação
+            <CheckInExport horariosEvento={horariosEvento} events={events} />
+          ) : null}
         </div>
       </Section>
     </div>
