@@ -140,7 +140,7 @@ const CheckInScanner = ({
         dashboard.style.position = "sticky";
         dashboard.style.top = "0";
         dashboard.style.zIndex = "100";
-        dashboard.style.backgroundColor = "#1F2937";
+        dashboard.style.backgroundColor = "#2F855A";
       }
 
       // Garantir que o botão de request fique visível

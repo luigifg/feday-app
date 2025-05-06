@@ -198,7 +198,7 @@ const NFCWriterAdmin = () => {
 
   const generateVCardData = (user) => {
     if (!user) return { vcard: "", size: 0 };
-  
+
     // Função para extrair apenas o primeiro e último nome
     const getFirstAndLastName = (fullName) => {
       if (!fullName) return "";
@@ -208,14 +208,14 @@ const NFCWriterAdmin = () => {
       const lastName = nameParts[nameParts.length - 1];
       return `${firstName} ${lastName}`;
     };
-  
+
     // Nome completo para o campo NOTE (essencial para o check-in)
     const fullName = user.name || "";
     const simplifiedName = getFirstAndLastName(fullName);
-    
+
     // Limite do cartão NFC em bytes (reduzido para 240 para margem de segurança)
     const NFC_LIMIT = 240;
-    
+
     // Tentar criar o vCard completo com todos os campos
     const completeVCard = [
       "BEGIN:VCARD",
@@ -226,21 +226,23 @@ const NFCWriterAdmin = () => {
       user.email ? `EMAIL;TYPE=WORK:${user.email}` : "",
       user.position ? `TITLE:${user.position}` : "", // Incluir position/title
       `NOTE:${user.id}|${fullName}`, // Nome completo para check-in
-      "END:VCARD"
-    ].filter(line => line !== "").join("\r\n");
-    
+      "END:VCARD",
+    ]
+      .filter((line) => line !== "")
+      .join("\r\n");
+
     const completeBytes = new TextEncoder().encode(completeVCard).length;
-    
+
     // Se o vCard completo estiver dentro do limite, use-o
     if (completeBytes <= NFC_LIMIT) {
       return {
         vcard: completeVCard,
         size: completeBytes,
         complete: true,
-        level: "complete"
+        level: "complete",
       };
     }
-    
+
     // Se ultrapassar o limite, remover APENAS o campo position/title
     const reducedVCard = [
       "BEGIN:VCARD",
@@ -251,11 +253,13 @@ const NFCWriterAdmin = () => {
       user.email ? `EMAIL;TYPE=WORK:${user.email}` : "",
       // Campo position/title removido
       `NOTE:${user.id}|${fullName}`, // Nome completo para check-in
-      "END:VCARD"
-    ].filter(line => line !== "").join("\r\n");
-    
+      "END:VCARD",
+    ]
+      .filter((line) => line !== "")
+      .join("\r\n");
+
     const reducedBytes = new TextEncoder().encode(reducedVCard).length;
-    
+
     // Se ainda ultrapassar o limite, mostrar erro
     if (reducedBytes <= NFC_LIMIT) {
       return {
@@ -263,16 +267,16 @@ const NFCWriterAdmin = () => {
         size: reducedBytes,
         complete: true,
         level: "reduced",
-        removed: ["position"]
+        removed: ["position"],
       };
     }
-    
+
     // Se ainda ultrapassar o limite mesmo sem o position/title, mostrar erro
     return {
       vcard: "",
       size: reducedBytes,
       complete: false,
-      error: `Dados muito grandes para o cartão NFC: ${reducedBytes}/${NFC_LIMIT} bytes. Mesmo removendo o cargo, o vCard ainda é grande demais.`
+      error: `Dados muito grandes para o cartão NFC: ${reducedBytes}/${NFC_LIMIT} bytes. Mesmo removendo o cargo, o vCard ainda é grande demais.`,
     };
   };
 
@@ -280,7 +284,7 @@ const NFCWriterAdmin = () => {
     try {
       console.log("Atualizando status NFC para usuário:", user.id);
       await api.patch(`/user/${user.id}`, { nfcActivated: 1 });
-  
+
       // Atualizar a lista de usuários localmente
       setUsers(
         users.map((u) =>
@@ -289,7 +293,7 @@ const NFCWriterAdmin = () => {
             : u
         )
       );
-  
+
       setSelectedUser("");
       return true;
     } catch (apiError) {
@@ -303,20 +307,20 @@ const NFCWriterAdmin = () => {
   const writeToPreFormattedCard = async () => {
     // Limpeza e inicialização
     stopNfcWriting();
-    
+
     setNfcStatus("detecting");
     setStatusMessage("Iniciando preparação do cartão...");
     setError("");
     setSuccessMessage("");
     setIsWriting(true);
-  
+
     if (!selectedUser) {
       setNfcStatus("error");
       setError("Selecione um usuário antes de gravar o cartão");
       setIsWriting(false);
       return;
     }
-  
+
     try {
       const user = users.find(
         (u) => u.id === selectedUser || u.id === parseInt(selectedUser)
@@ -324,60 +328,68 @@ const NFCWriterAdmin = () => {
       if (!user) {
         throw new Error("Usuário não encontrado");
       }
-  
+
       // Gerar o vCard e obter informações sobre o tamanho
       const vCardResult = generateVCardData(user);
-      
+
       // Verificar se tivemos erro de tamanho
       if (!vCardResult.complete || !vCardResult.vcard) {
         setNfcStatus("error");
-        setError(`Não foi possível gerar vCard: ${vCardResult.error || 'Erro desconhecido'}. Tamanho: ${vCardResult.size} bytes (limite: 240 bytes).`);
+        setError(
+          `Não foi possível gerar vCard: ${
+            vCardResult.error || "Erro desconhecido"
+          }. Tamanho: ${vCardResult.size} bytes (limite: 240 bytes).`
+        );
         setIsWriting(false);
         return;
       }
-      
+
       // Mensagens personalizadas baseadas nos campos removidos
       let statusMessage = "vCard customizado";
       const levelMessages = {
         complete: "vCard completo com todos os campos",
         reduced: "vCard sem o cargo (position/title)",
         basic: "vCard básico (sem cargo e email)",
-        minimal: "vCard mínimo (apenas ID e nome)"
+        minimal: "vCard mínimo (apenas ID e nome)",
       };
-      
+
       if (vCardResult.level && levelMessages[vCardResult.level]) {
         statusMessage = levelMessages[vCardResult.level];
       }
       if (vCardResult.removed && vCardResult.removed.length > 0) {
-        statusMessage += ` - Campos removidos: ${vCardResult.removed.join(", ")}`;
+        statusMessage += ` - Campos removidos: ${vCardResult.removed.join(
+          ", "
+        )}`;
       }
-      
+
       setStatusMessage(
         `Preparando cartão para ${user.name}. 
          ${statusMessage}. 
          Tamanho: ${vCardResult.size}/240 bytes. Aproxime o cartão...`
       );
-  
+
       // Criar novo abort controller
       const abortController = new AbortController();
       nfcAbortController.current = abortController;
 
       // Criar nova instância do NDEFReader
       const ndef = new NDEFReader();
-      
+
       // Variável para controlar processamento único
       let processed = false;
-  
+
       // Configurar handler para o evento de leitura
       ndef.addEventListener("reading", async ({ serialNumber }) => {
         // Evitar processamento duplicado
         if (processed) return;
         processed = true;
-        
+
         try {
-          setStatusMessage(`Cartão detectado (${serialNumber}). Gravando dados...`);
+          setStatusMessage(
+            `Cartão detectado (${serialNumber}). Gravando dados...`
+          );
           setNfcStatus("writing");
-          
+
           // Tentar gravar o vCard
           await ndef.write({
             records: [
@@ -385,53 +397,53 @@ const NFCWriterAdmin = () => {
                 recordType: "mime",
                 mediaType: "text/vcard",
                 data: new TextEncoder().encode(vCardResult.vcard),
-              }
+              },
             ],
           });
-  
+
           setNfcStatus("success");
           setSuccessMessage(
             `Cartão gravado com sucesso! 
              ${statusMessage}. 
              Tamanho: ${vCardResult.size}/240 bytes.`
           );
-          
+
           // Atualizar o status do usuário e recarregar a lista
           await atualizarStatusNfc(user);
           fetchUsers(currentPage, 400);
-          
+
           // Limpar recursos após gravação bem-sucedida
           stopNfcWriting();
           setIsWriting(false);
-          
         } catch (writeError) {
           console.error("Erro durante gravação:", writeError);
           setNfcStatus("error");
           setError(
-            `Erro na gravação: ${writeError.message || 'erro desconhecido'}. Tamanho vCard: ${vCardResult.size} bytes.`
+            `Erro na gravação: ${
+              writeError.message || "erro desconhecido"
+            }. Tamanho vCard: ${vCardResult.size} bytes.`
           );
           stopNfcWriting();
           setIsWriting(false);
         }
       });
-  
+
       // Configurar um handler para erros do NFC
       ndef.addEventListener("error", (error) => {
         console.error("Erro no leitor NFC:", error);
         setNfcStatus("error");
-        setError(`Erro no leitor NFC: ${error.message || 'erro desconhecido'}`);
+        setError(`Erro no leitor NFC: ${error.message || "erro desconhecido"}`);
         stopNfcWriting();
         setIsWriting(false);
       });
-  
+
       // Iniciar scan com o abort controller
       await ndef.scan({ signal: abortController.signal });
       console.log("Scan NFC iniciado. Aguardando aproximação do cartão...");
-      
     } catch (error) {
       console.error("Erro ao iniciar operação NFC:", error);
       setNfcStatus("error");
-      setError(`Erro ao iniciar NFC: ${error.message || 'erro desconhecido'}`);
+      setError(`Erro ao iniciar NFC: ${error.message || "erro desconhecido"}`);
       stopNfcWriting();
       setIsWriting(false);
     }
@@ -441,7 +453,7 @@ const NFCWriterAdmin = () => {
   const readNfcContent = async () => {
     // Limpar qualquer operação anterior
     stopNfcWriting();
-    
+
     setNfcStatus("detecting");
     setStatusMessage("Modo de leitura. Aproxime o cartão...");
     setError("");
@@ -451,7 +463,7 @@ const NFCWriterAdmin = () => {
       // Criar novo controlador de aborto
       const abortController = new AbortController();
       nfcAbortController.current = abortController;
-      
+
       const ndef = new NDEFReader();
 
       ndef.addEventListener("reading", ({ message, serialNumber }) => {
@@ -488,7 +500,9 @@ const NFCWriterAdmin = () => {
       ndef.addEventListener("error", (error) => {
         console.error("Erro na leitura NFC:", error);
         setNfcStatus("error");
-        setError(`Erro na leitura NFC: ${error.message || 'erro desconhecido'}`);
+        setError(
+          `Erro na leitura NFC: ${error.message || "erro desconhecido"}`
+        );
         stopNfcWriting();
       });
 
@@ -520,6 +534,12 @@ const NFCWriterAdmin = () => {
   // Remover duplicatas e garantir usuários únicos
   const uniqueFilteredUsers = removeDuplicates(filteredUsers);
 
+  const sortedFilteredUsers = uniqueFilteredUsers.sort((a, b) => {
+    if (!a.name || a.name.trim() === "") return 1; // Coloca usuários sem nome no final
+    if (!b.name || b.name.trim() === "") return -1; // Coloca usuários sem nome no final
+    return a.name.localeCompare(b.name); // Ordem alfabética por nome
+  });
+
   // Handlers para os inputs
   const handleUserChange = (e) => {
     setSelectedUser(e.target.value);
@@ -538,7 +558,7 @@ const NFCWriterAdmin = () => {
       <p className="text-lg border-l-4 border-blue-400 pl-4 mb-6">
         Grave cartões NFC para os participantes
       </p>
-  
+
       {/* Informações sobre NFC no A15 */}
       {nfcSupported === false && (
         <div className="w-full p-4 mb-4 bg-yellow-600 text-white rounded-lg text-sm">
@@ -551,7 +571,7 @@ const NFCWriterAdmin = () => {
           </p>
         </div>
       )}
-  
+
       {/* Instruções para formatação de cartões */}
       <div className="w-full p-4 mb-4 bg-gray-700 rounded-lg">
         <h3 className="text-lg font-bold text-white mb-2">
@@ -565,7 +585,7 @@ const NFCWriterAdmin = () => {
           <li>Depois de formatado, o cartão pode ser gravado pelo A15</li>
         </ol>
       </div>
-  
+
       {/* Botão de leitura NFC */}
       <div className="mb-4">
         <button
@@ -577,7 +597,7 @@ const NFCWriterAdmin = () => {
           Ler cartão NFC
         </button>
       </div>
-  
+
       {/* Filtro de busca */}
       <div className="relative w-full mb-4">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -593,7 +613,7 @@ const NFCWriterAdmin = () => {
               transition-all duration-300 outline-none"
         />
       </div>
-  
+
       {/* Toggle para mostrar apenas pendentes */}
       <div className="flex items-center mb-4 space-x-2">
         <input
@@ -607,7 +627,7 @@ const NFCWriterAdmin = () => {
           Mostrar apenas participantes sem cartão NFC
         </label>
       </div>
-  
+
       {/* Seleção de usuário - dropdown padrão */}
       <div className="relative w-full mb-4">
         <select
@@ -615,14 +635,15 @@ const NFCWriterAdmin = () => {
           onChange={handleUserChange}
           disabled={loading || isWriting}
           className="w-full p-4 rounded-lg bg-gray-800 text-white border-2 border-gray-700 
-          hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 
-          transition-all duration-300 outline-none appearance-none 
-          cursor-pointer shadow-lg backdrop-blur-sm disabled:opacity-60"
+    hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 
+    transition-all duration-300 outline-none appearance-none 
+    cursor-pointer shadow-lg backdrop-blur-sm disabled:opacity-60"
         >
           <option value="" className="bg-gray-800">
             {loading ? "Carregando usuários..." : "Selecione um participante"}
           </option>
-          {uniqueFilteredUsers.map((user) => (
+          {/* AQUI É ONDE VOCÊ DEVE SUBSTITUIR O CÓDIGO */}
+          {sortedFilteredUsers.map((user) => (
             <option key={user.id} value={user.id} className="bg-gray-800 py-2">
               #{user.id} - {user.name} - {user.email}
             </option>
@@ -633,12 +654,12 @@ const NFCWriterAdmin = () => {
           size={20}
         />
       </div>
-      
+
       {/* Indicador de status NFC */}
       <div className="mb-4">
         <NfcStatusIndicator />
       </div>
-  
+
       {/* Botão de Gravação */}
       <button
         onClick={writeToPreFormattedCard}
@@ -651,7 +672,7 @@ const NFCWriterAdmin = () => {
         <Wifi size={20} />
         {isWriting ? "Gravação em andamento..." : "Gravar Cartão NFC"}
       </button>
-  
+
       {/* Mensagem para lista vazia */}
       {uniqueFilteredUsers.length === 0 && !loading && (
         <div className="text-center p-4 mt-4 bg-gray-700 rounded-lg">
